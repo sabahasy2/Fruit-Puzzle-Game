@@ -430,6 +430,7 @@
         if (score >= goal()) {
           level++;
           localStorage.setItem("fruit-pop-level", String(level));
+          window.dispatchEvent(new CustomEvent("fruit-pop:level", { detail: { level } }));
           localStorage.setItem("fruit-pop-stars", String(Math.max(Number(localStorage.getItem("fruit-pop-stars") || 0), level - 1)));
           moves = 25;
           messageElement.textContent = "🎉 Level completed! Welcome to level " + level;
@@ -562,7 +563,6 @@
       document.body.classList.add("world-"+w.theme);
       $("worldName").textContent=w.emoji+" "+w.name;
       $("worldMeta").textContent="WORLD "+(worlds.indexOf(w)+1)+" · LEVELS "+w.start+"–"+w.end;
-      $("levelsWorld").textContent=w.emoji+" "+w.name+" · "+w.desc;
       $("levelsWorld").textContent=w.emoji+" "+w.name+" · Levels "+w.start+"–"+w.end;
     }
 
@@ -610,6 +610,7 @@
     $("googleAuthBtn").addEventListener("click",()=>{location.href="/api/google/start";});
     let lastSynced="";
     async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    applyWorld(guestProgress().level);
+    window.addEventListener("fruit-pop:level", event=>applyWorld(event.detail.level));
     request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
     setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
