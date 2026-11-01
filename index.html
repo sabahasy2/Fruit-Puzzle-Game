@@ -464,17 +464,26 @@
       }
 
       async function resolveBoard() {
+        let chain = 0;
+        let bonusPoints = 0;
         while (true) {
           const matches = findMatches();
           if (!matches.length) break;
+
+          chain++;
+          const multiplier = Math.min(chain, 4);
+          const earned = matches.length * 10 * multiplier;
+          bonusPoints += earned;
+          score += earned;
+          messageElement.textContent = chain > 1
+            ? "👑 Royal combo x" + multiplier + "! +" + earned + " points"
+            : "✨ Match! +" + earned + " points";
 
           matches.forEach(([r, c]) => {
             board[r][c] = null;
           });
 
-          score += matches.length * 10;
           render();
-
           await new Promise(resolve => setTimeout(resolve, 220));
 
           for (let c = 0; c < SIZE; c++) {
@@ -499,10 +508,13 @@
 
         ensurePlayableBoard();
         busy = false;
-        checkGame();
+        const feedback = chain > 1
+          ? "👑 Royal combo x" + Math.min(chain, 4) + "! You earned " + bonusPoints + " bonus points!"
+          : "✨ Nice match! Keep the royal adventure going.";
+        checkGame(feedback);
       }
 
-      function checkGame() {
+      function checkGame(feedback = "") {
         if (score >= goal()) {
           level++;
           localStorage.setItem("fruit-pop-level", String(level));
@@ -522,7 +534,7 @@
           return;
         }
 
-        messageElement.textContent = "Great! Keep matching fruits!";
+        messageElement.textContent = feedback || "Great! Keep matching fruits!";
       }
 
       function saveBest() {
