@@ -229,6 +229,24 @@
     .footer{color:#d3c19b}
     body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{background-image:radial-gradient(ellipse at 50% -10%,#d6ae5940,transparent 45%),radial-gradient(circle at top,#ffffff08,transparent 55%),linear-gradient(160deg,#101426,#19162c)}
     @media(max-width:380px){.game{padding:10px 8px 15px;border-radius:22px}.royal-brand{margin-top:9px}.royal-brand-name{font-size:15px}}
+    /* Original royal crest and cinematic kingdom reveals */
+    .royal-brand-mark{position:relative;isolation:isolate;width:44px;height:44px;border:0;background:transparent;box-shadow:none;font-size:0}
+    .royal-brand-mark:before{content:"";position:absolute;inset:2px;border:1px solid #f2d58b;border-radius:13px 13px 17px 17px;transform:rotate(45deg);background:linear-gradient(145deg,#8f6828,#241a20);box-shadow:0 0 16px #e6bf5b66;z-index:-1}
+    .royal-brand-mark:after{content:"♛";font-size:25px;color:#fff0b4;text-shadow:0 0 9px #ffdb75;line-height:1}
+    .intro-screen,.world-transition{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at 50% 42%,#59401f 0%,#20172b 42%,#080c1b 100%);display:flex;align-items:center;justify-content:center;padding:24px;opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease}
+    .intro-screen.hide,.world-transition.hide{opacity:0;visibility:hidden;pointer-events:none}
+    .intro-content{text-align:center;max-width:340px;animation:royalRise 1.1s cubic-bezier(.2,.8,.2,1) both}
+    .intro-emblem{width:112px;height:112px;margin:0 auto 22px;display:grid;place-items:center;border:2px solid #f1d58d;border-radius:30px 30px 42px 42px;transform:rotate(45deg);background:linear-gradient(145deg,#a4772c,#2b1c29);box-shadow:0 0 0 7px #d7b45a16,0 0 48px #e3bd5b66,inset 0 0 24px #fff0b455}
+    .intro-emblem span{transform:rotate(-45deg);font-size:58px;color:#fff0b4;text-shadow:0 0 20px #ffdc7b}
+    .intro-title{margin:38px 0 4px;color:#ffe7a6;font-size:30px;font-weight:950;letter-spacing:1px;text-shadow:0 0 20px #e8c56b66}
+    .intro-ar{color:#fff0c7;font-size:23px;font-weight:900}
+    .intro-caption{margin:8px 0 24px;color:#d7c18f;font-size:10px;letter-spacing:3px}
+    .intro-screen button{max-width:210px}
+    .world-transition{z-index:90;background:radial-gradient(ellipse at center,#725027 0%,#241a30 48%,#080c1b 100%);transition:opacity .45s ease,visibility .45s ease}
+    .world-transition .intro-title{font-size:25px}
+    @keyframes royalRise{from{opacity:0;transform:translateY(24px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(prefers-reduced-motion:reduce){.intro-content{animation:none}.intro-screen,.world-transition{transition:none}}
+
 
     @media (max-width: 350px) {
       .board { gap: 0; padding: 2px; }
@@ -238,6 +256,23 @@
 </head>
 
 <body>
+  <section class="intro-screen" id="introScreen" aria-label="Fruit Pop introduction">
+    <div class="intro-content">
+      <div class="intro-emblem"><span>♛</span></div>
+      <div class="intro-title">FRUIT POP</div>
+      <div class="intro-ar">عابر السبيل</div>
+      <div class="intro-caption">ROYAL GAME STUDIO</div>
+      <button id="enterGameBtn" type="button">ابدأ المغامرة ✨</button>
+    </div>
+  </section>
+  <section class="world-transition hide" id="worldTransition" aria-live="polite">
+    <div class="intro-content">
+      <div class="intro-emblem"><span>♛</span></div>
+      <div class="intro-title" id="transitionWorldTitle">A NEW KINGDOM</div>
+      <div class="intro-ar">عالم جديد بانتظارك</div>
+      <div class="intro-caption">YOUR ROYAL ADVENTURE CONTINUES</div>
+    </div>
+  </section>
   <main class="game">
     <h1>🍓 FRUIT POP 🍋</h1>
     <p class="subtitle">MATCH & BLOOM — A royal fruit adventure</p>
@@ -598,7 +633,18 @@
       {start:351,end:400,name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits"}
     ];
     const activeWorld=(n)=>worlds.find(w=>n>=w.start&&n<=w.end)||worlds[worlds.length-1];
+    let displayedWorld=-1, transitionTimer=null;
+    function showKingdomReveal(w){
+      const layer=$("worldTransition");
+      $("transitionWorldTitle").textContent=w.emoji+" "+w.name;
+      layer.classList.remove("hide");
+      clearTimeout(transitionTimer);
+      transitionTimer=setTimeout(()=>layer.classList.add("hide"),1900);
+    }
     function applyWorld(n){
+      const nextWorld=worlds.indexOf(activeWorld(n));
+      if(displayedWorld!==-1 && nextWorld!==displayedWorld) showKingdomReveal(activeWorld(n));
+      displayedWorld=nextWorld;
       const w=activeWorld(n);
       document.body.className=document.body.className.replace(/\bworld-\w+\b/g,"").trim();
       document.body.classList.add("world-"+w.theme);
@@ -650,12 +696,18 @@
     });
     $("googleAuthBtn").addEventListener("click",()=>{location.href="/api/google/start";});
     let lastSynced="";
-    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    applyWorld(guestProgress().level);
+    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }
+    applyWorld(guestProgress().level);
     window.addEventListener("fruit-pop:level", event=>applyWorld(event.detail.level));
     request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
     setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}
+    const intro=$("introScreen");
+    const enter=()=>{intro.classList.add("hide");try{sessionStorage.setItem("fruit-pop-intro-seen","1");}catch(e){}};
+    $("enterGameBtn").addEventListener("click",enter);
+    try{if(sessionStorage.getItem("fruit-pop-intro-seen")==="1") intro.classList.add("hide");}catch(e){}
+    setTimeout(()=>intro.classList.add("hide"),6500);
   })();
   </script>
 
