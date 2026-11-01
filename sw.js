@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "fruit-pop-v2";
+const CACHE_NAME = "fruit-pop-v3";
 
 const APP_FILES = [
   "./",
@@ -33,6 +33,12 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  // Never cache account or progress API responses; they are private and session-specific.
+  if (new URL(event.request.url).pathname.startsWith("/api/")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
