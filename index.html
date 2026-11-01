@@ -122,6 +122,10 @@
     .tile.empty {
       opacity: .15;
     }
+    .tile .fruit-face{position:relative;z-index:1}
+    .tile.ice-covered{border-color:#a9eaff;background:linear-gradient(145deg,#b8efff44,#fff8e60a);box-shadow:inset 0 0 12px #8bdcff88,0 0 8px #8bdcff55}
+    .tile .ice-overlay{position:absolute;z-index:2;right:1px;top:0;font-size:clamp(10px,3vw,14px);line-height:1;filter:drop-shadow(0 1px 2px #06152b)}
+    .tile.ice-covered .fruit-face{filter:saturate(.8) brightness(.92)}
 
     .message {
       min-height: 28px;
@@ -338,17 +342,22 @@
       const levelElement = document.getElementById("level");
       const objectiveElement = document.getElementById("objectiveText");
       let objectiveProgress = 0;
+      let iceGrid = [];
 
       function objectiveForLevel() {
-        const type = (level - 1) % 3;
+        const type = (level - 1) % 4;
         if (type === 0) return { type: "score", target: goal(), label: "Reach " + goal() + " points" };
         if (type === 1) {
           const fruit = FRUITS[(level - 1) % FRUITS.length];
           const target = 12 + Math.min(12, Math.floor((level - 1) / 5) * 2);
           return { type: "collect", fruit, target, label: "Collect " + target + " " + fruit };
         }
-        const target = 1 + Math.min(2, Math.floor((level - 1) / 15));
-        return { type: "special", target, label: "Create " + target + " special fruit" + (target > 1 ? "s" : "") };
+        if (type === 2) {
+          const target = 1 + Math.min(2, Math.floor((level - 1) / 15));
+          return { type: "special", target, label: "Create " + target + " special fruit" + (target > 1 ? "s" : "") };
+        }
+        const target = 6 + Math.min(6, Math.floor((level - 1) / 20));
+        return { type: "ice", target, label: "Break " + target + " ice blocks" };
       }
 
       function updateObjectiveUI() {
@@ -380,6 +389,15 @@
             board[r][c] = randomFruit();
           });
         }
+
+        iceGrid = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+        const objective = objectiveForLevel();
+        if (objective.type === "ice") {
+          const cells = Array.from({ length: SIZE * SIZE }, (_, i) => i)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, objective.target);
+          cells.forEach(index => { iceGrid[Math.floor(index / SIZE)][index % SIZE] = 1; });
+        }
       }
 
       function render() {
@@ -390,8 +408,18 @@
             const tile = document.createElement("button");
             tile.className = "tile";
             tile.type = "button";
-            tile.textContent = board[r][c] || "";
-            tile.setAttribute("aria-label", "Fruit tile");
+            const fruitFace = document.createElement("span");
+            fruitFace.className = "fruit-face";
+            fruitFace.textContent = board[r][c] || "";
+            tile.appendChild(fruitFace);
+            if (iceGrid[r] && iceGrid[r][c]) {
+              tile.classList.add("ice-covered");
+              const iceOverlay = document.createElement("span");
+              iceOverlay.className = "ice-overlay";
+              iceOverlay.textContent = "🧊";
+              tile.appendChild(iceOverlay);
+            }
+            tile.setAttribute("aria-label", iceGrid[r] && iceGrid[r][c] ? "Fruit under ice" : "Fruit tile");
 
             if (!board[r][c]) tile.classList.add("empty");
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) tile.classList.add("special-fruit");
@@ -584,6 +612,14 @@
           const objective = objectiveForLevel();
           if (objective.type === "collect") {
             objectiveProgress += matches.reduce((count, [r, c]) => count + (board[r][c] === objective.fruit ? 1 : 0), 0);
+          }
+          if (objective.type === "ice") {
+            matches.forEach(([r, c]) => {
+              if (iceGrid[r] && iceGrid[r][c]) {
+                iceGrid[r][c] = 0;
+                objectiveProgress++;
+              }
+            });
           }
           const special = specialForMatch(matches, null);
           if (special && objective.type === "special") objectiveProgress++;
