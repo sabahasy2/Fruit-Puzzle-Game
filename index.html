@@ -126,6 +126,9 @@
     .tile.ice-covered{border-color:#a9eaff;background:linear-gradient(145deg,#b8efff44,#fff8e60a);box-shadow:inset 0 0 12px #8bdcff88,0 0 8px #8bdcff55}
     .tile .ice-overlay{position:absolute;z-index:2;right:1px;top:0;font-size:clamp(10px,3vw,14px);line-height:1;filter:drop-shadow(0 1px 2px #06152b)}
     .tile.ice-covered .fruit-face{filter:saturate(.8) brightness(.92)}
+    .tile .crate-overlay{position:absolute;z-index:3;inset:0;display:grid;place-items:center;font-size:clamp(19px,7vw,30px);background:#3a241b22;filter:drop-shadow(0 2px 3px #080611);pointer-events:none}
+    .tile.crate-covered{border-color:#d9a15d;background:linear-gradient(145deg,#8b572e66,#3a241b55);box-shadow:inset 0 0 10px #f0bb6b66,0 0 7px #9b633c55}
+    .tile.crate-covered:disabled{opacity:1;cursor:not-allowed}
 
     .message {
       min-height: 28px;
@@ -343,9 +346,10 @@
       const objectiveElement = document.getElementById("objectiveText");
       let objectiveProgress = 0;
       let iceGrid = [];
+      let crateGrid = [];
 
       function objectiveForLevel() {
-        const type = (level - 1) % 4;
+        const type = (level - 1) % 5;
         if (type === 0) return { type: "score", target: goal(), label: "Reach " + goal() + " points" };
         if (type === 1) {
           const fruit = FRUITS[(level - 1) % FRUITS.length];
@@ -356,8 +360,12 @@
           const target = 1 + Math.min(2, Math.floor((level - 1) / 15));
           return { type: "special", target, label: "Create " + target + " special fruit" + (target > 1 ? "s" : "") };
         }
-        const target = 6 + Math.min(6, Math.floor((level - 1) / 20));
-        return { type: "ice", target, label: "Break " + target + " ice blocks" };
+        if (type === 3) {
+          const target = 6 + Math.min(6, Math.floor((level - 1) / 20));
+          return { type: "ice", target, label: "Break " + target + " ice blocks" };
+        }
+        const target = 4 + Math.min(5, Math.floor((level - 1) / 25));
+        return { type: "crate", target, label: "Break " + target + " wooden crates" };
       }
 
       function updateObjectiveUI() {
@@ -392,11 +400,16 @@
 
         iceGrid = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
         const objective = objectiveForLevel();
-        if (objective.type === "ice") {
+        crateGrid = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+        if (objective.type === "ice" || objective.type === "crate") {
           const cells = Array.from({ length: SIZE * SIZE }, (_, i) => i)
             .sort(() => Math.random() - 0.5)
             .slice(0, objective.target);
-          cells.forEach(index => { iceGrid[Math.floor(index / SIZE)][index % SIZE] = 1; });
+          cells.forEach(index => {
+            const r = Math.floor(index / SIZE), col = index % SIZE;
+            if (objective.type === "ice") iceGrid[r][col] = 1;
+            else crateGrid[r][col] = 2;
+          });
         }
       }
 
@@ -419,7 +432,15 @@
               iceOverlay.textContent = "🧊";
               tile.appendChild(iceOverlay);
             }
-            tile.setAttribute("aria-label", iceGrid[r] && iceGrid[r][c] ? "Fruit under ice" : "Fruit tile");
+            if (crateGrid[r] && crateGrid[r][c]) {
+              tile.classList.add("crate-covered");
+              const crateOverlay = document.createElement("span");
+              crateOverlay.className = "crate-overlay";
+              crateOverlay.textContent = crateGrid[r][c] === 2 ? "📦" : "🪵";
+              tile.appendChild(crateOverlay);
+            }
+            tile.disabled = !!(crateGrid[r] && crateGrid[r][c]);
+            tile.setAttribute("aria-label", crateGrid[r] && crateGrid[r][c] ? "Wooden crate, " + crateGrid[r][c] + " hits remaining" : iceGrid[r] && iceGrid[r][c] ? "Fruit under ice" : "Fruit tile");
 
             if (!board[r][c]) tile.classList.add("empty");
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) tile.classList.add("special-fruit");
@@ -503,33 +524,55 @@
 
       function collapseBoard() {
         for (let c = 0; c < SIZE; c++) {
-          let write = SIZE - 1;
-          for (let r = SIZE - 1; r >= 0; r--) {
-            if (board[r][c]) {
-              board[write][c] = board[r][c];
-              if (write !== r) board[r][c] = null;
-              write--;
+          let segmentTop = 0;
+          while (segmentTop < SIZE) {
+            if (crateGrid[segmentTop] && crateGrid[segmentTop][c]) { segmentTop++; continue; }
+            let segmentBottom = segmentTop;
+            while (segmentBottom + 1 < SIZE && !(crateGrid[segmentBottom + 1] && crateGrid[segmentBottom + 1][c])) segmentBottom++;
+            let write = segmentBottom;
+            for (let r = segmentBottom; r >= segmentTop; r--) {
+              if (board[r][c]) {
+                board[write][c] = board[r][c];
+                if (write !== r) board[r][c] = null;
+                write--;
+              }
             }
+            for (let r = write; r >= segmentTop; r--) board[r][c] = randomFruit();
+            segmentTop = segmentBottom + 1;
           }
-          for (let r = write; r >= 0; r--) board[r][c] = randomFruit();
         }
+      }
+
+      function damageCrate(r, c) {
+        if (!crateGrid[r] || !crateGrid[r][c]) return false;
+        crateGrid[r][c]--;
+        if (crateGrid[r][c] === 0) {
+          objectiveProgress++;
+          return true;
+        }
+        return false;
       }
 
       async function activateSpecial(r, c) {
         const kind = board[r][c];
         if (!SPECIAL_FRUITS.has(kind)) return false;
         const cleared = [];
+        const hitCrates = new Set();
         for (let y = 0; y < SIZE; y++) {
           for (let x = 0; x < SIZE; x++) {
             const hit = kind === "🔥" ? y === r
               : kind === "⚡" ? x === c
               : Math.abs(y - r) <= 1 && Math.abs(x - c) <= 1;
             if (hit && board[y][x]) {
-              cleared.push([y, x]);
-              board[y][x] = null;
+              if (crateGrid[y] && crateGrid[y][x]) hitCrates.add(y + "," + x);
+              else {
+                cleared.push([y, x]);
+                board[y][x] = null;
+              }
             }
           }
         }
+        hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y, x); });
         score += cleared.length * 20;
         messageElement.textContent = kind === "🔥" ? "🔥 Royal row blast!"
           : kind === "⚡" ? "⚡ Royal column blast!" : "🌟 Royal star explosion!";
@@ -567,6 +610,11 @@
 
         const first = selected;
         selected = null;
+        if ((crateGrid[first.r] && crateGrid[first.r][first.c]) || (crateGrid[current.r] && crateGrid[current.r][current.c])) {
+          messageElement.textContent = "📦 Break the wooden crate before moving this fruit.";
+          render();
+          return;
+        }
         swap(first, current);
 
         if (SPECIAL_FRUITS.has(board[current.r][current.c]) || SPECIAL_FRUITS.has(board[first.r][first.c])) {
@@ -621,10 +669,17 @@
               }
             });
           }
+          const crateHits = new Set();
+          matches.forEach(([r, c]) => {
+            [[r,c],[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([y,x]) => {
+              if (y >= 0 && y < SIZE && x >= 0 && x < SIZE && crateGrid[y] && crateGrid[y][x]) crateHits.add(y + "," + x);
+            });
+          });
+          crateHits.forEach(key => { const [y,x] = key.split(",").map(Number); damageCrate(y,x); });
           const special = specialForMatch(matches, null);
           if (special && objective.type === "special") objectiveProgress++;
           matches.forEach(([r, c]) => {
-            if (!special || r !== special.r || c !== special.c) board[r][c] = null;
+            if ((!special || r !== special.r || c !== special.c) && !(crateGrid[r] && crateGrid[r][c])) board[r][c] = null;
           });
           if (special) {
             board[special.r][special.c] = special.kind;
@@ -691,6 +746,7 @@
               const nc = c + dc;
 
               if (nr >= SIZE || nc >= SIZE) continue;
+              if ((crateGrid[r] && crateGrid[r][c]) || (crateGrid[nr] && crateGrid[nr][nc])) continue;
 
               swap({ r, c }, { r: nr, c: nc });
               const valid = SPECIAL_FRUITS.has(board[r][c]) || SPECIAL_FRUITS.has(board[nr][nc]) || findMatches().length > 0;
