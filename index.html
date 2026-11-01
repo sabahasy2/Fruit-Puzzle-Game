@@ -570,7 +570,9 @@
       }catch(e){note.textContent=e.message;}
     });
     $("googleAuthBtn").addEventListener("click",()=>{location.href="/api/google/start";});
-    let lastSynced="";\n    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});\n    setInterval(syncIfChanged,5000);
+    let lastSynced="";
+    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
+    setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}
   })();
