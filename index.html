@@ -190,6 +190,46 @@
     body.world-mythic{background:radial-gradient(circle at top,#a77b35,transparent 55%),linear-gradient(160deg,#34234d,#151a37)}
     .levels-world{margin:10px 0 4px;padding:10px;border-radius:12px;background:#ffe27a18;color:#ffe9a6;font-size:12px;font-weight:800}
 
+
+    /* Royal gold visual identity */
+    body{background:radial-gradient(ellipse at 50% -12%,#8a692c55,transparent 48%),linear-gradient(155deg,#090d20 0%,#17152d 52%,#24152b 100%);color:#fff8e6}
+    .game{position:relative;z-index:1;padding:14px 12px 18px;border:1px solid #d9b45a55;border-radius:28px;background:linear-gradient(155deg,#11162bd9,#21182fe8);box-shadow:0 22px 65px #0009,inset 0 1px #ffe6a522}
+    h1{color:#ffe5a0;text-shadow:0 0 8px #d6a84d66,0 3px 18px #a76a2b88;letter-spacing:2px}
+    .subtitle{color:#e8d6ad}
+    .royal-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px auto 15px;padding:10px 14px;max-width:280px;border:1px solid #d7b15b99;border-radius:16px;background:linear-gradient(110deg,#3a2a19,#17172b 55%,#3b2a19);box-shadow:0 7px 24px #0006,inset 0 0 18px #e8c66b18}
+    .royal-brand-mark{display:grid;place-items:center;width:38px;height:38px;border:1px solid #f4d88a;border-radius:50%;color:#ffe5a0;background:radial-gradient(circle,#8b672c,#332319);font-size:20px;box-shadow:0 0 15px #e5bd5b55}
+    .royal-brand-copy{display:flex;flex-direction:column;text-align:right}
+    .royal-brand-name{font-size:16px;font-weight:950;letter-spacing:.4px;color:#ffe4a0;text-shadow:0 1px 8px #d8aa4a55}
+    .royal-brand-caption{font-size:9px;color:#d8c49a;letter-spacing:1.2px}
+    .world-banner{border:1px solid #e6c36d;background:linear-gradient(115deg,#3d2b19ee,#19172fee 52%,#3a2819ee);box-shadow:0 9px 30px #0007,inset 0 0 22px #e9c46b18}
+    .world-kicker{color:#f7d98f}
+    .world-name{color:#ffe8b0}
+    .world-meta{color:#e8d8b5}
+    .stats .stat{border:1px solid #c9a85d77;background:linear-gradient(145deg,#302642cc,#171a2dcc);box-shadow:inset 0 1px #ffe6a018}
+    .stat small{color:#e2ca93}
+    .stat strong{color:#fff0c3;text-shadow:0 1px 9px #d7ac5a55}
+    .goal,.message{color:#ffe5a0}
+    .board{border:1px solid #d9b45a99;background:linear-gradient(135deg,#a9823b55,#211b36);box-shadow:0 14px 38px #0008,0 0 18px #d4a84b20}
+    .tile{background:#fff8e608}
+    .tile.selected{border-color:#ffe29a;background:#d8aa4b55;box-shadow:0 0 12px #f0c66a88}
+    button{color:#24180c;background:linear-gradient(135deg,#fff0b8 0%,#e6c16a 42%,#b98536 100%);border:1px solid #ffedb2;box-shadow:0 4px 13px #0005,inset 0 1px #fff9d8}
+    button.secondary{color:#ffe9b4;background:linear-gradient(140deg,#32263b,#171b30);border:1px solid #c6a65d99;box-shadow:inset 0 1px #fff2c322}
+    button:active{filter:brightness(1.12);transform:translateY(1px)}
+    .top-actions button{font-size:11px}
+    .modal{background:#050711eF;backdrop-filter:blur(8px)}
+    .modal-card{background:radial-gradient(circle at 50% 0%,#6b4a2655,transparent 48%),linear-gradient(155deg,#252039,#11182c);border:1px solid #d9b45a;box-shadow:0 22px 70px #000c,0 0 28px #d4a84b22}
+    .modal-card h2{color:#ffe3a0;text-shadow:0 1px 12px #d8aa4a55}
+    .modal-card p{color:#e4d5b7}
+    .modal-card input{border:1px solid #c6a65d88;background:#0b1022;color:#fff2cf}
+    .modal-card input:focus{outline:2px solid #e4bd63;outline-offset:1px}
+    .level-chip{background:linear-gradient(145deg,#382e40,#1a2033);border:1px solid #b99a5866;color:#f5e4bd}
+    .level-chip.current{background:linear-gradient(135deg,#fff0b8,#d8ad52);color:#24180c;border-color:#fff0b8}
+    .level-chip.locked{opacity:.38}
+    .levels-world{border:1px solid #b99a5866;background:#c99b3b18;color:#ffe5a0}
+    .footer{color:#d3c19b}
+    body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{background-image:radial-gradient(ellipse at 50% -10%,#d6ae5940,transparent 45%),radial-gradient(circle at top,#ffffff08,transparent 55%),linear-gradient(160deg,#101426,#19162c)}
+    @media(max-width:380px){.game{padding:10px 8px 15px;border-radius:22px}.royal-brand{margin-top:9px}.royal-brand-name{font-size:15px}}
+
     @media (max-width: 350px) {
       .board { gap: 0; padding: 2px; }
       .tile { border-radius: 6px; }
@@ -201,6 +241,7 @@
   <main class="game">
     <h1>🍓 FRUIT POP 🍋</h1>
     <p class="subtitle">MATCH & BLOOM — A royal fruit adventure</p>
+    <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">YOUR KINGDOM</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
     <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>
 
@@ -234,8 +275,8 @@
 
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
-    <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
-    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeLevels">✕</button><h2>👑 Royal Adventure</h2><p>Complete levels to unlock new kingdoms.</p><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="levels-grid" id="levelsGrid"></div></div></div>
+    <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
+    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeLevels">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span></span></div><h2>👑 Royal Adventure</h2><p>Complete levels to unlock new kingdoms.</p><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="levels-grid" id="levelsGrid"></div></div></div>
   </main>
 
   <script>
