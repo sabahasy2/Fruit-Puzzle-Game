@@ -175,6 +175,21 @@
     .level-chip.locked{opacity:.35}
     .auth-note{min-height:20px;color:#ffe89a!important}
 
+
+    .world-banner{position:relative;overflow:hidden;margin:0 0 14px;padding:15px 14px;border:1px solid #ffe27a66;border-radius:18px;background:linear-gradient(120deg,#294f45dd,#162b45ee);box-shadow:0 8px 28px #0005}
+    .world-banner:after{content:"✦  ✧  ✦";position:absolute;right:12px;top:10px;color:#ffe27a88;font-size:20px;letter-spacing:5px}
+    .world-kicker{display:block;color:#ffe7a0;font-size:10px;font-weight:900;letter-spacing:2px}
+    .world-name{display:block;margin-top:3px;color:#fff4c7;font-size:20px;font-weight:900;text-shadow:0 2px 12px #0007}
+    .world-meta{display:block;margin-top:3px;color:#e6e1f5;font-size:11px}
+    body.world-forest{background:radial-gradient(circle at top,#39745c,transparent 55%),linear-gradient(160deg,#102d2a,#142d42)}
+    body.world-ice{background:radial-gradient(circle at top,#4b8bb7,transparent 55%),linear-gradient(160deg,#102a4a,#152b54)}
+    body.world-island{background:radial-gradient(circle at top,#d18a43,transparent 55%),linear-gradient(160deg,#4b2850,#173d52)}
+    body.world-volcano{background:radial-gradient(circle at top,#a74336,transparent 55%),linear-gradient(160deg,#35172b,#17182f)}
+    body.world-crystal{background:radial-gradient(circle at top,#6e55b5,transparent 55%),linear-gradient(160deg,#211b50,#102b4a)}
+    body.world-sky{background:radial-gradient(circle at top,#6a9bd0,transparent 55%),linear-gradient(160deg,#273b73,#18264a)}
+    body.world-mythic{background:radial-gradient(circle at top,#a77b35,transparent 55%),linear-gradient(160deg,#34234d,#151a37)}
+    .levels-world{margin:10px 0 4px;padding:10px;border-radius:12px;background:#ffe27a18;color:#ffe9a6;font-size:12px;font-weight:800}
+
     @media (max-width: 350px) {
       .board { gap: 0; padding: 2px; }
       .tile { border-radius: 6px; }
@@ -185,7 +200,8 @@
 <body>
   <main class="game">
     <h1>🍓 FRUIT POP 🍋</h1>
-    <p class="subtitle">MATCH & BLOOM — A colorful fruit adventure</p>
+    <p class="subtitle">MATCH & BLOOM — A royal fruit adventure</p>
+    <section class="world-banner" id="worldBanner"><span class="world-kicker">YOUR KINGDOM</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
     <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>
 
     <section class="stats">
@@ -219,7 +235,7 @@
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
     <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
-    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeLevels">✕</button><h2>🌈 Fruit Adventure</h2><p>Complete each level to unlock the next one.</p><div class="levels-grid" id="levelsGrid"></div></div></div>
+    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeLevels">✕</button><h2>👑 Royal Adventure</h2><p>Complete levels to unlock new kingdoms.</p><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="levels-grid" id="levelsGrid"></div></div></div>
   </main>
 
   <script>
@@ -499,10 +515,10 @@
 
         score = 0;
         moves = 25;
-        level = 1;
         selected = null;
         busy = false;
         messageElement.textContent = "Tap a fruit, then an adjacent fruit!";
+        localStorage.setItem("fruit-pop-level", String(level));
         makeBoard();
         render();
       }
@@ -529,6 +545,27 @@
     const $ = id => document.getElementById(id);
     const authModal=$("authModal"), levelsModal=$("levelsModal"), note=$("authNote");
     let mode="login", player=null;
+    const worlds=[
+      {start:1,end:50,name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths"},
+      {start:51,end:100,name:"Crystal Ice Kingdom",ar:"مملكة الجليد",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves"},
+      {start:101,end:150,name:"Tropical Treasure Isles",ar:"جزر الكنوز الاستوائية",emoji:"🏝️",theme:"island",desc:"Golden beaches, palms and secret treasure"},
+      {start:151,end:200,name:"Dragonfire Volcano",ar:"بركان التنين",emoji:"🌋",theme:"volcano",desc:"Lava rivers and fiery challenges"},
+      {start:201,end:250,name:"Crystal Palace",ar:"قصر الكريستال",emoji:"💎",theme:"crystal",desc:"A dazzling palace of magical gems"},
+      {start:251,end:300,name:"Kingdom of the Sky",ar:"مملكة السماء",emoji:"☁️",theme:"sky",desc:"Floating islands above the clouds"},
+      {start:301,end:350,name:"Mythic Star Realm",ar:"مملكة النجوم الأسطورية",emoji:"🌌",theme:"mythic",desc:"Ancient magic beneath a sky of stars"},
+      {start:351,end:400,name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits"}
+    ];
+    const activeWorld=(n)=>worlds.find(w=>n>=w.start&&n<=w.end)||worlds[worlds.length-1];
+    function applyWorld(n){
+      const w=activeWorld(n);
+      document.body.className=document.body.className.replace(/\\bworld-\\w+\\b/g,"").trim();
+      document.body.classList.add("world-"+w.theme);
+      $("worldName").textContent=w.emoji+" "+w.name;
+      $("worldMeta").textContent="WORLD "+(worlds.indexOf(w)+1)+" · LEVELS "+w.start+"–"+w.end;
+      $("levelsWorld").textContent=w.emoji+" "+w.name+" · "+w.desc;
+      $("levelsWorld").textContent=w.emoji+" "+w.name+" · Levels "+w.start+"–"+w.end;
+    }
+
     const guestProgress=()=>({level:Number(localStorage.getItem("fruit-pop-level")||1),stars:Number(localStorage.getItem("fruit-pop-stars")||0),coins:Number(localStorage.getItem("fruit-pop-coins")||0),lives:5});
     const show=(el)=>el.classList.add("open"), hide=(el)=>el.classList.remove("open");
     async function request(path, options={}) {
@@ -540,7 +577,8 @@
     function accountLabel(){ $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : "👤 Guest · Sign in"; }
     function drawLevels(){
       const current=guestProgress().level, grid=$("levelsGrid"); grid.innerHTML="";
-      for(let i=1;i<=100;i++){
+      applyWorld(current);
+      for(let i=1;i<=400;i++){
         const b=document.createElement("button"); b.className="level-chip"+(i===current?" current":"")+(i>current?" locked":"");
         b.textContent=i>current?"🔒 "+i:i+" "+(i<current?"★":"");
         b.disabled=i>current;
@@ -571,7 +609,8 @@
     });
     $("googleAuthBtn").addEventListener("click",()=>{location.href="/api/google/start";});
     let lastSynced="";
-    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
+    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }\n    applyWorld(guestProgress().level);
+    request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
     setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}
