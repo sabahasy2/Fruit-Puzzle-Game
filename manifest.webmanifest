@@ -1,0 +1,13 @@
+
+{
+  "name": "Fruit Pop - Match & Bloom",
+  "short_name": "Fruit Pop",
+  "description": "A colorful and fun fruit matching puzzle game.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff8ed",
+  "theme_color": "#ff6b6b",
+  "categories": ["games", "entertainment"]
+}
