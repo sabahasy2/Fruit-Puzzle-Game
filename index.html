@@ -426,6 +426,68 @@
         board[b.r][b.c] = temp;
       }
 
+      const SPECIAL_FRUITS = new Set(["🔥", "⚡", "🌟"]);
+
+      function specialForMatch(matches, preferred) {
+        const coords = new Set(matches.map(([r, c]) => r + "," + c));
+        let kind = null;
+        if (matches.length >= 5) kind = "🌟";
+        else {
+          const rows = new Map(), cols = new Map();
+          matches.forEach(([r, c]) => {
+            rows.set(r, (rows.get(r) || 0) + 1);
+            cols.set(c, (cols.get(c) || 0) + 1);
+          });
+          if ([...rows.values()].some(n => n >= 4)) kind = "🔥";
+          else if ([...cols.values()].some(n => n >= 4)) kind = "⚡";
+        }
+        if (!kind) return null;
+        const target = preferred && coords.has(preferred.r + "," + preferred.c)
+          ? preferred : { r: matches[0][0], c: matches[0][1] };
+        return { ...target, kind };
+      }
+
+      function collapseBoard() {
+        for (let c = 0; c < SIZE; c++) {
+          let write = SIZE - 1;
+          for (let r = SIZE - 1; r >= 0; r--) {
+            if (board[r][c]) {
+              board[write][c] = board[r][c];
+              if (write !== r) board[r][c] = null;
+              write--;
+            }
+          }
+          for (let r = write; r >= 0; r--) board[r][c] = randomFruit();
+        }
+      }
+
+      async function activateSpecial(r, c) {
+        const kind = board[r][c];
+        if (!SPECIAL_FRUITS.has(kind)) return false;
+        const cleared = [];
+        for (let y = 0; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            const hit = kind === "🔥" ? y === r
+              : kind === "⚡" ? x === c
+              : Math.abs(y - r) <= 1 && Math.abs(x - c) <= 1;
+            if (hit && board[y][x]) {
+              cleared.push([y, x]);
+              board[y][x] = null;
+            }
+          }
+        }
+        score += cleared.length * 20;
+        messageElement.textContent = kind === "🔥" ? "🔥 Royal row blast!"
+          : kind === "⚡" ? "⚡ Royal column blast!" : "🌟 Royal star explosion!";
+        render();
+        await new Promise(resolve => setTimeout(resolve, 250));
+        collapseBoard();
+        render();
+        await new Promise(resolve => setTimeout(resolve, 180));
+        await resolveBoard();
+        return true;
+      }
+
       function choose(r, c) {
         if (busy || moves <= 0) return;
 
@@ -452,6 +514,18 @@
         const first = selected;
         selected = null;
         swap(first, current);
+
+        if (SPECIAL_FRUITS.has(board[current.r][current.c]) || SPECIAL_FRUITS.has(board[first.r][first.c])) {
+          moves--;
+          busy = true;
+          render();
+          const special = SPECIAL_FRUITS.has(board[current.r][current.c]) ? current : first;
+          activateSpecial(special.r, special.c).then(() => {
+            busy = false;
+            checkGame("✨ Special fruit activated!");
+          });
+          return;
+        }
 
         if (findMatches().length === 0) {
           swap(first, current);
@@ -482,28 +556,22 @@
             ? "👑 Royal combo x" + multiplier + "! +" + earned + " points"
             : "✨ Match! +" + earned + " points";
 
+          const special = specialForMatch(matches, null);
           matches.forEach(([r, c]) => {
-            board[r][c] = null;
+            if (!special || r !== special.r || c !== special.c) board[r][c] = null;
           });
+          if (special) {
+            board[special.r][special.c] = special.kind;
+            messageElement.textContent = special.kind === "🔥"
+              ? "🔥 Row-clearing fruit created!"
+              : special.kind === "⚡" ? "⚡ Column-clearing fruit created!"
+              : "🌟 Royal star fruit created!";
+          }
 
           render();
           await new Promise(resolve => setTimeout(resolve, 220));
 
-          for (let c = 0; c < SIZE; c++) {
-            let write = SIZE - 1;
-
-            for (let r = SIZE - 1; r >= 0; r--) {
-              if (board[r][c]) {
-                board[write][c] = board[r][c];
-                if (write !== r) board[r][c] = null;
-                write--;
-              }
-            }
-
-            for (let r = write; r >= 0; r--) {
-              board[r][c] = randomFruit();
-            }
-          }
+          collapseBoard();
 
           render();
           await new Promise(resolve => setTimeout(resolve, 180));
