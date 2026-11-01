@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17152e">
+  <meta name="description" content="Fruit Pop - Match colorful fruits and reach your goals!">
+  <title>Fruit Pop - Match & Bloom</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 18px 12px 30px;
+      font-family: system-ui, sans-serif;
+      color: white;
+      background:
+        radial-gradient(circle at top, #46316f, transparent 55%),
+        linear-gradient(160deg, #17152e, #101b35);
+      display: flex;
+      justify-content: center;
+    }
+
+    .game {
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 8px 0 2px;
+      font-size: 34px;
+      letter-spacing: 1px;
+      color: #ffe27a;
+      text-shadow: 0 3px 12px #ff8c4266;
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      color: #d9d2f5;
+      font-size: 13px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      padding: 12px 5px;
+      border: 1px solid #ffffff20;
+      border-radius: 15px;
+      background: #ffffff12;
+    }
+
+    .stat small {
+      display: block;
+      color: #c7bde7;
+      font-size: 11px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+    }
+
+    .goal {
+      margin: 12px 0;
+      color: #ffe89a;
+      font-size: 14px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 5px;
+      padding: 8px;
+      border-radius: 19px;
+      background: #ffffff16;
+      border: 1px solid #ffffff25;
+      box-shadow: 0 12px 35px #0005;
+      touch-action: manipulation;
+    }
+
+    .tile {
+      aspect-ratio: 1;
+      min-width: 0;
+      border: 2px solid transparent;
+      border-radius: 11px;
+      background: #ffffff13;
+      display: grid;
+      place-items: center;
+      font-size: clamp(21px, 7vw, 32px);
+      cursor: pointer;
+      transition: transform .12s, background .12s;
+      user-select: none;
+    }
+
+    .tile:active {
+      transform: scale(.88);
+    }
+
+    .tile.selected {
+      border-color: #ffe27a;
+      background: #ffe27a35;
+      transform: scale(1.08);
+    }
+
+    .tile.empty {
+      opacity: .15;
+    }
+
+    .message {
+      min-height: 28px;
+      margin: 14px 0 5px;
+      color: #ffe89a;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      flex: 1;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #201631;
+      background: linear-gradient(135deg, #ffe27a, #ffae63);
+      cursor: pointer;
+    }
+
+    button.secondary {
+      color: white;
+      background: #ffffff20;
+      border: 1px solid #ffffff30;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #aaa2c8;
+    }
+
+    @media (max-width: 350px) {
+      .board { gap: 3px; padding: 5px; }
+      .tile { border-radius: 7px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="game">
+    <h1>🍓 FRUIT POP 🍋</h1>
+    <p class="subtitle">MATCH & BLOOM — A colorful fruit adventure</p>
+
+    <section class="stats">
+      <div class="stat">
+        <small>SCORE</small>
+        <strong id="score">0</strong>
+      </div>
+      <div class="stat">
+        <small>MOVES</small>
+        <strong id="moves">25</strong>
+      </div>
+      <div class="stat">
+        <small>LEVEL</small>
+        <strong id="level">1</strong>
+      </div>
+    </section>
+
+    <div class="goal">
+      🎯 Goal: Reach <strong id="goal">500</strong> points
+    </div>
+
+    <section class="board" id="board" aria-label="Fruit puzzle board"></section>
+
+    <div class="message" id="message">Tap a fruit, then an adjacent fruit!</div>
+
+    <div class="controls">
+      <button id="restart">↻ Restart</button>
+      <button class="secondary" id="hint">💡 Hint</button>
+    </div>
+
+    <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const SIZE = 8;
+      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
+
+      let board = [];
+      let selected = null;
+      let score = 0;
+      let moves = 25;
+      let level = 1;
+      let busy = false;
+
+      const boardElement = document.getElementById("board");
+      const scoreElement = document.getElementById("score");
+      const movesElement = document.getElementById("moves");
+      const levelElement = document.getElementById("level");
+      const goalElement = document.getElementById("goal");
+      const messageElement = document.getElementById("message");
+
+      const goal = () => 500 + (level - 1) * 300;
+
+      function randomFruit() {
+        return FRUITS[Math.floor(Math.random() * FRUITS.length)];
+      }
+
+      function makeBoard() {
+        board = Array.from({ length: SIZE }, () =>
+          Array.from({ length: SIZE }, randomFruit)
+        );
+
+        while (findMatches().length) {
+          const matches = findMatches();
+          matches.forEach(([r, c]) => {
+            board[r][c] = randomFruit();
+          });
+        }
+      }
+
+      function render() {
+        boardElement.innerHTML = "";
+
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            const tile = document.createElement("button");
+            tile.className = "tile";
+            tile.type = "button";
+            tile.textContent = board[r][c] || "";
+            tile.setAttribute("aria-label", "Fruit tile");
+
+            if (!board[r][c]) tile.classList.add("empty");
+            if (selected && selected.r === r && selected.c === c) {
+              tile.classList.add("selected");
+            }
+
+            tile.addEventListener("click", () => choose(r, c));
+            boardElement.appendChild(tile);
+          }
+        }
+
+        scoreElement.textContent = score;
+        movesElement.textContent = moves;
+        levelElement.textContent = level;
+        goalElement.textContent = goal();
+      }
+
+      function findMatches() {
+        const found = new Set();
+
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            const fruit = board[r][c];
+            if (!fruit) continue;
+
+            let horizontal = [[r, c]];
+            let vertical = [[r, c]];
+
+            for (let x = c + 1; x < SIZE && board[r][x] === fruit; x++) {
+              horizontal.push([r, x]);
+            }
+
+            for (let x = r + 1; x < SIZE && board[x][c] === fruit; x++) {
+              vertical.push([x, c]);
+            }
+
+            if (horizontal.length >= 3) {
+              horizontal.forEach(([a, b]) => found.add(`${a},${b}`));
+            }
+
+            if (vertical.length >= 3) {
+              vertical.forEach(([a, b]) => found.add(`${a},${b}`));
+            }
+          }
+        }
+
+        return [...found].map(item => item.split(",").map(Number));
+      }
+
+      function adjacent(a, b) {
+        return Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1;
+      }
+
+      function swap(a, b) {
+        const temp = board[a.r][a.c];
+        board[a.r][a.c] = board[b.r][b.c];
+        board[b.r][b.c] = temp;
+      }
+
+      function choose(r, c) {
+        if (busy || moves <= 0) return;
+
+        const current = { r, c };
+
+        if (!selected) {
+          selected = current;
+          render();
+          return;
+        }
+
+        if (selected.r === r && selected.c === c) {
+          selected = null;
+          render();
+          return;
+        }
+
+        if (!adjacent(selected, current)) {
+          selected = current;
+          render();
+          return;
+        }
+
+        const first = selected;
+        selected = null;
+        swap(first, current);
+
+        if (findMatches().length === 0) {
+          swap(first, current);
+          messageElement.textContent = "No match! Try another move.";
+          render();
+          return;
+        }
+
+        moves--;
+        busy = true;
+        render();
+        resolveBoard();
+      }
+
+      async function resolveBoard() {
+        while (true) {
+          const matches = findMatches();
+          if (!matches.length) break;
+
+          matches.forEach(([r, c]) => {
+            board[r][c] = null;
+          });
+
+          score += matches.length * 10;
+          render();
+
+          await new Promise(resolve => setTimeout(resolve, 220));
+
+          for (let c = 0; c < SIZE; c++) {
+            let write = SIZE - 1;
+
+            for (let r = SIZE - 1; r >= 0; r--) {
+              if (board[r][c]) {
+                board[write][c] = board[r][c];
+                if (write !== r) board[r][c] = null;
+                write--;
+              }
+            }
+
+            for (let r = write; r >= 0; r--) {
+              board[r][c] = randomFruit();
+            }
+          }
+
+          render();
+          await new Promise(resolve => setTimeout(resolve, 180));
+        }
+
+        busy = false;
+        checkGame();
+      }
+
+      function checkGame() {
+        if (score >= goal()) {
+          level++;
+          moves = 25;
+          messageElement.textContent = "🎉 Level completed! Welcome to level " + level;
+          saveBest();
+          makeBoard();
+          render();
+          return;
+        }
+
+        if (moves <= 0) {
+          messageElement.textContent = "Game over! Press Restart to play again.";
+          saveBest();
+          return;
+        }
+
+        messageElement.textContent = "Great! Keep matching fruits!";
+      }
+
+      function saveBest() {
+        const previous = Number(localStorage.getItem("fruit-pop-best") || 0);
+        if (score > previous) {
+          localStorage.setItem("fruit-pop-best", String(score));
+        }
+      }
+
+      function hasMove() {
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            for (const [dr, dc] of [[0, 1], [1, 0]]) {
+              const nr = r + dr;
+              const nc = c + dc;
+
+              if (nr >= SIZE || nc >= SIZE) continue;
+
+              swap({ r, c }, { r: nr, c: nc });
+              const valid = findMatches().length > 0;
+              swap({ r, c }, { r: nr, c: nc });
+
+              if (valid) return true;
+            }
+          }
+        }
+
+        return false;
+      }
+
+      function showHint() {
+        if (busy || moves <= 0) return;
+
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            for (const [dr, dc] of [[0, 1], [1, 0]]) {
+              const nr = r + dr;
+              const nc = c + dc;
+
+              if (nr >= SIZE || nc >= SIZE) continue;
+
+              swap({ r, c }, { r: nr, c: nc });
+              const valid = findMatches().length > 0;
+              swap({ r, c }, { r: nr, c: nc });
+
+              if (valid) {
+                selected = { r, c };
+                render();
+                messageElement.textContent = "💡 Try the highlighted fruit!";
+                return;
+              }
+            }
+          }
+        }
+
+        messageElement.textContent = "No available moves. Restart the game!";
+      }
+
+      function restart() {
+        score = 0;
+        moves = 25;
+        level = 1;
+        selected = null;
+        busy = false;
+        messageElement.textContent = "Tap a fruit, then an adjacent fruit!";
+        makeBoard();
+        render();
+      }
+
+      document.getElementById("restart").addEventListener("click", restart);
+      document.getElementById("hint").addEventListener("click", showHint);
+
+      makeBoard();
+      render();
+    })();
+  </script>
+</body>
+</html>
