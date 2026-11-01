@@ -628,7 +628,7 @@
               if (nr >= SIZE || nc >= SIZE) continue;
 
               swap({ r, c }, { r: nr, c: nc });
-              const valid = findMatches().length > 0;
+              const valid = SPECIAL_FRUITS.has(board[r][c]) || SPECIAL_FRUITS.has(board[nr][nc]) || findMatches().length > 0;
               swap({ r, c }, { r: nr, c: nc });
 
               if (valid) return { r, c, nr, nc };
