@@ -83,8 +83,8 @@
     .board {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
-      gap: 2px;
-      padding: 5px;
+      gap: 0;
+      padding: 3px;
       border-radius: 19px;
       background: #ffffff16;
       border: 1px solid #ffffff25;
@@ -95,8 +95,8 @@
     .tile {
       aspect-ratio: 1;
       min-width: 0;
-      border: 2px solid transparent;
-      border-radius: 11px;
+      border: 1px solid transparent;
+      border-radius: 8px;
       background: #ffffff13;
       display: grid;
       place-items: center;
@@ -158,8 +158,8 @@
     }
 
     @media (max-width: 350px) {
-      .board { gap: 1px; padding: 3px; }
-      .tile { border-radius: 7px; }
+      .board { gap: 0; padding: 2px; }
+      .tile { border-radius: 6px; }
     }
   </style>
 </head>
