@@ -85,7 +85,7 @@ export async function onRequest({ request, env }) {
       const state=random(24), redirect=new URL("/api/google/callback",url.origin).toString();
       const target=new URL("https://accounts.google.com/o/oauth2/v2/auth");
       target.search=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:redirect,response_type:"code",scope:"openid email profile",state,prompt:"select_account"}).toString();
-      return Response.redirect(target.toString(),302,{headers:{"Set-Cookie":cookie("fp_oauth_state",state,600)}});
+      return new Response(null,{status:302,headers:{"Location":target.toString(),"Set-Cookie":cookie("fp_oauth_state",state,600)}});
     }
     if (path === "/api/google/callback" && request.method === "GET") {
       const stateCookie=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("fp_oauth_state="))?.slice(15);
@@ -107,7 +107,7 @@ export async function onRequest({ request, env }) {
         await env.DB.prepare("UPDATE players SET google_sub=COALESCE(google_sub,?) WHERE id=?").bind(info.sub,player.id).run();
       }
       const session=await createSession(env.DB,player.id);
-      return Response.redirect(new URL("/",url.origin),302,{headers:{"Set-Cookie":[cookie("fp_session",session,60*60*24*30),clearCookie("fp_oauth_state")]}});
+      const headers=new Headers({Location:new URL("/",url.origin).toString()}); headers.append("Set-Cookie",cookie("fp_session",session,60*60*24*30)); headers.append("Set-Cookie",clearCookie("fp_oauth_state")); return new Response(null,{status:302,headers});
     }
     if (path === "/api/logout" && request.method === "POST") {
       const token=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("fp_session="))?.slice(11);
