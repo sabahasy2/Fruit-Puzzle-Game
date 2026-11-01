@@ -559,7 +559,7 @@
     const activeWorld=(n)=>worlds.find(w=>n>=w.start&&n<=w.end)||worlds[worlds.length-1];
     function applyWorld(n){
       const w=activeWorld(n);
-      document.body.className=document.body.className.replace(/\\bworld-\\w+\\b/g,"").trim();
+      document.body.className=document.body.className.replace(/\bworld-\w+\b/g,"").trim();
       document.body.classList.add("world-"+w.theme);
       $("worldName").textContent=w.emoji+" "+w.name;
       $("worldMeta").textContent="WORLD "+(worlds.indexOf(w)+1)+" · LEVELS "+w.start+"–"+w.end;
