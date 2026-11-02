@@ -71,7 +71,7 @@ test("guest progress includes coins and account progress is restored", () => {
 });
 
 test("Fruit Pop Adam branding and fruit-logo asset are wired into the app", () => {
-  assert.match(html, /<title>Fruit Pop Adam<\\/title>/);
+  assert.ok(html.includes("<title>Fruit Pop Adam</title>"));
   assert.match(html, /FRUIT POP ADAM/);
   assert.equal(manifest.name, "Fruit Pop Adam");
   assert.equal(manifest.short_name, "Fruit Pop Adam");
