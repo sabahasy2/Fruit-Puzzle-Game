@@ -593,7 +593,7 @@
         if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
         return audioContext;
       }
-      function playTone(frequency, duration=0.12, wave="sine", volume=0.045, delay=0) {
+      function playTone(frequency, duration=0.12, wave="sine", volume=0.045, delay=0, endFrequency=null) {
         const ctx = audioEngine();
         if (!ctx) return;
         const start = ctx.currentTime + delay;
@@ -601,26 +601,96 @@
         const gain = ctx.createGain();
         oscillator.type = wave;
         oscillator.frequency.setValueAtTime(frequency, start);
+        if (endFrequency !== null) {
+          oscillator.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), start + duration);
+        }
         gain.gain.setValueAtTime(0.0001, start);
         gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         oscillator.connect(gain);
         gain.connect(ctx.destination);
         oscillator.start(start);
-        oscillator.stop(start + duration + 0.025);
+        oscillator.stop(start + duration + 0.03);
       }
+
+      // Original synthesized arcade impacts, electric zaps and thunder-like rumbles.
+      function playNoise(duration=0.18, volume=0.08, filterType="highpass", frequency=1400, delay=0) {
+        const ctx = audioEngine();
+        if (!ctx) return;
+        const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+        const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < length; i++) {
+          const fade = 1 - i / length;
+          data[i] = (Math.random() * 2 - 1) * fade * fade;
+        }
+        const source = ctx.createBufferSource();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+        const start = ctx.currentTime + delay;
+        source.buffer = buffer;
+        filter.type = filterType;
+        filter.frequency.setValueAtTime(frequency, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        source.start(start);
+        source.stop(start + duration + 0.02);
+      }
+
       function playSound(kind="tap") {
         if (!soundsEnabled) return;
-        const patterns = {
-          tap: [[660,.055,"sine",.025]],
-          match: [[660,.11,"sine",.045],[784,.13,"sine",.04],[988,.16,"triangle",.035]],
-          combo: [[784,.12,"triangle",.05],[988,.14,"triangle",.05],[1175,.2,"sine",.045],[1568,.22,"sine",.03]],
-          special: [[392,.18,"triangle",.055],[587,.18,"triangle",.05],[880,.28,"sine",.045]],
-          win: [[523,.16,"sine",.05],[659,.16,"sine",.05],[784,.18,"sine",.05],[1047,.34,"triangle",.05]],
-          lose: [[392,.2,"sine",.04],[349,.22,"sine",.035],[294,.32,"triangle",.03]],
-          nope: [[260,.08,"sine",.025]]
-        };
-        (patterns[kind] || patterns.tap).forEach(([f,d,w,v],i)=>playTone(f,d,w,v,i*.075));
+        switch (kind) {
+          case "tap":
+            playTone(920,.075,"square",.055,0,520);
+            playNoise(.045,.035,"highpass",2600);
+            break;
+          case "match":
+            playNoise(.16,.105,"bandpass",1800);
+            playTone(360,.19,"triangle",.12,0,115);
+            playTone(660,.12,"sine",.085,.025);
+            playTone(880,.15,"triangle",.075,.085);
+            playTone(1180,.2,"sine",.065,.15);
+            break;
+          case "combo":
+            playNoise(.32,.14,"bandpass",1250);
+            playTone(240,.3,"sawtooth",.13,0,95);
+            playTone(520,.2,"triangle",.105,.04,1040);
+            playTone(780,.2,"triangle",.095,.13,1560);
+            playTone(1175,.28,"sine",.09,.23,1760);
+            playTone(1568,.34,"sine",.07,.34);
+            break;
+          case "special":
+            // Lightning crack, deep impact and rolling thunder tail.
+            playNoise(.12,.19,"highpass",2400);
+            playNoise(.62,.16,"lowpass",430,.035);
+            playTone(980,.28,"sawtooth",.14,0,75);
+            playTone(150,.48,"triangle",.17,.015,42);
+            playTone(740,.22,"square",.075,.07,180);
+            playTone(1320,.24,"sine",.075,.18,440);
+            playTone(1760,.28,"triangle",.055,.28,880);
+            break;
+          case "win":
+            playNoise(.42,.085,"highpass",3200);
+            [523,659,784,1047,1319,1568].forEach((f,i)=>playTone(f,.32,"triangle",.09,i*.105));
+            playTone(130,.55,"sine",.12,.02,65);
+            break;
+          case "lose":
+            playNoise(.28,.075,"lowpass",520);
+            playTone(330,.28,"sawtooth",.09,0,190);
+            playTone(247,.34,"triangle",.085,.16,125);
+            playTone(165,.48,"sine",.08,.32,75);
+            break;
+          case "nope":
+            playNoise(.09,.07,"lowpass",650);
+            playTone(190,.14,"square",.075,0,90);
+            break;
+          default:
+            playTone(920,.075,"square",.055,0,520);
+        }
       }
       function musicTick() {
         if (!musicEnabled) { musicTimer = null; return; }
