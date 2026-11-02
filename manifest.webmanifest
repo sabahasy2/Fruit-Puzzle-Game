@@ -1,4 +1,3 @@
-
 {
   "name": "Fruit Pop - Match & Bloom",
   "short_name": "Fruit Pop",
@@ -9,5 +8,20 @@
   "orientation": "portrait",
   "background_color": "#111426",
   "theme_color": "#b8893d",
-  "categories": ["games", "entertainment"]
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ]
 }
