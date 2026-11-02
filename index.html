@@ -2085,7 +2085,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         filter.frequency.setValueAtTime(frequency, start);
         gain.gain.setValueAtTime(0.0001, start);
         gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + fastDuration);
         source.connect(filter);
         filter.connect(gain);
         gain.connect(audioCompressor || ctx.destination);
