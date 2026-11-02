@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#ff78a8">
-  <meta name="description" content="Fruit Pop - Match colorful fruits and reach your goals!">
-  <title>Fruit Pop - Match & Bloom</title>
+  <meta name="description" content="Fruit Pop Adam — a colorful fruit-matching adventure with 24 worlds and 1,200 levels.">
+  <title>Fruit Pop Adam</title>
   <style>
     * {
       box-sizing: border-box;
@@ -1646,6 +1646,52 @@
     .game .board.bomb-burst{animation-duration:.30s!important}
     .game .board.bomb-burst:before{animation-duration:.28s!important}
 
+
+/* Fruit Pop Adam — premium original fruit-puzzle design */
+:root{--fpa-gold:#ffe4a0;--fpa-pink:#ff83b9;--fpa-purple:#8755c8}
+html{background:#241039}
+body,body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{
+ padding:max(12px,env(safe-area-inset-top)) 12px max(22px,env(safe-area-inset-bottom));
+ background:radial-gradient(ellipse at 50% -8%,#ff91c8 0%,#9b3f9e 20%,transparent 54%),radial-gradient(ellipse at 8% 58%,#ffcf6a22,transparent 35%),linear-gradient(160deg,#341044,#1c123e 54%,#351044)!important;background-attachment:fixed!important
+}
+.game{max-width:460px!important;padding:14px 12px 18px!important;border:1px solid #ffffff30!important;border-radius:30px!important;background:linear-gradient(155deg,#ffffff18,#ffffff08 44%,#12082055)!important;box-shadow:0 22px 70px #10051f88,inset 0 1px #ffffff55!important;backdrop-filter:blur(12px)}
+.game h1{margin:8px 0 0!important;color:#fff4b8!important;font-size:clamp(27px,7vw,35px)!important;font-weight:1000!important;text-shadow:0 2px 0 #a94d23,0 5px 0 #622b58,0 9px 18px #13051f!important}
+.subtitle{margin:3px 0 10px!important;color:#ffe5f2!important;font-weight:800!important;letter-spacing:1.4px!important;font-size:10px!important}
+.world-banner{position:relative!important;overflow:hidden!important;border:2px solid var(--fpa-gold)!important;border-radius:21px!important;background:linear-gradient(115deg,#f16ca9,#9b5be1 50%,#35b9d3)!important;box-shadow:0 7px 0 #552b83,0 13px 24px #10051f77,inset 0 2px 0 #ffffffa8!important;padding:12px 14px!important}
+.world-banner:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,#fff5,transparent 38%,transparent 72%,#fff2)}
+.world-kicker{font-size:10px!important;letter-spacing:2px!important;color:#fff9!important}.world-name{font-size:clamp(19px,5vw,24px)!important;font-weight:1000!important;text-shadow:0 2px 4px #35104488!important}.world-meta{font-size:11px!important;font-weight:900!important;color:#fff4c8!important}
+.stats{gap:7px!important;margin:12px 0 10px!important}.stats .stat{position:relative!important;overflow:hidden!important;min-height:70px!important;padding:10px 5px!important;border:2px solid var(--fpa-gold)!important;border-radius:17px!important;background:linear-gradient(155deg,#ffffff2c,#ffffff0c 62%,#32104466)!important;box-shadow:0 5px 0 #54275e,0 9px 18px #10051f66,inset 0 2px 2px #fff8!important}.stats .stat small{color:#ffe8f4!important;font-weight:900!important;letter-spacing:.6px!important}.stats .stat strong{color:#fff!important;font-size:clamp(20px,5.8vw,25px)!important;text-shadow:0 2px 0 #51214c!important}
+.goal{margin:12px 0 14px!important;padding:11px 13px!important;border:1.5px solid var(--fpa-gold)!important;border-radius:16px!important;background:linear-gradient(100deg,#ffcf6a2b,#ff83bd2c,#8cebd32b)!important;color:#fff3b8!important;font-weight:900!important;box-shadow:inset 0 1px #fff7,0 5px 14px #10051f44!important}
+.game .board{border:3px solid var(--fpa-gold)!important;border-radius:22px!important;background:linear-gradient(145deg,#572b75,#2b194c 60%,#71407e)!important;box-shadow:0 9px 0 #351b57,0 18px 30px #10051f99,inset 0 2px 5px #fff8!important}
+.game .tile{border:1px solid #ffffff45!important;border-radius:11px!important;background:linear-gradient(145deg,#ffffff36,#ffffff0d 58%,#170d2c88)!important;box-shadow:inset 0 2px 4px #fff6,inset 0 -3px 5px #14082066,0 2px 3px #10051f66!important}
+.game .tile.selected{outline:3px solid #fff4a4!important;outline-offset:-2px!important;filter:brightness(1.18) drop-shadow(0 0 7px #ffe56b)!important}
+.game .message{margin:14px 2px 8px!important;padding:12px!important;border:1.5px solid var(--fpa-gold)!important;border-radius:17px!important;background:linear-gradient(100deg,#f16ca933,#8d67e633,#36c5d633)!important;color:#fff!important;font-weight:850!important;box-shadow:inset 0 1px #fff5,0 6px 16px #10051f44!important}
+.top-actions,.audio-controls,.controls{gap:8px!important;margin:10px 0!important}
+.top-actions button,.audio-controls button,.controls button,.return-menu-btn{min-height:43px!important;border:1.5px solid var(--fpa-gold)!important;border-radius:15px!important;background:linear-gradient(150deg,#ff8ebd,#a66bea 58%,#4bbfd0)!important;color:#fff!important;font-weight:950!important;box-shadow:0 5px 0 #57306e,0 9px 15px #10051f66,inset 0 2px 2px #fff9!important;text-shadow:0 1px 2px #51214c!important}
+.top-actions button:active,.audio-controls button:active,.controls button:active,.return-menu-btn:active{transform:translateY(3px)!important;box-shadow:0 2px 0 #57306e,inset 0 2px 3px #fff8!important}
+.game-tools>summary{border:2px solid var(--fpa-gold)!important;background:linear-gradient(145deg,#ff8bb8,#9867e7)!important;box-shadow:0 4px 0 #57306e,0 8px 15px #10051f66!important}
+.footer{color:#fbddec!important;font-weight:700!important}
+.fruit-splash{background:radial-gradient(circle at 50% 34%,#fff3ad,#ffb1d3 25%,#b77bfa 55%,#276ab7 100%)!important;overflow:hidden!important}
+.splash-logo{display:grid!important;place-items:center!important;width:clamp(148px,43vw,205px)!important;height:clamp(148px,43vw,205px)!important;border:5px solid #fff0b5!important;border-radius:36%!important;background:linear-gradient(145deg,#fff8d8,#ff9cc8 48%,#9c69ed)!important;box-shadow:0 12px 0 #7843a8,0 25px 60px #24104e88,inset 0 4px 9px #fff!important;overflow:hidden!important}
+.splash-logo img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}
+.splash-brand{font-size:clamp(34px,9vw,48px)!important;font-weight:1000!important;letter-spacing:1px!important;color:#fff2a6!important;text-shadow:0 3px 0 #a34e26,0 7px 0 #62305f,0 12px 24px #170628!important}
+.splash-arabic{font-size:22px!important;font-weight:1000!important;color:#fff!important;text-shadow:0 2px 7px #54245f!important}.splash-tagline{font-weight:900!important;letter-spacing:2px!important;color:#fff!important}
+#splashStartBtn{border:3px solid #fff4b0!important;border-radius:22px!important;background:linear-gradient(180deg,#9cf46e,#39bd58 58%,#16823c)!important;color:#fff!important;font-size:17px!important;font-weight:1000!important;box-shadow:0 8px 0 #176b39,0 16px 28px #1c154c88,inset 0 3px 4px #fff9!important;text-shadow:0 2px 3px #176b39!important}
+#splashSkipBtn{color:#fff!important;font-weight:900!important;text-shadow:0 2px 5px #30104e!important}
+.intro-screen{background:radial-gradient(ellipse at 50% 0%,#fff5c7,#ffb3d0 24%,transparent 58%),linear-gradient(160deg,#6b3ac0,#32205f 54%,#1d194d)!important}
+.main-menu-content{max-width:430px!important;overflow:hidden!important;border:3px solid #ffe7ae!important;border-radius:34px!important;background:linear-gradient(160deg,#fff0c9,#ff9ec9 23%,#a66be5 58%,#397fc8)!important;box-shadow:0 12px 0 #563080,0 28px 75px #14062f99,inset 0 3px 8px #fff!important}
+.main-menu-content:before{border-color:#fff8!important;box-shadow:inset 0 0 0 2px #ffe8a6!important}
+.intro-emblem{display:grid!important;place-items:center!important;width:clamp(100px,29vw,132px)!important;height:clamp(100px,29vw,132px)!important;margin:8px auto 10px!important;border:4px solid #fff1b3!important;border-radius:32%!important;background:linear-gradient(145deg,#fff4cf,#ff9bc5 50%,#9267e9)!important;box-shadow:0 7px 0 #693e9c,0 14px 28px #29104d77,inset 0 3px 5px #fff!important;overflow:hidden!important}
+.intro-emblem img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important}
+.intro-title{font-size:clamp(34px,9vw,48px)!important;font-weight:1000!important;letter-spacing:.5px!important;color:#fff4a5!important;text-shadow:0 3px 0 #a64f27,0 7px 0 #63315f,0 12px 20px #2b104e!important}
+.intro-owner,.intro-ar{font-weight:1000!important;color:#fff!important;text-shadow:0 2px 5px #48215f!important}.intro-owner{letter-spacing:3px!important}.intro-caption{font-weight:900!important;color:#fff!important;letter-spacing:1.5px!important}
+.main-menu-actions button{min-height:49px!important;border:2px solid #fff0b5!important;border-radius:18px!important;background:linear-gradient(150deg,#ff8fbf,#a66be8 56%,#3dbed4)!important;box-shadow:0 6px 0 #58317e,0 11px 18px #24104e66,inset 0 2px 3px #fff9!important;color:#fff!important;font-weight:1000!important;text-shadow:0 1px 3px #54245f!important}
+.main-menu-actions #enterGameBtn{min-height:58px!important;background:linear-gradient(180deg,#a8f77b,#48c75e 58%,#198c49)!important;box-shadow:0 8px 0 #176c3a,0 14px 22px #24104e66,inset 0 3px 4px #fff9!important;font-size:20px!important}
+.main-menu-actions .menu-settings{border:1.5px solid #fff4!important;border-radius:20px!important;background:#30165a33!important;box-shadow:inset 0 1px 5px #fff4!important}
+.menu-footer{color:#fff!important;font-weight:900!important;text-shadow:0 2px 4px #30104e!important}
+@media(max-width:380px){.game{padding:10px 8px 14px!important;border-radius:24px!important}.stats .stat{min-height:64px!important;padding:8px 3px!important}.top-actions button,.audio-controls button{font-size:11px!important;padding:8px 5px!important}.main-menu-content{padding-left:14px!important;padding-right:14px!important}}
+@media(prefers-reduced-motion:reduce){.game *,.main-menu-content *,.fruit-splash *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 
@@ -1657,9 +1703,9 @@
     <div class="splash-orbit orbit-three" aria-hidden="true">🍇</div>
     <div class="splash-logo-wrap">
       <div class="splash-halo"></div>
-      <div class="splash-logo"><span>🍓</span></div>
+      <div class="splash-logo"><img src="./icon.svg" alt="Fruit Pop Adam fruit logo"></div>
     </div>
-    <div class="splash-brand">FRUIT POP</div>
+    <div class="splash-brand">FRUIT POP ADAM</div>
     <div class="splash-arabic">آدم النور</div>
     <div class="splash-motto">عابر🖤السبيل</div>
     <div class="splash-tagline">A LITTLE MAGIC IN EVERY MATCH</div>
@@ -1671,9 +1717,9 @@
     <div class="intro-content main-menu-content">
       <div class="menu-sky" aria-hidden="true"><span class="menu-moon">☀️</span><span class="menu-cloud cloud-one">☁️</span><span class="menu-cloud cloud-two">☁️</span></div>
       <div class="menu-castle" aria-hidden="true"><span>🌳</span><span class="castle">🍭</span><span>🌳</span></div>
-      <div class="intro-emblem"><span>🍓</span></div>
+      <div class="intro-emblem"><img src="./icon.svg" alt="Fruit Pop Adam"></div>
       <div class="intro-owner">✦ ADAM AL NOOR ✦</div>
-      <div class="intro-title">FRUIT POP</div>
+      <div class="intro-title">FRUIT POP ADAM</div>
       <div class="intro-ar">آدم النور</div>
       <div class="intro-caption">A HAPPY LITTLE FRUIT ADVENTURE</div>
       <div class="intro-signature">✦ Sabah Asy ✦</div>
@@ -1707,7 +1753,7 @@
       <summary aria-label="Game tools and settings">⚙️</summary>
       <div class="game-tools-panel">
         <div class="tools-panel-heading">🍓 FRUIT POP <span>خيارات اللعبة</span></div>
-    <h1>🍓 FRUIT POP 🍋</h1>
+    <h1>🍓 FRUIT POP ADAM 🍋</h1>
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
