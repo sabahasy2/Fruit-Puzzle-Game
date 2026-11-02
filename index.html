@@ -575,6 +575,8 @@
 
 
     [hidden]{display:none!important;}
+    /* Keep one points counter: the visible SCORE is the lifetime total. */
+    .total-score-stat{display:none!important;}
     /* Original Fruit Pop music and sound controls */
     .audio-controls{display:flex;gap:8px;margin:-3px 0 12px}
     .audio-controls button{min-height:36px;padding:8px 10px;border-radius:13px;font-size:11px}
@@ -1794,7 +1796,9 @@
           }
         }
 
-        scoreElement.textContent = score.toLocaleString();
+        // The single visible points counter represents the player's lifetime total.
+        // The per-level score remains internal for objectives and level celebrations.
+        scoreElement.textContent = totalScore.toLocaleString();
         totalScoreElement.textContent = totalScore.toLocaleString();
         movesElement.textContent = moves;
         levelElement.textContent = level;
