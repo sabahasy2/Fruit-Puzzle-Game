@@ -670,6 +670,7 @@
 
     /* Main menu, quick return and Arabic/English language controls */
     .intro-screen{z-index:120;overflow-y:auto;align-items:center;transition:opacity .75s ease,visibility .75s ease,backdrop-filter .75s ease}
+    .modal{z-index:130}
     .intro-screen:not(.hide){backdrop-filter:blur(9px)}
     .main-menu-content{max-height:calc(100dvh - 28px);overflow-y:auto;scrollbar-width:thin}
     .intro-owner{position:relative;color:#ffe69a;font-size:14px;font-weight:1000;letter-spacing:3px;text-shadow:0 0 14px #ffcf5a99;margin:0 0 10px}
@@ -1008,8 +1009,11 @@
         const soundButton = document.getElementById("soundToggle");
         const menuMusicButton = document.getElementById("menuMusicToggle");
         const menuSoundButton = document.getElementById("menuSoundToggle");
-        if(menuMusicButton){menuMusicButton.textContent=musicEnabled?"🎵 الموسيقى: تعمل":"🎵 الموسيقى: متوقفة";menuMusicButton.setAttribute("aria-pressed",String(musicEnabled));}
-        if(menuSoundButton){menuSoundButton.textContent=soundsEnabled?"🔊 المؤثرات: تعمل":"🔇 المؤثرات: متوقفة";menuSoundButton.setAttribute("aria-pressed",String(soundsEnabled));}
+        const arabic=localStorage.getItem("fruit-pop-language")!=="en";
+        const musicLabel=musicEnabled?(arabic?"🎵 الموسيقى: تعمل":"🎵 Music: ON"):(arabic?"🎵 الموسيقى: متوقفة":"🎵 Music: OFF");
+        const soundLabel=soundsEnabled?(arabic?"🔊 المؤثرات: تعمل":"🔊 Sounds: ON"):(arabic?"🔇 المؤثرات: متوقفة":"🔇 Sounds: OFF");
+        if(menuMusicButton){menuMusicButton.textContent=musicLabel;menuMusicButton.setAttribute("aria-pressed",String(musicEnabled));}
+        if(menuSoundButton){menuSoundButton.textContent=soundLabel;menuSoundButton.setAttribute("aria-pressed",String(soundsEnabled));}
         if (musicButton) {
           musicButton.textContent = musicEnabled ? "🎵 Music: ON" : "🎵 Music: OFF";
           musicButton.setAttribute("aria-pressed", String(musicEnabled));
@@ -1813,9 +1817,12 @@
       $("menuSoundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
       $("musicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
       $("soundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
+      $("musicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
+      $("soundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
-      $("levelsWorld").textContent=lang==="ar"?$("mapWorldName").textContent+" · المراحل "+worlds[mapWorldIndex].start+"–"+worlds[mapWorldIndex].end:worlds[mapWorldIndex].name+" · Levels "+worlds[mapWorldIndex].start+"–"+worlds[mapWorldIndex].end;
+      const languageWorld=worlds.find(w=>guestProgress().level>=w.start&&guestProgress().level<=w.end)||worlds[0];
+      $("levelsWorld").textContent=lang==="ar"?languageWorld.emoji+" "+languageWorld.ar+" · المراحل "+languageWorld.start+"–"+languageWorld.end:languageWorld.name+" · Levels "+languageWorld.start+"–"+languageWorld.end;
       $("themeTitle").textContent=lang==="ar"?"🎨 اختر أجواء مغامرتك":"🎨 Choose your adventure theme";
       $("authEmail").placeholder=lang==="ar"?"البريد الإلكتروني":"Email address";
       $("authPassword").placeholder=lang==="ar"?"كلمة المرور (8 أحرف على الأقل)":"Password (8+ characters)";
@@ -1832,7 +1839,7 @@
       if(!r.ok) throw new Error(data.error||"Something went wrong.");
       return data;
     }
-    function accountLabel(){ $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : "👤 Guest · Sign in"; }
+    function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
       const current=guestProgress().level, grid=$("levelsGrid"), tabs=$("mapWorldTabs");
