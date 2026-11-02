@@ -1591,6 +1591,18 @@
       .game .tile{font-size:clamp(22px,7.8vw,30px)!important}
     }
 
+    
+    /* v69 — quicker match, drop and special-effect rhythm */
+    .game .tile.match-pop .fruit-face{animation-duration:.29s!important}
+    .game .tile.fruit-fall .fruit-face{animation-duration:.34s!important}
+    .game .tile.match-pop:before{animation-duration:.23s!important}
+    .game .tile.match-pop:after{animation-duration:.25s!important}
+    .game .board.thunder-burst,.game .board.fire-burst,.game .board.rainbow-burst,.game .board.supercombo-burst{animation-duration:.30s!important}
+    .game .board.thunder-burst:before,.game .board.fire-burst:before,.game .board.rainbow-burst:before,.game .board.supercombo-burst:before{animation-duration:.32s!important}
+    .game .board.thunder-burst:after,.game .board.fire-burst:after,.game .board.rainbow-burst:after,.game .board.supercombo-burst:after{animation-duration:.34s!important}
+    .game .board.bomb-burst{animation-duration:.42s!important}
+    .game .board.bomb-burst:before{animation-duration:.40s!important}
+
     /* v68 — taller, roomier fruit cells and a snappier play rhythm */
     .game .board{
       gap:clamp(3px,.9vw,6px)!important;
@@ -2281,7 +2293,7 @@
             if (poppingSet.has(cellKey)) tile.classList.add("match-pop");
             if (fallingSet.has(cellKey)) {
               tile.classList.add("fruit-fall");
-              fruitFace.style.setProperty("--rain-delay", (r * 22 + c * 6) + "ms");
+              fruitFace.style.setProperty("--rain-delay", (r * 11 + c * 3) + "ms");
             }
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) {
               tile.classList.add("special-fruit");
@@ -2542,14 +2554,14 @@
         boardElement.classList.add(burstClass);
         if (isMegaBomb) playMegaBombExplosion(kind === "💣" ? r : other.r, kind === "💣" ? c : other.c);
         playSound(isMegaBomb ? "supercombo" : combo ? "supercombo" : kind === "⚡" ? "thunder" : kind === "🔥" || kind === "🚀" ? "fireblast" : "rainbow");
-        window.setTimeout(() => boardElement.classList.remove(burstClass), 750);
+        window.setTimeout(() => boardElement.classList.remove(burstClass), 520);
         messageElement.textContent = combo
           ? "💥 SUPER COMBO! A spectacular fruit explosion!"
           : kind === "🔥" || kind === "🚀" ? "🚀 Rocket blast! A whole row cleared!"
           : kind === "⚡" ? "⚡ Fruit lightning! A whole column cleared!"
           : kind === "💣" ? "💣 MEGA BOMB! A huge area exploded!"
           : "🌟 Rainbow burst! A magical fruit explosion!";
-        await new Promise(resolve => setTimeout(resolve, 220));
+        await new Promise(resolve => setTimeout(resolve, 120));
 
         cells.forEach(([y, x]) => { board[y][x] = null; });
         hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y, x); });
@@ -2557,7 +2569,7 @@
         boardElement.classList.remove("special-burst");
         collapseBoard();
         render();
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 45));
         await resolveBoard();
         return true;
       }
@@ -2654,7 +2666,7 @@
             !(crateGrid[r] && crateGrid[r][c])
           );
           render({ popping });
-          await new Promise(resolve => setTimeout(resolve, 180));
+          await new Promise(resolve => setTimeout(resolve, 105));
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -2676,7 +2688,7 @@
           }
 
           render();
-          await new Promise(resolve => setTimeout(resolve, 35));
+          await new Promise(resolve => setTimeout(resolve, 15));
 
           const falling = collapseBoard();
           render({ falling });
@@ -2686,7 +2698,7 @@
           landingColumns.forEach((column, index) => {
             playImpactSound(.34 + index * .075);
           });
-          await new Promise(resolve => setTimeout(resolve, 620));
+          await new Promise(resolve => setTimeout(resolve, 390));
         }
 
         ensurePlayableBoard();
