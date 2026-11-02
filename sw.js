@@ -1,10 +1,11 @@
 
-const CACHE_NAME = "fruit-pop-v70";
+const CACHE_NAME = "fruit-pop-v71";
 
 const APP_FILES = [
   "./",
   "./index.html",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "./icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
