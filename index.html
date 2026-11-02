@@ -352,10 +352,11 @@
     .map-scenery small{display:block;margin-top:2px;font-size:10px;color:#fff4cf}
     .map-scenery-emoji{font-size:34px;filter:drop-shadow(0 4px 3px #15202a66)}
     .map-path{position:relative;display:block;min-height:3800px;padding:0 5px}
-     .map-route-svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;overflow:visible;pointer-events:none}
-     .map-route-shadow{fill:none;stroke:#8a684b88;stroke-width:19;stroke-linecap:round;stroke-linejoin:round}
-     .map-route-line{fill:none;stroke:#fff4c6;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 2}
-     .map-node-wrap{position:absolute;z-index:1;display:flex;align-items:center;flex-direction:column;min-width:54px;transform:translateX(-50%)}
+     .map-scene{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.98}
+     .map-route-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+     .map-route-shadow{fill:none;stroke:#76563899;stroke-width:22;stroke-linecap:round;stroke-linejoin:round}
+     .map-route-line{fill:none;stroke:#fff6d5;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 2}
+     .map-node-wrap{position:absolute;z-index:2;display:flex;align-items:center;flex-direction:column;min-width:54px;transform:translateX(-50%)}
     .map-node{width:43px!important;height:43px;min-width:43px;max-width:43px;flex:none!important;margin:0!important;padding:0!important;border:3px solid #fff3bd!important;border-radius:50%!important;background:linear-gradient(145deg,#fff2a8,#e8a83f)!important;color:#75421d!important;font-size:18px!important;font-weight:1000;box-shadow:0 4px 0 #925d2c,0 6px 10px #15202a66,inset 0 2px 4px #fff9;transition:transform .15s}
     .map-node:active{transform:scale(.92)}
     .map-node.completed{background:linear-gradient(145deg,#fff4bf,#f2c85d)!important}
@@ -1892,6 +1893,26 @@
         });
         nodes.push(wrap);
       }
+      const scene=document.createElementNS("http://www.w3.org/2000/svg","svg");
+      scene.setAttribute("class","map-scene");
+      scene.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
+      scene.setAttribute("preserveAspectRatio","none");
+      const palettes={forest:["#b8edaa","#78c879","#438f62","#28664d","#8bd9e8"],ice:["#eafaff","#a8dcf3","#6eafd6","#477eae","#fff"],island:["#ffe6a0","#f6c66d","#63cbbd","#328da0","#68d8ee"],volcano:["#ffd2a0","#ed916f","#bd5559","#73334e","#ffdf75"],crystal:["#f5e4ff","#c7a7ed","#967bd4","#635aa8","#a8f4ff"],sky:["#e6faff","#b6e2ff","#86b9ee","#668ed0","#fff"],mythic:["#d9d1ff","#a89ae8","#786ac2","#494b91","#f8e6a0"]};
+      const p=palettes[w.theme]||palettes.mythic;
+      const H=nodes.length*76;
+      let terrain="";
+      if(w.theme==="forest") terrain='<path d="M0 300 Q130 170 280 285 T560 270 T1000 230 V'+H+' H0Z" fill="'+p[1]+'"/><path d="M0 620 Q180 420 350 575 T700 520 T1000 590 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 1050 Q170 850 330 960 T650 920 T1000 990 V'+H+' H0Z" fill="'+p[3]+'"/><path d="M0 430 Q230 560 420 450 T760 500 T1000 430" fill="none" stroke="'+p[4]+'" stroke-width="46"/><path d="M0 430 Q230 560 420 450 T760 500 T1000 430" fill="none" stroke="#e7fbff" stroke-width="8"/><path d="M0 1550 Q180 1390 390 1510 T760 1460 T1000 1510 V'+H+' H0Z" fill="#347653"/>';
+      else if(w.theme==="ice") terrain='<path d="M0 420 L180 180 320 390 500 100 720 410 870 190 1000 420 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 610 Q260 490 480 610 T1000 570 V'+H+' H0Z" fill="'+p[3]+'"/><path d="M0 760 Q300 650 520 760 T1000 730" stroke="'+p[4]+'" stroke-width="54" fill="none"/>';
+      else if(w.theme==="island") terrain='<path d="M0 480 Q180 350 350 470 T700 430 T1000 480 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 570 Q220 470 440 570 T1000 550 V'+H+' H0Z" fill="'+p[1]+'"/><path d="M0 780 Q250 690 500 780 T1000 760" stroke="'+p[4]+'" stroke-width="70" fill="none"/>';
+      else if(w.theme==="volcano") terrain='<path d="M0 520 L230 250 420 500 650 120 870 480 1000 350 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M610 175 Q650 300 710 430 L760 600" stroke="'+p[4]+'" stroke-width="48" fill="none"/><path d="M0 720 Q300 620 520 730 T1000 690 V'+H+' H0Z" fill="'+p[3]+'"/>';
+      else if(w.theme==="crystal") terrain='<path d="M0 520 L160 230 300 520 470 130 650 520 820 210 1000 520 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 700 Q220 570 440 700 T1000 680 V'+H+' H0Z" fill="'+p[3]+'"/>';
+      else if(w.theme==="sky") terrain='<path d="M0 520 Q180 390 340 510 T680 490 T1000 510 V'+H+' H0Z" fill="'+p[2]+'"/><g fill="#fff" opacity=".95"><ellipse cx="180" cy="650" rx="130" ry="34"/><ellipse cx="700" cy="900" rx="170" ry="42"/><ellipse cx="390" cy="1300" rx="125" ry="32"/></g>';
+      else terrain='<path d="M0 520 Q170 350 350 510 T700 470 T1000 520 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 760 Q240 630 460 760 T1000 740 V'+H+' H0Z" fill="'+p[3]+'"/>';
+      const trees=w.theme==="forest"?Array.from({length:Math.ceil(H/78)},(_,i)=>{const y=100+i*78,x=(i%2?28:900)+(i%5)*13;return '<g transform="translate('+x+' '+y+')"><path d="M0 28 L-25 76 H25Z" fill="#27634b"/><path d="M0 8 L-19 50 H19Z" fill="#37885b"/><path d="M0 0 L-13 29 H13Z" fill="#55a96b"/><rect x="-3" y="72" width="6" height="18" fill="#80583d"/></g>'}).join(""):"";
+      const symbols={forest:"🌳 🍄 🏡 🌼 🌲",ice:"❄️ 🏔️ 🧊 💎",island:"🌴 🐚 🏝️ 🦜",volcano:"🌋 🔥 🐉 🪨",crystal:"💎 ✨ 🏰 🔮",sky:"☁️ 🕊️ 🏰 ⭐",mythic:"🌌 ⭐ 🔮 👑"};
+      const labels=(symbols[w.theme]||symbols.mythic).split(" ").map((e,i)=>'<text x="'+(90+(i%2)*690)+'" y="'+(210+i*510)+'" font-size="68">'+e+'</text>').join("");
+      scene.innerHTML='<defs><linearGradient id="sceneSky" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient></defs><rect width="1000" height="'+H+'" fill="url(#sceneSky)"/>'+terrain+trees+'<g opacity=".8">'+labels+'</g>';
+      grid.appendChild(scene);
       const route=document.createElementNS("http://www.w3.org/2000/svg","svg");
       route.setAttribute("class","map-route-svg");
       route.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
