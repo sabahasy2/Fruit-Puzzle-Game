@@ -1815,12 +1815,12 @@
       document.querySelector(".footer").textContent=t.footer;
       $("levelsBtn").textContent=t.map;$("accountBtn").textContent=player?(lang==="ar"?"👤 "+(player.display_name||player.email):"👤 "+(player.display_name||player.email)):t.guest;
       $("mapProgress").textContent=(lang==="ar"?"المرحلة ":"LEVEL ")+guestProgress().level+" / 1,200";
-      $("menuMusicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
-      $("menuSoundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
-      $("musicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
-      $("soundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
-      $("musicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
-      $("soundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
+      const musicOn=localStorage.getItem("fruit-pop-music")!=="off";
+      const soundsOn=localStorage.getItem("fruit-pop-sounds")!=="off";
+      $("menuMusicToggle").textContent=musicOn?t.musicOn:t.musicOff;
+      $("menuSoundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
+      $("musicToggle").textContent=musicOn?t.musicOn:t.musicOff;
+      $("soundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
       const languageWorld=worlds.find(w=>guestProgress().level>=w.start&&guestProgress().level<=w.end)||worlds[0];
