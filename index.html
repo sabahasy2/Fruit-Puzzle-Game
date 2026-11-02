@@ -276,6 +276,46 @@
       .board { gap: 0; padding: 2px; }
       .tile { border-radius: 6px; }
     }
+
+    /* Candy-style journey map — original Fruit Pop artwork */
+    .modal-card.map-card{max-width:430px;padding:16px 14px 18px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+    .map-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 2px 10px}
+    .map-heading h2{margin:0;font-size:20px}
+    .map-progress{font-size:11px;color:#f7dfa4;white-space:nowrap}
+    .map-world-tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 2px 10px;scrollbar-width:thin}
+    .map-world-tab{flex:0 0 auto;width:auto!important;margin:0!important;padding:8px 10px!important;border-radius:20px;font-size:11px!important;white-space:nowrap}
+    .map-world-tab.active{outline:2px solid #fff0b8;box-shadow:0 0 14px #f5d16a88}
+    .map-world-tab:disabled{opacity:.35;filter:grayscale(1)}
+    .map-landscape{position:relative;isolation:isolate;overflow:auto;min-height:350px;max-height:58vh;border:2px solid #d9b45a;border-radius:20px;padding:18px 10px 22px;scrollbar-color:#d9b45a #17162b;background:linear-gradient(180deg,#7abf79 0%,#4d9b69 42%,#286d60 100%)}
+    .map-landscape:before{content:"";position:absolute;z-index:-2;inset:0;background:radial-gradient(ellipse at 15% 10%,#fff7a966 0 3%,transparent 18%),radial-gradient(ellipse at 85% 22%,#d8f4ff66 0 4%,transparent 20%),radial-gradient(ellipse at 50% 65%,#e8db8c55 0 10%,transparent 34%),linear-gradient(155deg,transparent 30%,#174e4a66 100%)}
+    .map-landscape:after{content:"";position:absolute;z-index:-1;inset:0;opacity:.25;background-image:radial-gradient(#fff 1px,transparent 1.5px);background-size:23px 23px;pointer-events:none}
+    .map-landscape.theme-ice{background:linear-gradient(180deg,#b9eaff,#6db6d7 48%,#376e9e)}
+    .map-landscape.theme-island{background:linear-gradient(180deg,#f6d27c,#4ec4c0 48%,#277b91)}
+    .map-landscape.theme-volcano{background:linear-gradient(180deg,#f2a05c,#b94c45 48%,#4b253f)}
+    .map-landscape.theme-crystal{background:linear-gradient(180deg,#c8a9f4,#8269c6 48%,#3d397c)}
+    .map-landscape.theme-sky{background:linear-gradient(180deg,#d9f5ff,#80bde9 48%,#547fc0)}
+    .map-landscape.theme-mythic{background:linear-gradient(180deg,#584b9c,#292b66 48%,#151a42)}
+    .map-landscape.theme-forest{background:linear-gradient(180deg,#9ad77d,#4d9b69 48%,#286d60)}
+    .map-scenery{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 4px 18px;padding:10px 12px;border:1px solid #fff9;border-radius:16px;background:#101a2c66;box-shadow:0 5px 18px #10231d44;color:#fff8df;text-align:left}
+    .map-scenery strong{display:block;font-size:14px;text-shadow:0 2px 4px #0008}
+    .map-scenery small{display:block;margin-top:2px;font-size:10px;color:#fff4cf}
+    .map-scenery-emoji{font-size:34px;filter:drop-shadow(0 4px 3px #15202a66)}
+    .map-path{position:relative;display:flex;flex-direction:column;gap:13px;padding:0 5px}
+    .map-row{position:relative;display:flex;direction:ltr;justify-content:space-around;align-items:center;min-height:58px}
+    .map-row:nth-child(even){flex-direction:row-reverse}
+    .map-row:before{content:"";position:absolute;z-index:0;left:8%;right:8%;top:50%;border-top:5px dotted #fff0b9cc;filter:drop-shadow(0 2px 1px #5a553b88)}
+    .map-node-wrap{position:relative;z-index:1;display:flex;flex:1;align-items:center;flex-direction:column;min-width:0}
+    .map-node{width:43px!important;height:43px;min-width:43px;max-width:43px;flex:none!important;margin:0!important;padding:0!important;border:3px solid #fff3bd!important;border-radius:50%!important;background:linear-gradient(145deg,#fff2a8,#e8a83f)!important;color:#75421d!important;font-size:18px!important;font-weight:1000;box-shadow:0 4px 0 #925d2c,0 6px 10px #15202a66,inset 0 2px 4px #fff9;transition:transform .15s}
+    .map-node:active{transform:scale(.92)}
+    .map-node.completed{background:linear-gradient(145deg,#fff4bf,#f2c85d)!important}
+    .map-node.current{width:51px!important;height:51px;min-width:51px;max-width:51px;border:4px solid #fff!important;background:linear-gradient(145deg,#ffef7d,#ff8f45)!important;color:#71331d!important;box-shadow:0 0 0 5px #fff7a955,0 5px 0 #9a4a28,0 0 20px #fff2aacc;animation:mapCurrentPulse 1.15s ease-in-out infinite alternate}
+    .map-node.locked{background:linear-gradient(145deg,#a9b1bd,#596477)!important;border-color:#dce2e9!important;color:#edf3fa!important;box-shadow:0 4px 0 #303b50,0 6px 10px #15202a66}
+    .map-node-label{margin-top:4px;color:#fff;font-size:9px;font-weight:900;text-shadow:0 2px 3px #18202c;white-space:nowrap}
+    .map-stars{font-size:9px;letter-spacing:-1px;color:#fff6a6;text-shadow:0 1px 3px #4d3217}
+    .map-landmark{margin:20px auto 0;text-align:center;color:#fff4c8;font-size:26px;filter:drop-shadow(0 4px 3px #18202c66)}
+    @keyframes mapCurrentPulse{from{transform:translateY(0) scale(1)}to{transform:translateY(-4px) scale(1.06)}}
+    @media(prefers-reduced-motion:reduce){.map-node.current{animation:none}}
+
   </style>
 </head>
 
@@ -334,7 +374,7 @@
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
     <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
-    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeLevels">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>👑 Royal Adventure</h2><p>Complete levels to unlock new kingdoms.</p><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="levels-grid" id="levelsGrid"></div></div></div>
+    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><button class="secondary modal-close" id="closeLevels" aria-label="Close map">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><div class="map-heading"><h2>🗺️ Royal Journey</h2><span class="map-progress" id="mapProgress">Level 1 / 400</span></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
   </main>
 
   <script>
@@ -893,15 +933,67 @@
       return data;
     }
     function accountLabel(){ $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : "👤 Guest · Sign in"; }
+    let mapWorldIndex=0;
     function drawLevels(){
-      const current=guestProgress().level, grid=$("levelsGrid"); grid.innerHTML="";
+      const current=guestProgress().level, grid=$("levelsGrid"), tabs=$("mapWorldTabs");
+      const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
+      if(mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
       applyWorld(current);
-      for(let i=1;i<=400;i++){
-        const b=document.createElement("button"); b.className="level-chip"+(i===current?" current":"")+(i>current?" locked":"");
-        b.textContent=i>current?"🔒 "+i:i+" "+(i<current?"★":"");
+      tabs.innerHTML="";
+      worlds.forEach((w,index)=>{
+        const unlocked=w.start<=current;
+        const tab=document.createElement("button");
+        tab.type="button";
+        tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
+        tab.textContent=w.emoji+" "+w.ar+(unlocked?"":" 🔒");
+        tab.disabled=!unlocked;
+        tab.addEventListener("click",()=>{mapWorldIndex=index;drawLevels();});
+        tabs.appendChild(tab);
+      });
+      const w=worlds[mapWorldIndex];
+      $("mapProgress").textContent="LEVEL "+current+" / 400";
+      $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
+      $("mapWorldName").textContent=w.ar;
+      $("mapWorldDesc").textContent=w.desc;
+      $("mapWorldEmoji").textContent=w.emoji;
+      $("mapLandmark").textContent=mapWorldIndex===0?"🌳 🍄 🏰":mapWorldIndex===1?"🏔️ ❄️ 💎":mapWorldIndex===2?"🌴 🏝️ 🐚":mapWorldIndex===3?"🌋 🔥 🐉":mapWorldIndex===4?"💎 🏰 ✨":mapWorldIndex===5?"☁️ 🏰 🕊️":mapWorldIndex===6?"🌌 ⭐ 🔮":"👑 🏰 ✨";
+      const landscape=$("mapLandscape");
+      landscape.className="map-landscape theme-"+w.theme;
+      grid.innerHTML="";
+      const nodes=[];
+      for(let i=w.start;i<=w.end;i++){
+        const wrap=document.createElement("div");
+        wrap.className="map-node-wrap";
+        const b=document.createElement("button");
+        const state=i<current?"completed":i===current?"current":"locked";
+        b.type="button";
+        b.className="map-node "+state;
+        b.textContent=i<current?"★":i===current?"▶":"🔒";
+        b.setAttribute("aria-label","Level "+i+(i<current?", completed":i===current?", current level":", locked"));
         b.disabled=i>current;
-        b.addEventListener("click",()=>{hide(levelsModal); if(i===current) $("message").textContent="Level "+i+" is ready. Good luck!";});
-        grid.appendChild(b);
+        const label=document.createElement("span");
+        label.className="map-node-label";
+        label.textContent=i;
+        wrap.append(b,label);
+        if(i<current){
+          const stars=document.createElement("span");
+          stars.className="map-stars";
+          stars.textContent="★ ★ ★";
+          wrap.appendChild(stars);
+        }
+        b.addEventListener("click",()=>{
+          if(i>current)return;
+          hide(levelsModal);
+          if(i!==current){localStorage.setItem("fruit-pop-level",String(i));location.reload();}
+          else $("message").textContent="✨ المرحلة "+i+" جاهزة! انطلق للمغامرة.";
+        });
+        nodes.push(wrap);
+      }
+      for(let start=0;start<nodes.length;start+=5){
+        const row=document.createElement("div");
+        row.className="map-row";
+        nodes.slice(start,start+5).forEach(node=>row.appendChild(node));
+        grid.appendChild(row);
       }
     }
     $("accountBtn").addEventListener("click",()=>{note.textContent="";show(authModal);});
