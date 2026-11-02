@@ -982,7 +982,7 @@
     .game .stats .stat strong{text-shadow:0 0 10px #ffe6a6aa,0 2px 3px #180c3c!important}
     .game .board{
       position:relative;isolation:isolate;overflow:visible!important;
-      gap:4px!important;padding:7px!important;border:2px solid #fff0b9!important;
+      gap:2px!important;padding:4px!important;border:2px solid #fff0b9!important;
       border-radius:23px!important;
       background:linear-gradient(145deg,#fff5c844,#7b56c8aa 42%,#241b60ee)!important;
       box-shadow:0 0 0 3px #ffb6e522,0 12px 28px #08051f99,
@@ -1078,7 +1078,13 @@
     @keyframes lightningStrike{0%{opacity:0;transform:translateY(-18%) scaleY(.5)}18%{opacity:1;transform:translateY(0) scaleY(1.05)}48%{opacity:.8}100%{opacity:0;transform:translateY(12%) scaleY(1)}}
     @keyframes fireBloom{0%{opacity:0;transform:scale(.3)}28%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(1.35)}}
     @keyframes rainbowSpark{0%{opacity:0;transform:scale(.3) rotate(-18deg)}35%{opacity:1;transform:scale(1.12) rotate(5deg)}100%{opacity:0;transform:scale(1.55) rotate(20deg)}}
-    @media(max-width:380px){.game .board{gap:3px!important;padding:5px!important}.game .tile{border-radius:9px!important}}
+    /* v45 — restore the original full-size play field on phones */
+    @media(max-width:520px){
+      .game{width:100%;max-width:none;padding-left:8px;padding-right:8px}
+      .game .board{width:100%;max-width:560px;gap:2px!important;padding:4px!important}
+      .game .tile{min-width:0;border-radius:9px!important}
+    }
+    @media(min-width:521px){.game .board{gap:4px!important;padding:7px!important}}
     @media(prefers-reduced-motion:reduce){.board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst,.board:before,.board:after{animation:none!important}}
 
   </style>
