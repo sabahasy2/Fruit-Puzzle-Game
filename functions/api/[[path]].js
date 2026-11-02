@@ -116,6 +116,15 @@ export async function onRequest({ request, env }) {
     }
     return json({error:"Not found"},404);
   } catch (error) {
-    return json({error:"The request could not be completed."},500);
+    const errorId = crypto.randomUUID();
+    const detail = String(error?.stack || error?.message || error).slice(0, 3000);
+    console.error("Fruit Pop API failure", { errorId, path, method: request.method, detail });
+    try {
+      await env.DB.prepare("INSERT INTO api_errors(id,path,method,detail,created_at) VALUES(?,?,?,?,?)")
+        .bind(errorId, path, request.method, detail, Math.floor(Date.now()/1000)).run();
+    } catch (logError) {
+      console.error("Fruit Pop diagnostic logging failed", String(logError));
+    }
+    return json({error:"The request could not be completed. Reference: " + errorId},500);
   }
 }
