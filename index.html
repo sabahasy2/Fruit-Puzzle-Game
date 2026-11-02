@@ -933,11 +933,11 @@
       return data;
     }
     function accountLabel(){ $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : "👤 Guest · Sign in"; }
-    let mapWorldIndex=0;
+    let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
       const current=guestProgress().level, grid=$("levelsGrid"), tabs=$("mapWorldTabs");
       const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
-      if(mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
+      if(!mapWorldChosen || mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
       applyWorld(current);
       tabs.innerHTML="";
       worlds.forEach((w,index)=>{
@@ -947,7 +947,7 @@
         tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
         tab.textContent=w.emoji+" "+w.ar+(unlocked?"":" 🔒");
         tab.disabled=!unlocked;
-        tab.addEventListener("click",()=>{mapWorldIndex=index;drawLevels();});
+        tab.addEventListener("click",()=>{mapWorldIndex=index;mapWorldChosen=true;drawLevels();});
         tabs.appendChild(tab);
       });
       const w=worlds[mapWorldIndex];
@@ -975,12 +975,6 @@
         label.className="map-node-label";
         label.textContent=i;
         wrap.append(b,label);
-        if(i<current){
-          const stars=document.createElement("span");
-          stars.className="map-stars";
-          stars.textContent="★ ★ ★";
-          wrap.appendChild(stars);
-        }
         b.addEventListener("click",()=>{
           if(i>current)return;
           hide(levelsModal);
