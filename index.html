@@ -1939,6 +1939,10 @@
       $("menuExitNote").textContent=languageSelect.value==="ar"?"تم إيقاف اللعب مؤقتاً وحفظ تقدمك. يمكنك إغلاق التطبيق من جهازك.":"Game paused and progress is saved. You can close the app from your device.";
       stopMusic();
       try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
+      try{window.close();}catch(e){}
+      window.setTimeout(()=>{
+        if($("menuExitNote"))$("menuExitNote").textContent=languageSelect.value==="ar"?"إذا لم يُغلق التطبيق تلقائياً، أغلقه من زر الرجوع أو التطبيقات المفتوحة في هاتفك.":"If the app stays open, close it using your phone's app switcher or back button.";
+      },450);
     });
     $("enterGameBtn").addEventListener("click",enter);
     $("introLevelsBtn").addEventListener("click",()=>{drawLevels();show(levelsModal);});
