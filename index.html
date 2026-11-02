@@ -337,7 +337,9 @@
       let selected = null;
       let score = 0;
       let moves = 25;
-      let level = Number(localStorage.getItem("fruit-pop-level") || 1);
+      // Test build: open with ?test=1 to start at level 3 and preview special-fruit mechanics.
+      const testMode = new URLSearchParams(window.location.search).get("test") === "1";
+      let level = testMode ? 3 : Number(localStorage.getItem("fruit-pop-level") || 1);
       let busy = false;
 
       const boardElement = document.getElementById("board");
