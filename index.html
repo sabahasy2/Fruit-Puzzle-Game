@@ -581,6 +581,7 @@
       // Original, lightweight Fruit Pop soundtrack generated with Web Audio.
       // Audio begins only after the player's first gesture (mobile autoplay policy).
       let audioContext = null;
+      let audioCompressor = null;
       let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
       let musicTimer = null;
@@ -589,7 +590,16 @@
       function audioEngine() {
         const AudioCtor = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtor) return null;
-        if (!audioContext) audioContext = new AudioCtor();
+        if (!audioContext) {
+          audioContext = new AudioCtor();
+          audioCompressor = audioContext.createDynamicsCompressor();
+          audioCompressor.threshold.setValueAtTime(-18, audioContext.currentTime);
+          audioCompressor.knee.setValueAtTime(22, audioContext.currentTime);
+          audioCompressor.ratio.setValueAtTime(8, audioContext.currentTime);
+          audioCompressor.attack.setValueAtTime(0.003, audioContext.currentTime);
+          audioCompressor.release.setValueAtTime(0.25, audioContext.currentTime);
+          audioCompressor.connect(audioContext.destination);
+        }
         if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
         return audioContext;
       }
@@ -608,7 +618,7 @@
         gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         oscillator.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(audioCompressor || ctx.destination);
         oscillator.start(start);
         oscillator.stop(start + duration + 0.03);
       }
@@ -643,53 +653,63 @@
 
       function playSound(kind="tap") {
         if (!soundsEnabled) return;
+        const v = 0.92 + Math.random() * 0.16;
+        const p = f => f * v;
         switch (kind) {
           case "tap":
-            playTone(920,.075,"square",.055,0,520);
-            playNoise(.045,.035,"highpass",2600);
+            playTone(p(980),.085,"square",.075,0,p(430));
+            playNoise(.055,.055,"highpass",2900);
             break;
           case "match":
-            playNoise(.16,.105,"bandpass",1800);
-            playTone(360,.19,"triangle",.12,0,115);
-            playTone(660,.12,"sine",.085,.025);
-            playTone(880,.15,"triangle",.075,.085);
-            playTone(1180,.2,"sine",.065,.15);
+            playNoise(.22,.19,"bandpass",1650);
+            playNoise(.12,.10,"highpass",3600,.012);
+            playTone(p(105),.30,"sine",.24,0,48);
+            playTone(p(390),.20,"triangle",.18,0,p(155));
+            playTone(p(690),.16,"triangle",.14,.035,p(940));
+            playTone(p(980),.20,"sine",.13,.10,p(1320));
+            playTone(p(1480),.24,"sine",.10,.17,p(1880));
             break;
           case "combo":
-            playNoise(.32,.14,"bandpass",1250);
-            playTone(240,.3,"sawtooth",.13,0,95);
-            playTone(520,.2,"triangle",.105,.04,1040);
-            playTone(780,.2,"triangle",.095,.13,1560);
-            playTone(1175,.28,"sine",.09,.23,1760);
-            playTone(1568,.34,"sine",.07,.34);
+            playNoise(.34,.25,"bandpass",1350);
+            playNoise(.20,.13,"highpass",2500,.025);
+            playTone(p(72),.48,"sine",.30,0,38);
+            playTone(p(185),.38,"sawtooth",.22,0,p(82));
+            playTone(p(440),.25,"triangle",.17,.045,p(880));
+            playTone(p(740),.26,"sawtooth",.13,.12,p(1480));
+            playTone(p(1180),.30,"triangle",.13,.22,p(1760));
+            playTone(p(1760),.38,"sine",.11,.32,p(2200));
             break;
           case "special":
-            // Lightning crack, deep impact and rolling thunder tail.
-            playNoise(.12,.19,"highpass",2400);
-            playNoise(.62,.16,"lowpass",430,.035);
-            playTone(980,.28,"sawtooth",.14,0,75);
-            playTone(150,.48,"triangle",.17,.015,42);
-            playTone(740,.22,"square",.075,.07,180);
-            playTone(1320,.24,"sine",.075,.18,440);
-            playTone(1760,.28,"triangle",.055,.28,880);
+            playNoise(.16,.34,"highpass",3100);
+            playNoise(.30,.25,"bandpass",1050,.018);
+            playNoise(.95,.31,"lowpass",260,.045);
+            playNoise(.72,.20,"lowpass",520,.24);
+            playTone(p(1180),.34,"sawtooth",.22,0,p(62));
+            playTone(p(58),.72,"sine",.34,.018,32);
+            playTone(p(155),.58,"triangle",.25,.035,42);
+            playTone(p(820),.28,"square",.12,.075,p(145));
+            playTone(p(1540),.30,"sawtooth",.10,.16,p(430));
+            playTone(p(2100),.36,"triangle",.085,.29,p(720));
+            playNoise(.68,.22,"lowpass",190,.42);
             break;
           case "win":
-            playNoise(.42,.085,"highpass",3200);
-            [523,659,784,1047,1319,1568].forEach((f,i)=>playTone(f,.32,"triangle",.09,i*.105));
-            playTone(130,.55,"sine",.12,.02,65);
+            playNoise(.56,.15,"highpass",3300);
+            playNoise(.34,.16,"lowpass",380,.02);
+            playTone(82,.62,"sine",.24,.015,45);
+            [523,659,784,1047,1319,1568,2093].forEach((f,i)=>playTone(p(f),.38,"triangle",.13,i*.09));
             break;
           case "lose":
-            playNoise(.28,.075,"lowpass",520);
-            playTone(330,.28,"sawtooth",.09,0,190);
-            playTone(247,.34,"triangle",.085,.16,125);
-            playTone(165,.48,"sine",.08,.32,75);
+            playNoise(.42,.16,"lowpass",420);
+            playTone(294,.38,"sawtooth",.15,0,150);
+            playTone(196,.48,"triangle",.16,.14,92);
+            playTone(98,.65,"sine",.22,.30,42);
             break;
           case "nope":
-            playNoise(.09,.07,"lowpass",650);
-            playTone(190,.14,"square",.075,0,90);
+            playNoise(.14,.13,"lowpass",580);
+            playTone(155,.20,"square",.14,0,68);
             break;
           default:
-            playTone(920,.075,"square",.055,0,520);
+            playTone(980,.085,"square",.075,0,430);
         }
       }
       function musicTick() {
