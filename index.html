@@ -165,6 +165,55 @@
       100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: none; }
     }
     .tile.fruit-fall { overflow: visible; }
+    .tile.match-pop { overflow: visible; z-index: 4; }
+    .tile.match-pop::before,
+    .tile.match-pop::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 50%;
+      inset: 5%;
+      opacity: 0;
+    }
+    .tile.match-pop::before {
+      background:
+        radial-gradient(circle, #fff 0 5%, #fff8bf 7% 11%, transparent 14%),
+        radial-gradient(circle at 20% 28%, #ffdf75 0 3%, transparent 5%),
+        radial-gradient(circle at 78% 24%, #ff8ac5 0 3%, transparent 5%),
+        radial-gradient(circle at 25% 78%, #8fffe0 0 3%, transparent 5%),
+        radial-gradient(circle at 82% 76%, #9ed7ff 0 3%, transparent 5%);
+      animation: fruitBurstFlash .48s ease-out both;
+    }
+    .tile.match-pop::after {
+      inset: 12%;
+      border: 2px solid #fff4b5;
+      box-shadow: 0 0 10px #ffdc78, inset 0 0 8px #ffdc78;
+      animation: fruitShockRing .52s cubic-bezier(.12,.72,.2,1) both;
+    }
+    @keyframes fruitBurstFlash {
+      0% { opacity: 0; transform: scale(.15) rotate(0); filter: brightness(1); }
+      24% { opacity: 1; transform: scale(1.08) rotate(18deg); filter: brightness(2); }
+      100% { opacity: 0; transform: scale(1.65) rotate(48deg); filter: brightness(1.4); }
+    }
+    @keyframes fruitShockRing {
+      0% { opacity: 0; transform: scale(.25); }
+      22% { opacity: .95; }
+      100% { opacity: 0; transform: scale(1.8); }
+    }
+    .tile.fruit-fall .fruit-face {
+      animation-name: fruitRainImpact;
+    }
+    @keyframes fruitRainImpact {
+      0% { opacity: 0; transform: translateY(-720%) scale(.72) rotate(-12deg); filter: blur(3px) brightness(1.5); }
+      54% { opacity: 1; transform: translateY(9%) scale(1.12,.88) rotate(5deg); filter: blur(0) brightness(1.35); }
+      70% { opacity: 1; transform: translateY(-6%) scale(.94,1.08) rotate(-3deg); }
+      84% { opacity: 1; transform: translateY(2%) scale(1.05,.96) rotate(1deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: none; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .tile.match-pop::before, .tile.match-pop::after { animation-duration: .01ms; }
+    }
     @media(prefers-reduced-motion:reduce) {
       .tile.match-pop .fruit-face, .tile.fruit-fall .fruit-face { animation-duration: .01ms; animation-delay: 0ms; }
     }
