@@ -1450,13 +1450,19 @@
         if (!dragStart) return;
         const from = dragStart;
         dragStart = null;
-        const destination = tileAt(event.target);
-        if (!destination) return;
-        selected = from;
+        // Touch pointers use implicit pointer capture: event.target can remain
+        // the starting tile. Resolve the tile physically under the finger instead.
+        const underFinger = document.elementFromPoint(event.clientX, event.clientY);
+        const destination = tileAt(underFinger);
+        if (!destination) {
+          selected = null;
+          return;
+        }
         if (from.r === destination.r && from.c === destination.c) {
           selected = null;
           return;
         }
+        selected = from;
         choose(destination.r, destination.c);
         scheduleIdleHint();
       });
