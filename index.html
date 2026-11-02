@@ -3055,24 +3055,34 @@
     let mode="login", player=window.__fruitPopBootPlayer||null;
     let authReady=window.__fruitPopBootReady===true;
     const worldSeeds=[
-      {name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths"},
-      {name:"Crystal Ice Kingdom",ar:"مملكة الجليد",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves"},
-      {name:"Tropical Treasure Isles",ar:"جزر الكنوز الاستوائية",emoji:"🏝️",theme:"island",desc:"Golden beaches, palms and secret treasure"},
-      {name:"Dragonfire Volcano",ar:"بركان التنين",emoji:"🌋",theme:"volcano",desc:"Lava rivers and fiery challenges"},
-      {name:"Crystal Palace",ar:"قصر الكريستال",emoji:"💎",theme:"crystal",desc:"A dazzling palace of magical gems"},
-      {name:"Kingdom of the Sky",ar:"مملكة السماء",emoji:"☁️",theme:"sky",desc:"Floating islands above the clouds"},
-      {name:"Mythic Star Realm",ar:"مملكة النجوم الأسطورية",emoji:"🌌",theme:"mythic",desc:"Ancient magic beneath a sky of stars"},
-      {name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits"}
+      {name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths",descAr:"غابات عتيقة وتوت متوهج ومسارات سحرية مخفية",landmark:"🌳 🍄 🏰"},
+      {name:"Crystal Ice Kingdom",ar:"مملكة الجليد البلوري",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves",descAr:"بحيرات متجمدة وكهوف كريستالية متلألئة",landmark:"🏔️ ❄️ 💎"},
+      {name:"Tropical Treasure Isles",ar:"جزر الكنوز الاستوائية",emoji:"🏝️",theme:"island",desc:"Golden beaches, palms and secret treasure",descAr:"شواطئ ذهبية ونخيل وكنوز استوائية مخفية",landmark:"🌴 🏝️ 🐚"},
+      {name:"Dragonfire Volcano",ar:"بركان نيران التنين",emoji:"🌋",theme:"volcano",desc:"Lava rivers and fiery challenges",descAr:"أنهار الحمم وتحديات اللهب والتنانين",landmark:"🌋 🔥 🐉"},
+      {name:"Crystal Palace",ar:"قصر الكريستال",emoji:"💎",theme:"crystal",desc:"A dazzling palace of magical gems",descAr:"قصر متلألئ مليء بالأحجار السحرية",landmark:"💎 🏰 ✨"},
+      {name:"Kingdom of the Sky",ar:"مملكة السماء",emoji:"☁️",theme:"sky",desc:"Floating islands above the clouds",descAr:"جزر عائمة تعانق السحب والنجوم",landmark:"☁️ 🏰 🕊️"},
+      {name:"Mythic Star Realm",ar:"مملكة النجوم الأسطورية",emoji:"🌌",theme:"mythic",desc:"Ancient magic beneath a sky of stars",descAr:"سحر قديم تحت سماء مرصعة بالنجوم",landmark:"🌌 ⭐ 🔮"},
+      {name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits",descAr:"المملكة الأخيرة حيث ينتظر التاج الملكي",landmark:"👑 🏰 ✨"},
+      {name:"Whispering Willow Woods",ar:"غابة الصفصاف الهامس",emoji:"🌳",theme:"forest",desc:"Secret willow groves and enchanted springs",descAr:"أشجار صفصاف عتيقة وينابيع مسحورة",landmark:"🌳 💧 🧚"},
+      {name:"Frostfire Citadel",ar:"قلعة الصقيع الناري",emoji:"🏰",theme:"ice",desc:"A frozen fortress lit by blue flames",descAr:"حصن جليدي تضيئه نيران زرقاء",landmark:"🏰 ❄️ 🔥"},
+      {name:"Coral Crown Coast",ar:"ساحل التاج المرجاني",emoji:"🪸",theme:"island",desc:"Coral gardens and hidden ocean passages",descAr:"حدائق مرجانية وممرات بحرية سرية",landmark:"🪸 🐠 🐚"},
+      {name:"Ashen Dragon Peaks",ar:"قمم التنين الرمادية",emoji:"🐉",theme:"volcano",desc:"Volcanic peaks guarded by ancient dragons",descAr:"قمم بركانية تحرسها التنانين القديمة",landmark:"🐉 ⛰️ 🔥"},
+      {name:"Prism Garden",ar:"حديقة المنشور البلوري",emoji:"🌈",theme:"crystal",desc:"Rainbow prisms and radiant crystal flowers",descAr:"منشورات قوس قزح وأزهار كريستالية مشعة",landmark:"🌈 🌷 💎"},
+      {name:"Cloudspire Sanctuary",ar:"ملاذ أبراج السحاب",emoji:"🕊️",theme:"sky",desc:"Peaceful sky temples and drifting clouds",descAr:"معابد سماوية هادئة وسحب عائمة",landmark:"🕊️ ☁️ 🛕"},
+      {name:"Moonlit Observatory",ar:"مرصد ضوء القمر",emoji:"🌙",theme:"mythic",desc:"Lunar towers and constellations of magic",descAr:"أبراج قمرية ومجموعات نجمية ساحرة",landmark:"🌙 🔭 ✨"},
+      {name:"Sovereign Sunlands",ar:"أراضي الشمس السيادية",emoji:"☀️",theme:"mythic",desc:"The sun throne and its golden guardians",descAr:"عرش الشمس وحراسه الذهبيون",landmark:"☀️ 🦁 👑"},
+      {name:"Emerald Riverlands",ar:"أراضي النهر الزمردي",emoji:"🏞️",theme:"forest",desc:"Emerald rivers winding through ancient groves",descAr:"أنهار زمردية تتعرج بين البساتين العتيقة",landmark:"🏞️ 🌿 💚"},
+      {name:"Aurora Glacier",ar:"نهر الشفق الجليدي",emoji:"🌌",theme:"ice",desc:"Northern lights above endless glaciers",descAr:"أضواء الشفق القطبي فوق أنهار جليدية",landmark:"🌌 🧊 💠"},
+      {name:"Pearl Lagoon Realm",ar:"مملكة بحيرة اللؤلؤ",emoji:"🐚",theme:"island",desc:"Pearl lagoons and luminous sea caves",descAr:"بحيرات اللؤلؤ وكهوف بحرية مضيئة",landmark:"🐚 🦪 🌊"},
+      {name:"Inferno Heartlands",ar:"أراضي قلب الجحيم",emoji:"🔥",theme:"volcano",desc:"The hottest lava fields and boldest trials",descAr:"أشد حقول الحمم حرارة وأقوى التحديات",landmark:"🔥 🌋 ⚔️"},
+      {name:"Sapphire Spires",ar:"أبراج الياقوت الأزرق",emoji:"🔷",theme:"crystal",desc:"Sapphire towers rising from a crystal valley",descAr:"أبراج ياقوت زرقاء ترتفع من وادٍ كريستالي",landmark:"🔷 🏰 💠"},
+      {name:"Celestial Aviary",ar:"محمية الطيور السماوية",emoji:"🦅",theme:"sky",desc:"Aerial gardens and legendary winged guardians",descAr:"حدائق معلقة وحراس مجنحون أسطوريون",landmark:"🦅 🪶 ☁️"},
+      {name:"Eclipse Starfields",ar:"حقول نجوم الكسوف",emoji:"🌠",theme:"mythic",desc:"Eclipses, meteor trails and cosmic puzzles",descAr:"كسوفات وشهب وألغاز كونية",landmark:"🌠 🌑 🔮"},
+      {name:"Everlasting Royal Summit",ar:"قمة العرش الخالد",emoji:"👑",theme:"mythic",desc:"The ultimate royal summit and final crown",descAr:"قمة العرش الأخيرة والتاج الأبدي",landmark:"👑 🏆 ✨"}
     ];
-    const worldEras=["","Legendary ","Celestial "];
-    const eraArabic=["","الأسطورية: ","السماوية: "];
-    const worlds=Array.from({length:24},(_,index)=>{
-      const seed=worldSeeds[index%8], era=Math.floor(index/8);
+    const worlds=worldSeeds.map((seed,index)=>{
       const start=index*50+1;
-      return {...seed,start,end:start+49,
-        name:worldEras[era]+seed.name,
-        ar:eraArabic[era]+seed.ar,
-        desc:era===0?seed.desc:(era===1?"Legendary quests — ":"Celestial adventures — ")+seed.desc};
+      return {...seed,start,end:start+49};
     });
     const activeWorld=(n)=>worlds.find(w=>n>=w.start&&n<=w.end)||worlds[worlds.length-1];
     let displayedWorld=-1, transitionTimer=null;
@@ -3087,15 +3097,22 @@
       const nextWorld=worlds.indexOf(activeWorld(n));
       if(displayedWorld!==-1 && nextWorld!==displayedWorld) showKingdomReveal(activeWorld(n));
       displayedWorld=nextWorld;
-      const w=activeWorld(n);
+      const w=activeWorld(n), ar=localStorage.getItem("fruit-pop-language")!=="en";
       document.body.className=document.body.className.replace(/\bworld-\w+\b/g,"").trim();
       document.body.classList.add("world-"+w.theme);
-      $("worldName").textContent=w.emoji+" "+w.name;
-      $("worldMeta").textContent="WORLD "+(worlds.indexOf(w)+1)+" · LEVELS "+w.start+"–"+w.end;
-      $("levelsWorld").textContent=w.emoji+" "+w.name+" · Levels "+w.start+"–"+w.end;
+      document.body.dataset.world=String(worlds.indexOf(w)+1);
+      $("worldName").textContent=w.emoji+" "+(ar?w.ar:w.name);
+      $("worldMeta").textContent=(ar?"العالم ":"WORLD ")+(worlds.indexOf(w)+1)+" · "+(ar?"المراحل ":"LEVELS ")+w.start+"–"+w.end;
+      $("levelsWorld").textContent=w.emoji+" "+(ar?w.ar:w.name)+" · "+(ar?"المراحل ":"Levels ")+w.start+"–"+w.end;
     }
 
-    const guestProgress=()=>({level:Number(localStorage.getItem("fruit-pop-level")||1),stars:Number(localStorage.getItem("fruit-pop-stars")||0),coins:Number(localStorage.getItem("fruit-pop-coins")||0),totalScore:Number(localStorage.getItem("fruit-pop-total-score")||0),lives:5});
+    const guestProgress=()=>({
+      level:Math.max(1,Math.min(1200,Number(localStorage.getItem("fruit-pop-unlocked-level")||localStorage.getItem("fruit-pop-level")||1))),
+      stars:Number(localStorage.getItem("fruit-pop-stars")||0),
+      coins:Number(localStorage.getItem("fruit-pop-coins")||0),
+      totalScore:Number(localStorage.getItem("fruit-pop-total-score")||0),
+      lives:5
+    });
     const show=(el)=>el.classList.add("open"), hide=(el)=>el.classList.remove("open");
     const themeModal=$("themeModal");
     const themeNames={candy:"Candy Pop",royal:"Royal Gold",ocean:"Ocean Splash",sunset:"Sunset Berry",forest:"Emerald Garden"};
@@ -3160,7 +3177,7 @@
       $("restart").textContent=t.restart;$("hint").textContent=t.hint;
       document.querySelector(".footer").textContent=t.footer;
       $("levelsBtn").textContent=t.map;$("accountBtn").textContent=player?(lang==="ar"?"👤 "+(player.display_name||player.email):"👤 "+(player.display_name||player.email)):t.guest;
-      $("mapProgress").textContent=(lang==="ar"?"المرحلة ":"LEVEL ")+guestProgress().level+" / 1,200";
+      $("mapProgress").textContent=(lang==="ar"?"المرحلة ":"LEVEL ")+guestProgress().level+" / 1,200"+(guestProgress().stars>=1200?(lang==="ar"?" · مكتملة":" · COMPLETE"):"");
       const musicOn=localStorage.getItem("fruit-pop-music")!=="off";
       const soundsOn=localStorage.getItem("fruit-pop-sounds")!=="off";
       $("menuMusicToggle").textContent=musicOn?t.musicOn:t.musicOff;
@@ -3170,7 +3187,9 @@
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
       const languageWorld=worlds.find(w=>guestProgress().level>=w.start&&guestProgress().level<=w.end)||worlds[0];
-      $("levelsWorld").textContent=lang==="ar"?languageWorld.emoji+" "+languageWorld.ar+" · المراحل "+languageWorld.start+"–"+languageWorld.end:languageWorld.name+" · Levels "+languageWorld.start+"–"+languageWorld.end;
+      $("levelsWorld").textContent=lang==="ar"?languageWorld.emoji+" "+languageWorld.ar+" · المراحل "+languageWorld.start+"–"+languageWorld.end:languageWorld.emoji+" "+languageWorld.name+" · Levels "+languageWorld.start+"–"+languageWorld.end;
+      applyWorld(guestProgress().level);
+      if($("levelsModal").classList.contains("open"))drawLevels();
       $("themeTitle").textContent=lang==="ar"?"🎨 اختر أجواء مغامرتك":"🎨 Choose your adventure theme";
       $("authEmail").placeholder=lang==="ar"?"البريد الإلكتروني":"Email address";
       $("authPassword").placeholder=lang==="ar"?"كلمة المرور (8 أحرف على الأقل)":"Password (8+ characters)";
@@ -3191,7 +3210,7 @@
     function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=false; }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
-      const current=guestProgress().level, grid=$("levelsGrid"), tabs=$("mapWorldTabs");
+      const current=guestProgress().level, allComplete=guestProgress().stars>=1200, ar=localStorage.getItem("fruit-pop-language")!=="en", grid=$("levelsGrid"), tabs=$("mapWorldTabs");
       const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
       if(!mapWorldChosen || mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
       applyWorld(current);
@@ -3201,18 +3220,18 @@
         const tab=document.createElement("button");
         tab.type="button";
         tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
-        tab.textContent=w.emoji+" "+w.ar+(unlocked?"":" 🔒");
+        tab.textContent=w.emoji+" "+(ar?w.ar:w.name)+(unlocked?"":" 🔒");
         tab.disabled=!unlocked;
         tab.addEventListener("click",()=>{mapWorldIndex=index;mapWorldChosen=true;drawLevels();});
         tabs.appendChild(tab);
       });
       const w=worlds[mapWorldIndex];
-      $("mapProgress").textContent="LEVEL "+current+" / 1,200";
-      $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
-      $("mapWorldName").textContent=w.ar;
-      $("mapWorldDesc").textContent=w.desc;
+      $("mapProgress").textContent=(ar?"المرحلة ":"LEVEL ")+current+" / 1,200"+(allComplete?(ar?" · مكتملة":" · COMPLETE"):"");
+      $("levelsWorld").textContent=w.emoji+" "+(ar?w.ar:w.name)+" · "+(ar?"المراحل ":"Levels ")+w.start+"–"+w.end;
+      $("mapWorldName").textContent=ar?w.ar:w.name;
+      $("mapWorldDesc").textContent=ar?w.descAr:w.desc;
       $("mapWorldEmoji").textContent=w.emoji;
-      $("mapLandmark").textContent=mapWorldIndex===0?"🌳 🍄 🏰":mapWorldIndex===1?"🏔️ ❄️ 💎":mapWorldIndex===2?"🌴 🏝️ 🐚":mapWorldIndex===3?"🌋 🔥 🐉":mapWorldIndex===4?"💎 🏰 ✨":mapWorldIndex===5?"☁️ 🏰 🕊️":mapWorldIndex===6?"🌌 ⭐ 🔮":"👑 🏰 ✨";
+      $("mapLandmark").textContent=w.landmark;
       const landscape=$("mapLandscape");
       landscape.className="map-landscape theme-"+w.theme;
       grid.innerHTML="";
@@ -3221,11 +3240,11 @@
         const wrap=document.createElement("div");
         wrap.className="map-node-wrap";
         const b=document.createElement("button");
-        const state=i<current?"completed":i===current?"current":"locked";
+        const state=allComplete&&i<=current?"completed":i<current?"completed":i===current?"current":"locked";
         b.type="button";
         b.className="map-node "+state;
-        b.textContent=i<current?"★":i===current?"▶":"🔒";
-        b.setAttribute("aria-label","Level "+i+(i<current?", completed":i===current?", current level":", locked"));
+        b.textContent=(allComplete||i<current)?"★":i===current?"▶":"🔒";
+        b.setAttribute("aria-label",(ar?"المرحلة ":"Level ")+i+((allComplete||i<current)?(ar?"، مكتملة":", completed"):i===current?(ar?"، المرحلة الحالية":", current level"):(ar?"، مقفلة":", locked")));
         b.disabled=i>current;
         const label=document.createElement("span");
         label.className="map-node-label";
@@ -3234,8 +3253,10 @@
         b.addEventListener("click",()=>{
           if(i>current)return;
           hide(levelsModal);
-          if(i!==current){localStorage.setItem("fruit-pop-level",String(i));window.__fruitPopSaveGuest?.();location.reload();}
-          else $("message").textContent="✨ المرحلة "+i+" جاهزة! انطلق للمغامرة.";
+          if(window.__fruitPopSelectLevel && window.__fruitPopSelectLevel(i)){
+            $("message").textContent=ar?"✨ المرحلة "+i+" جاهزة! انطلق للمغامرة.":"✨ Level "+i+" is ready. Let the adventure begin!";
+            applyWorld(i);
+          }
         });
         nodes.push(wrap);
       }
@@ -3323,7 +3344,8 @@
         catch(e){ if(e.message.includes("incorrect")) { const d=await request("/api/register",{method:"POST",body:JSON.stringify({email,password,guestProgress:guestProgress()})}); player=d.player; } else throw e; }
         accountLabel(); hide(authModal);
         const p=await request("/api/progress"); const saved=p.progress||{};
-        localStorage.setItem("fruit-pop-level",String(saved.level||1));
+        localStorage.setItem("fruit-pop-level",String(Math.min(1200,Math.max(1,saved.level||1))));
+        localStorage.setItem("fruit-pop-unlocked-level",String(Math.min(1200,Math.max(1,saved.level||1))));
         localStorage.setItem("fruit-pop-stars",String(saved.stars||0));
         localStorage.setItem("fruit-pop-coins",String(saved.coins||0));
         localStorage.setItem("fruit-pop-total-score",String(saved.totalScore||0));
