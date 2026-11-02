@@ -2189,7 +2189,8 @@
       let moves = 25;
       // Test build: open with ?test=1 to start at level 3 and preview special-fruit mechanics.
       const testMode = new URLSearchParams(window.location.search).get("test") === "1";
-      let level = testMode ? 3 : Number(localStorage.getItem("fruit-pop-level") || 1);
+      const storedLevel = Number.parseInt(localStorage.getItem("fruit-pop-level") || "1", 10);
+      let level = testMode ? 3 : (Number.isFinite(storedLevel) ? Math.max(1, Math.min(MAX_LEVEL, storedLevel)) : 1);
       moves = movesForLevel();
       let busy = false;
 
