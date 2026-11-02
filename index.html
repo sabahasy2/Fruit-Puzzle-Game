@@ -1215,12 +1215,12 @@
     #claimDailyRewardBtn:disabled{opacity:.62;filter:grayscale(.25)}
     @keyframes chestBounce{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
     .tile.special-bomb{background:radial-gradient(circle,#fff2a9,#ff8e58)!important;box-shadow:0 0 0 3px #fff,0 0 22px #ff733f!important}
-    .board.bomb-burst{animation:megaBombShake .72s ease-out}
-    .board.bomb-burst:before{content:"";position:absolute;z-index:9;inset:-8px;border-radius:inherit;pointer-events:none;background:radial-gradient(circle,#fff 0%,#ffe17b 13%,#ff8b45aa 34%,#e83e8c55 58%,transparent 76%);animation:megaBombFlash .8s ease-out}
-    .board.bomb-burst:after{content:"💥";position:absolute;z-index:10;inset:0;display:grid;place-items:center;pointer-events:none;font-size:clamp(68px,22vw,130px);filter:drop-shadow(0 5px 12px #b33b4c);animation:megaBombEmoji .75s cubic-bezier(.15,1.4,.35,1) both}
-    @keyframes megaBombShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-5px) rotate(-.6deg)}30%{transform:translateX(5px) rotate(.6deg)}48%{transform:translateX(-3px)}68%{transform:translateX(2px)}}
-    @keyframes megaBombFlash{0%{opacity:0;transform:scale(.1)}25%{opacity:1;transform:scale(.85)}100%{opacity:0;transform:scale(1.5)}}
-    @keyframes megaBombEmoji{0%{opacity:0;transform:scale(.15) rotate(-25deg)}28%{opacity:1;transform:scale(1.18) rotate(8deg)}100%{opacity:0;transform:scale(1.65) rotate(18deg)}}
+    .board{position:relative;isolation:isolate}
+    .board.bomb-burst{animation:megaBombShake 1s cubic-bezier(.2,.8,.2,1)}
+    .board.bomb-burst:before{content:"";position:absolute;z-index:19;inset:-8px;border-radius:inherit;pointer-events:none;background:radial-gradient(circle,#fff 0%,#fff7b8 10%,#ff9a43bb 32%,#ed3e8b66 58%,transparent 78%);animation:megaBombFlash .95s ease-out both}
+    .bomb-fx-canvas{position:absolute;z-index:20;inset:0;width:100%;height:100%;pointer-events:none;border-radius:inherit}
+    @keyframes megaBombShake{0%,100%{transform:translate(0,0) rotate(0)}12%{transform:translate(-8px,3px) rotate(-1deg)}24%{transform:translate(9px,-3px) rotate(1deg)}38%{transform:translate(-7px,2px) rotate(-.7deg)}52%{transform:translate(6px,-2px) rotate(.6deg)}68%{transform:translate(-3px,1px)}82%{transform:translate(2px,-1px)}}
+    @keyframes megaBombFlash{0%{opacity:0;transform:scale(.08)}18%{opacity:1;transform:scale(.8)}100%{opacity:0;transform:scale(1.7)}}
     .level-celebration.fireworks-active:before{content:"✦     ✧       ✦   ✧      ✦";position:absolute;z-index:2;inset:4% 0 auto;text-align:center;color:#fff4a6;font-size:clamp(25px,8vw,42px);letter-spacing:9px;text-shadow:0 0 8px #fff,0 0 22px #ff75c8;pointer-events:none;animation:victoryFireworks 1.8s ease-out both}
     .level-celebration.fireworks-active:after{content:"🎆   ✨   🎇";position:absolute;z-index:2;inset:auto 0 8%;text-align:center;font-size:clamp(28px,9vw,46px);pointer-events:none;animation:victoryFireworks 1.8s .15s ease-out both}
     @keyframes victoryFireworks{0%{opacity:0;transform:scale(.35) translateY(18px)}24%{opacity:1;transform:scale(1.12) translateY(0)}100%{opacity:0;transform:scale(1.55) translateY(-16px)}}
@@ -2027,6 +2027,53 @@
         return false;
       }
 
+      function playMegaBombExplosion(row, col) {
+        const boardRect = boardElement.getBoundingClientRect();
+        const tile = boardElement.children[row * SIZE + col];
+        if (!tile || !boardRect.width || !boardRect.height) return;
+        const tileRect = tile.getBoundingClientRect();
+        const ox = tileRect.left - boardRect.left + tileRect.width / 2;
+        const oy = tileRect.top - boardRect.top + tileRect.height / 2;
+        const canvas = document.createElement("canvas"); canvas.className = "bomb-fx-canvas";
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(boardRect.width * dpr); canvas.height = Math.round(boardRect.height * dpr);
+        boardElement.appendChild(canvas);
+        const ctx = canvas.getContext("2d"); ctx.scale(dpr, dpr);
+        const w = boardRect.width, h = boardRect.height;
+        const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const duration = reduced ? 480 : 1350;
+        const colors = ["#fff7b0","#ffd34e","#ff8138","#ff4f68","#ffffff","#ffb2e1"];
+        const particles = Array.from({length: reduced ? 22 : 110}, (_,i) => ({
+          angle: Math.random()*Math.PI*2, speed: 65+Math.random()*(reduced?95:260),
+          size: 2+Math.random()*5, delay: Math.random()*110, color: colors[i%colors.length]
+        }));
+        const started = performance.now();
+        function draw(now) {
+          const elapsed = now-started, t = Math.min(1,elapsed/duration), ease = 1-Math.pow(1-t,3);
+          ctx.clearRect(0,0,w,h);
+          const radius = 8+ease*Math.min(w,h)*.62;
+          const glow = ctx.createRadialGradient(ox,oy,1,ox,oy,radius);
+          glow.addColorStop(0,"rgba(255,255,245,"+(1-t*.9)+")");
+          glow.addColorStop(.2,"rgba(255,232,125,"+(1-t)+")");
+          glow.addColorStop(.52,"rgba(255,112,48,"+((1-t)*.55)+")");
+          glow.addColorStop(1,"rgba(255,55,80,0)");
+          ctx.fillStyle=glow;ctx.beginPath();ctx.arc(ox,oy,radius,0,Math.PI*2);ctx.fill();
+          const maxR=Math.max(w,h)*.82;
+          for(let k=0;k<3;k++){const q=Math.max(0,Math.min(1,(t-k*.12)/.82));if(!q)continue;
+            ctx.beginPath();ctx.arc(ox,oy,q*maxR*(.78+k*.1),0,Math.PI*2);
+            ctx.strokeStyle="rgba("+(k===0?"255,246,190":k===1?"255,139,55":"255,83,130")+","+((1-q)*.95)+")";
+            ctx.lineWidth=(1-q)*11+1;ctx.shadowBlur=18;ctx.shadowColor="#ff9a42";ctx.stroke();ctx.shadowBlur=0;}
+          particles.forEach(p=>{const q=Math.max(0,(elapsed-p.delay)/duration);if(q<=0||q>=1)return;
+            const d=p.speed*q,x=ox+Math.cos(p.angle)*d,y=oy+Math.sin(p.angle)*d+q*q*42;
+            ctx.globalAlpha=(1-q)*Math.min(1,q*7);ctx.fillStyle=p.color;ctx.shadowBlur=13;ctx.shadowColor=p.color;
+            ctx.beginPath();ctx.arc(x,y,Math.max(.6,p.size*(1-q*.72)),0,Math.PI*2);ctx.fill();
+            ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1,p.size*.55);ctx.beginPath();
+            ctx.moveTo(x,y);ctx.lineTo(x-Math.cos(p.angle)*p.size*3,y-Math.sin(p.angle)*p.size*3);ctx.stroke();});
+          ctx.globalAlpha=1;ctx.shadowBlur=0;
+          if(t<1)requestAnimationFrame(draw);else canvas.remove();
+        }
+        requestAnimationFrame(draw);
+      }
       async function activateSpecial(r, c, other = null) {
         const kind = board[r][c];
         if (!SPECIAL_FRUITS.has(kind)) return false;
@@ -2092,12 +2139,14 @@
         boardElement.classList.remove("special-burst");
         boardElement.classList.add("special-burst");
         render({ popping: cells });
-        const burstClass = combo ? "supercombo-burst" : kind === "⚡" ? "thunder-burst" : kind === "💣" ? "bomb-burst" : kind === "🔥" || kind === "🚀" ? "fire-burst" : "rainbow-burst";
-        boardElement.classList.remove("thunder-burst","fire-burst","rainbow-burst","supercombo-burst");
+        const isMegaBomb = kind === "💣" || otherKind === "💣";
+        const burstClass = isMegaBomb ? "bomb-burst" : combo ? "supercombo-burst" : kind === "⚡" ? "thunder-burst" : kind === "🔥" || kind === "🚀" ? "fire-burst" : "rainbow-burst";
+        boardElement.classList.remove("thunder-burst","fire-burst","rainbow-burst","supercombo-burst","bomb-burst");
         void boardElement.offsetWidth;
         boardElement.classList.add(burstClass);
-        playSound(combo ? "supercombo" : kind === "⚡" ? "thunder" : kind === "🔥" ? "fireblast" : "rainbow");
-        window.setTimeout(() => boardElement.classList.remove(burstClass), 1150);
+        if (isMegaBomb) playMegaBombExplosion(kind === "💣" ? r : other.r, kind === "💣" ? c : other.c);
+        playSound(isMegaBomb ? "supercombo" : combo ? "supercombo" : kind === "⚡" ? "thunder" : kind === "🔥" || kind === "🚀" ? "fireblast" : "rainbow");
+        window.setTimeout(() => boardElement.classList.remove(burstClass), 1450);
         messageElement.textContent = combo
           ? "💥 SUPER COMBO! A spectacular fruit explosion!"
           : kind === "🔥" || kind === "🚀" ? "🚀 Rocket blast! A whole row cleared!"
