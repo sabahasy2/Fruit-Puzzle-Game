@@ -2238,6 +2238,7 @@
         const current = objective.type === "score" ? score : objectiveProgress;
         objectiveElement.textContent = objective.label + " · " + Math.min(current, objective.target) + "/" + objective.target;
       }
+      window.__fruitPopRefreshLanguage = () => updateObjectiveUI();
 
       function objectiveComplete() {
         const objective = objectiveForLevel();
@@ -2577,12 +2578,13 @@
         if (isMegaBomb) playMegaBombExplosion(kind === "💣" ? r : other.r, kind === "💣" ? c : other.c);
         playSound(isMegaBomb ? "supercombo" : combo ? "supercombo" : kind === "⚡" ? "thunder" : kind === "🔥" || kind === "🚀" ? "fireblast" : "rainbow");
         window.setTimeout(() => boardElement.classList.remove(burstClass), 380);
+        const ar = localStorage.getItem("fruit-pop-language") !== "en";
         messageElement.textContent = combo
-          ? "💥 SUPER COMBO! A spectacular fruit explosion!"
-          : kind === "🔥" || kind === "🚀" ? "🚀 Rocket blast! A whole row cleared!"
-          : kind === "⚡" ? "⚡ Fruit lightning! A whole column cleared!"
-          : kind === "💣" ? "💣 MEGA BOMB! A huge area exploded!"
-          : "🌟 Rainbow burst! A magical fruit explosion!";
+          ? (ar ? "💥 مجموعة خارقة! انفجار فواكه مذهل!" : "💥 SUPER COMBO! A spectacular fruit explosion!")
+          : kind === "🔥" || kind === "🚀" ? (ar ? "🚀 صاروخ الفاكهة! تم مسح صف كامل!" : "🚀 Rocket blast! A whole row cleared!")
+          : kind === "⚡" ? (ar ? "⚡ برق الفاكهة! تم مسح عمود كامل!" : "⚡ Fruit lightning! A whole column cleared!")
+          : kind === "💣" ? (ar ? "💣 قنبلة هائلة! انفجرت مساحة كبيرة!" : "💣 MEGA BOMB! A huge area exploded!")
+          : (ar ? "🌟 انفجار قوس قزح السحري!" : "🌟 Rainbow burst! A magical fruit explosion!");
         await new Promise(resolve => setTimeout(resolve, 65));
 
         cells.forEach(([y, x]) => { board[y][x] = null; });
@@ -2612,7 +2614,7 @@
           return;
         }
         if ((crateGrid[first.r] && crateGrid[first.r][first.c]) || (crateGrid[current.r] && crateGrid[current.r][current.c])) {
-          messageElement.textContent = "📦 Break the wooden crate before moving this fruit.";
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "📦 حطّم الصندوق الخشبي قبل تحريك هذه الفاكهة." : "📦 Break the wooden crate before moving this fruit.";
           playSound("nope");
           render();
           return;
@@ -2639,7 +2641,7 @@
 
         if (findMatches().length === 0) {
           swap(first, current);
-          messageElement.textContent = "No match! Try another move.";
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "لا يوجد تطابق! جرّب حركة أخرى." : "No match! Try another move.";
           playSound("nope");
           render();
           return;
@@ -2664,9 +2666,10 @@
           const earned = matches.length * 10 * multiplier;
           bonusPoints += earned;
           addPoints(earned);
+          const ar = localStorage.getItem("fruit-pop-language") !== "en";
           messageElement.textContent = chain > 1
-            ? "🌈 SWEET COMBO x" + multiplier + "! +" + earned + " points"
-            : "✨ Match! +" + earned + " points";
+            ? (ar ? "🌈 مجموعة رائعة ×" + multiplier + "! +" + earned + " نقطة" : "🌈 SWEET COMBO x" + multiplier + "! +" + earned + " points")
+            : (ar ? "✨ تطابق! +" + earned + " نقطة" : "✨ Match! +" + earned + " points");
 
           const objective = objectiveForLevel();
           if (objective.type === "collect") {
@@ -2703,10 +2706,11 @@
           if (special) {
             playSound("special");
             board[special.r][special.c] = special.kind;
+            const ar = localStorage.getItem("fruit-pop-language") !== "en";
             messageElement.textContent = special.kind === "🔥"
-              ? "🔥 Row-clearing fruit created!"
-              : special.kind === "⚡" ? "⚡ Column-clearing fruit created!"
-              : "🌟 Royal star fruit created!";
+              ? (ar ? "🔥 تم إنشاء فاكهة تمسح صفاً كاملاً!" : "🔥 Row-clearing fruit created!")
+              : special.kind === "⚡" ? (ar ? "⚡ تم إنشاء فاكهة تمسح عموداً كاملاً!" : "⚡ Column-clearing fruit created!")
+              : (ar ? "🌟 تم إنشاء فاكهة النجمة الملكية!" : "🌟 Royal star fruit created!");
           }
 
           render();
@@ -2829,12 +2833,12 @@
 
         if (moves <= 0) {
           playSound("lose");
-          messageElement.textContent = "Game over! Press Restart to play again.";
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "انتهت المحاولات! اضغط إعادة اللعب للمحاولة مجدداً." : "Game over! Press Restart to play again.";
           saveBest();
           return;
         }
 
-        messageElement.textContent = feedback || "Great! Keep matching fruits!";
+        messageElement.textContent = feedback || (localStorage.getItem("fruit-pop-language") !== "en" ? "رائع! واصل مطابقة الفواكه!" : "Great! Keep matching fruits!");
       }
 
       function saveBest() {
@@ -2879,7 +2883,7 @@
         }
 
         if (attempts > 0) {
-          messageElement.textContent = "✨ New fruit combinations! Keep playing!";
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "✨ تشكيلات فواكه جديدة! واصل اللعب!" : "✨ New fruit combinations! Keep playing!";
           render();
         }
       }
@@ -2893,14 +2897,15 @@
           selected = { r: hint.r, c: hint.c };
           hintPartner = { r: hint.nr, c: hint.nc };
           render();
+          const ar = localStorage.getItem("fruit-pop-language") !== "en";
           messageElement.textContent = automatic
-            ? "💡 Need a hand? These two glowing fruits can make a match!"
-            : "💡 Drag one glowing fruit onto the other to make a match!";
+            ? (ar ? "💡 هل تحتاج إلى مساعدة؟ هاتان الفاكهتان تصنعان تطابقاً!" : "💡 Need a hand? These two glowing fruits can make a match!")
+            : (ar ? "💡 اسحب إحدى الفاكهتين المتوهجتين إلى الأخرى لصنع تطابق!" : "💡 Drag one glowing fruit onto the other to make a match!");
           return;
         }
 
         ensurePlayableBoard();
-        messageElement.textContent = "✨ The board has been refreshed. Find a match!";
+        messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "✨ تم تحديث اللوحة. ابحث عن تطابق!" : "✨ The board has been refreshed. Find a match!";
       }
 
       let idleHintTimer = null;
@@ -3187,6 +3192,7 @@
       $("soundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
+      window.__fruitPopRefreshLanguage?.();
       const languageWorld=worlds.find(w=>guestProgress().level>=w.start&&guestProgress().level<=w.end)||worlds[0];
       $("levelsWorld").textContent=lang==="ar"?languageWorld.emoji+" "+languageWorld.ar+" · المراحل "+languageWorld.start+"–"+languageWorld.end:languageWorld.emoji+" "+languageWorld.name+" · Levels "+languageWorld.start+"–"+languageWorld.end;
       applyWorld(guestProgress().level);
