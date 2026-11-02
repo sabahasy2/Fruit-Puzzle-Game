@@ -3234,6 +3234,7 @@
       $("mapLandmark").textContent=w.landmark;
       const landscape=$("mapLandscape");
       landscape.className="map-landscape theme-"+w.theme;
+      landscape.dataset.world=String(mapWorldIndex+1);
       grid.innerHTML="";
       const nodes=[];
       for(let i=w.start;i<=w.end;i++){
@@ -3265,7 +3266,9 @@
       scene.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
       scene.setAttribute("preserveAspectRatio","none");
       const palettes={forest:["#b8edaa","#78c879","#438f62","#28664d","#8bd9e8"],ice:["#eafaff","#a8dcf3","#6eafd6","#477eae","#fff"],island:["#ffe6a0","#f6c66d","#63cbbd","#328da0","#68d8ee"],volcano:["#ffd2a0","#ed916f","#bd5559","#73334e","#ffdf75"],crystal:["#f5e4ff","#c7a7ed","#967bd4","#635aa8","#a8f4ff"],sky:["#e6faff","#b6e2ff","#86b9ee","#668ed0","#fff"],mythic:["#d9d1ff","#a89ae8","#786ac2","#494b91","#f8e6a0"]};
-      const p=palettes[w.theme]||palettes.mythic;
+      // Give every realm a distinct color identity instead of reusing eight palettes.
+      const hue=(mapWorldIndex*47+108)%360;
+      const p=["hsl("+hue+" 92% 95%)","hsl("+hue+" 70% 78%)","hsl("+hue+" 56% 59%)","hsl("+hue+" 48% 39%)","hsl("+((hue+42)%360)+" 88% 84%)"];
       const H=nodes.length*76;
       let terrain="";
       if(w.theme==="forest") terrain='<path d="M0 250 Q160 115 330 250 T680 210 T1000 260 V'+H+' H0Z" fill="#9bc98a"/><path d="M0 480 Q170 330 350 455 T700 420 T1000 470 V'+H+' H0Z" fill="#6eaa70"/><path d="M0 760 Q160 610 350 735 T700 700 T1000 760 V'+H+' H0Z" fill="#4b8b5d"/><path d="M0 1180 Q190 1010 390 1150 T760 1110 T1000 1160 V'+H+' H0Z" fill="#326d4d"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#247d83" stroke-width="78" opacity=".9"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#8ed8c7" stroke-width="49" opacity=".9"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#d2f0d7" stroke-width="4" opacity=".9"/><path d="M0 1550 Q180 1390 390 1510 T760 1460 T1000 1510 V'+H+' H0Z" fill="#285b42"/><path d="M0 1980 Q180 1840 370 1970 T730 1930 T1000 1980 V'+H+' H0Z" fill="#39794e"/><path d="M0 2700 Q190 2540 390 2690 T760 2650 T1000 2700 V'+H+' H0Z" fill="#285b42"/>';
