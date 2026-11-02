@@ -57,7 +57,8 @@ test("install metadata and offline cache include the app icon", () => {
 });
 
 test("Arabic and English objective and world descriptions are available", () => {
-  assert.match(html, /اجمع .* نقطة/);
+  assert.match(html, /"اجمع "/);
+  assert.match(html, /" نقطة"/);
   assert.match(html, /descAr:/);
   assert.match(html, /mapWorldDesc/);
 });
