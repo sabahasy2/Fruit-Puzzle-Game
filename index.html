@@ -1482,6 +1482,34 @@
     .main-menu-content:before{background:radial-gradient(ellipse at 50% 0%,#ffb5d844,transparent 55%),linear-gradient(180deg,transparent 55%,#19001299)!important}
     @media(prefers-reduced-motion:reduce){.tile{transition:none!important}}
 
+  
+    /* v64 — deep raspberry night + premium glossy candy-crush-inspired fruit tray */
+    :root{--berry-night:#19000f;--berry-deep:#260018;--berry-panel:#430629;--berry-edge:#ff8fca;--berry-light:#ffd5ec;--candy-cream:#fff2fb}
+    html,body{background:#19000f!important;color:#fff2fa!important}
+    body,body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{
+      background:radial-gradient(ellipse at 50% -10%,#a51b65 0%,#5a0b3d 25%,transparent 59%),radial-gradient(ellipse at 0% 90%,#6e104b55,transparent 40%),radial-gradient(ellipse at 100% 65%,#4b073b66,transparent 42%),linear-gradient(160deg,#260018 0%,#16000f 56%,#310020 100%)!important;background-attachment:fixed!important
+    }
+    .game{border:2px solid #ff9bce!important;border-radius:30px!important;background:linear-gradient(155deg,#4c0b36f5 0%,#320522f8 52%,#210016fa 100%)!important;box-shadow:0 25px 65px #050006dd,0 0 35px #ff4c9a2b,inset 0 2px 0 #fff6fb44,inset 0 -8px 20px #10000b99!important}
+    h1{color:#fff0f8!important;text-shadow:0 2px 0 #86104f,0 0 20px #ff70b8bb!important}
+    .subtitle,.footer{color:#f6c0dd!important}
+    .game .board{position:relative!important;isolation:isolate!important;display:grid!important;gap:5px!important;padding:10px!important;border:3px solid #ffc0df!important;border-radius:25px!important;background:radial-gradient(ellipse at 50% 0%,#ffb5df55,transparent 52%),linear-gradient(145deg,#8c155d 0%,#5b0a43 48%,#310321 100%)!important;box-shadow:0 8px 0 #8e164f,0 14px 26px #090008bb,0 0 0 4px #ffb5df22,0 0 28px #ff58ad55,inset 0 3px 7px #fff8,inset 0 -9px 18px #180012cc!important}
+    .game .tile{position:relative!important;isolation:isolate!important;overflow:hidden!important;display:grid!important;place-items:center!important;min-width:0!important;aspect-ratio:1!important;border:1px solid #ffd1e8!important;border-radius:12px!important;background:radial-gradient(ellipse at 32% 15%,#fff9 0%,#fff3 18%,transparent 44%),linear-gradient(155deg,#ffb9dc 0%,#f46ab1 28%,#ce398c 62%,#8b155e 100%)!important;box-shadow:inset 0 2px 2px #fff9,inset 0 -5px 7px #65083f99,0 3px 0 #65083f,0 5px 7px #16000f99!important;transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important}
+    .game .tile::before{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:8%!important;right:8%!important;top:5%!important;height:34%!important;border-radius:50% 50% 42% 42%!important;background:linear-gradient(180deg,#fff9 0%,#fff5 28%,#fff0 100%)!important;opacity:.88!important;filter:blur(.35px)!important}
+    .game .tile::after{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:19%!important;right:19%!important;bottom:5%!important;height:8%!important;border-radius:50%!important;background:#fff8!important;filter:blur(3px)!important}
+    .game .tile .fruit-face{position:relative!important;z-index:4!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;font-size:clamp(25px,8.2vw,38px)!important;line-height:1!important;filter:drop-shadow(0 2px 0 #7b164e) drop-shadow(0 4px 4px #240016cc) drop-shadow(0 0 5px #fff9)!important;transform:translateY(-1px) scale(1.035)!important;-webkit-text-stroke:.3px #fff7!important}
+    .game .tile:active{transform:scale(.91)!important;filter:brightness(1.2)!important}
+    .game .tile.selected{border:2px solid #fff8b9!important;background:linear-gradient(145deg,#fff4b8 0%,#ff9dca 42%,#ce287d 100%)!important;box-shadow:0 0 0 3px #fff6,0 0 23px #fff0a9,inset 0 2px 5px #fff!important;transform:scale(1.07)!important;z-index:6!important}
+    .game .tile.hint-partner{border:2px solid #baffef!important;background:linear-gradient(145deg,#c7fff2,#50e6cc 48%,#168c91)!important;box-shadow:0 0 0 3px #fff7,0 0 20px #68ffe6,inset 0 2px 5px #fff!important}
+    .game .tile.special-fruit{border:2px solid #fff1a9!important;background:radial-gradient(circle at 35% 20%,#fff9d5,#ffc64f 38%,#f36b75 72%,#9c236f)!important;box-shadow:0 0 0 2px #fff6,0 0 23px #ffd45dcc,inset 0 2px 7px #fff!important}
+    .game .tile.ice-covered{border:2px solid #d8faff!important;background:linear-gradient(145deg,#f4ffffdd,#8feaffbb 52%,#4a9bcbbb)!important;box-shadow:inset 0 0 14px #fff,0 0 10px #79ddffbb!important}
+    .game .tile.crate-covered{border:2px solid #ffe0a9!important;background:linear-gradient(145deg,#e9b276,#a85b43 60%,#612744)!important;box-shadow:inset 0 2px 6px #fff9,inset 0 -5px 8px #321321bb!important}
+    .game .tile.empty{opacity:.2!important;filter:saturate(.55)!important}
+    .game .goal{border:2px solid #fff2c8!important;border-radius:16px!important;background:linear-gradient(100deg,#fff1a5,#ffc46b 55%,#ff8bbd)!important;color:#6c254d!important;box-shadow:0 4px 0 #bd6b55,0 8px 16px #16000f66!important}
+    .game .stats .stat{border:1px solid #ffb1d4!important;box-shadow:inset 0 2px 0 #fff8,0 5px 13px #10000b77!important}
+    .game .message{color:#ffe5f2!important;text-shadow:0 1px 9px #ff4e9a88!important}
+    @media(max-width:380px){.game .board{gap:4px!important;padding:7px!important}.game .tile{border-radius:9px!important}}
+    @media(prefers-reduced-motion:reduce){.game .tile{transition:none!important}}
+
   </style>
 </head>
 
