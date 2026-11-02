@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "fruit-pop-v15";
+const CACHE_NAME = "fruit-pop-v16";
 
 const APP_FILES = [
   "./",
