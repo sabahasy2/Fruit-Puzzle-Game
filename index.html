@@ -1901,6 +1901,158 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       .game .tile.match-pop .fruit-face,.game .tile.fruit-fall .fruit-face{animation-duration:.01ms!important}
     }
 
+  
+    /* v82 — taller jewel cells and a dimensional 3D kingdom map */
+    .game .board{
+      padding:clamp(8px,2vw,12px)!important;
+      gap:clamp(4px,1.15vw,7px)!important;
+      perspective:1000px!important;
+      transform:translateZ(0)!important;
+    }
+    .game .tile{
+      aspect-ratio:.92!important;
+      border-radius:14px!important;
+      transform-style:preserve-3d!important;
+      box-shadow:inset 0 3px 4px #fff, inset 0 -7px 10px #35103f99,
+        0 4px 0 #351347,0 7px 10px #09031399,0 0 9px #ffb9e633!important;
+    }
+    .game .tile .fruit-face{
+      inset:1%!important;width:98%!important;height:98%!important;
+      transform:translateY(-2px) scale(1.045)!important;
+      filter:drop-shadow(0 4px 2px #321044aa) drop-shadow(0 0 7px #fff9)!important;
+    }
+    .game .tile.selected{transform:translateY(-2px) scale(1.09)!important}
+    .game .tile:before{height:20%;width:48%;opacity:.92}
+    .game .tile:after{width:23%;height:9%;filter:blur(4px)}
+    @media(max-width:390px){
+      .game .board{gap:3px!important;padding:7px!important}
+      .game .tile{aspect-ratio:.90!important;border-radius:11px!important}
+      .game .tile .fruit-face{inset:0!important;width:100%!important;height:100%!important;transform:translateY(-1px) scale(1.04)!important}
+    }
+    @media(max-height:720px){
+      .game .board{gap:3px!important;padding:7px!important}
+      .game .tile{aspect-ratio:.96!important}
+    }
+
+    /* 3D diorama treatment for all 24 original realms */
+    #levelsModal .map-landscape{
+      perspective:1200px!important;
+      perspective-origin:50% 12%!important;
+      transform-style:preserve-3d!important;
+      background-image:
+        radial-gradient(ellipse at 50% 0%,#fff9 0%,transparent 36%),
+        linear-gradient(145deg,#ffffff1c,transparent 38%,#160b3b55)!important;
+      box-shadow:inset 0 0 0 3px #fff5,inset 0 0 42px #fff6,
+        0 10px 0 #55317d,0 17px 34px #16082f99!important;
+    }
+    #levelsModal .map-landscape:before{
+      z-index:0!important;opacity:.9!important;
+      background:
+        radial-gradient(ellipse at 14% 8%,#fff9 0 1%,transparent 17%),
+        radial-gradient(ellipse at 87% 20%,#fff8 0 1.2%,transparent 16%),
+        radial-gradient(ellipse at 50% 75%,#fff3 0 5%,transparent 30%),
+        linear-gradient(160deg,#ffffff22,transparent 35%,#180c3f55)!important;
+      transform:translateZ(-18px) scale(1.035)!important;
+    }
+    #levelsModal .map-scene{
+      transform:perspective(1100px) rotateX(3.2deg) scale(1.025)!important;
+      transform-origin:50% 0!important;
+      filter:saturate(1.18) contrast(1.08) drop-shadow(0 15px 12px #160b3577)!important;
+      opacity:1!important;
+    }
+    #levelsModal .map-route-svg{
+      filter:drop-shadow(0 8px 4px #21103f99) drop-shadow(0 0 7px #fff8)!important;
+      transform:translateZ(16px)!important;
+    }
+    #levelsModal .map-route-shadow{
+      stroke-width:58!important;stroke:#321b4f!important;opacity:.76!important;
+    }
+    #levelsModal .map-route-line{
+      stroke-width:43!important;stroke:#ffe7a8!important;opacity:1!important;
+    }
+    #levelsModal .map-node-wrap{
+      filter:drop-shadow(0 8px 5px #1b0b3999) drop-shadow(0 0 8px #fff6)!important;
+      transform-style:preserve-3d!important;
+    }
+    #levelsModal .map-node{
+      position:relative!important;
+      border:3px solid #fff!important;border-radius:38% 38% 44% 44%!important;
+      background:
+        radial-gradient(ellipse at 28% 12%,#fff 0%,#fff9 10%,transparent 34%),
+        linear-gradient(145deg,#fff5bf 0%,#ffb65e 42%,#ed609e 76%,#a73583 100%)!important;
+      box-shadow:inset 0 4px 7px #fff,inset 0 -8px 10px #9c286b88,
+        0 5px 0 #87376f,0 9px 0 #4c2469,0 13px 17px #1b0b3d99!important;
+      text-shadow:0 2px 2px #8d386a,0 0 7px #fff9!important;
+      transform:translateZ(26px)!important;
+      transition:transform .2s ease,filter .2s ease!important;
+    }
+    #levelsModal .map-node:before{
+      content:"";position:absolute;left:15%;top:8%;width:45%;height:18%;
+      border-radius:50%;background:linear-gradient(#fff,#fff2);
+      transform:rotate(-24deg);pointer-events:none;
+    }
+    #levelsModal .map-node.completed{
+      background:radial-gradient(ellipse at 28% 12%,#fff 0%,#fff9 10%,transparent 34%),
+        linear-gradient(145deg,#eaffb4,#8be77b 48%,#24a98c)!important;
+      box-shadow:inset 0 4px 7px #fff,inset 0 -8px 10px #147a6688,
+        0 5px 0 #287d70,0 9px 0 #175b62,0 13px 17px #1b0b3d99!important;
+    }
+    #levelsModal .map-node.current{
+      border-radius:50%!important;
+      background:radial-gradient(ellipse at 28% 12%,#fff 0%,#fff9 12%,transparent 35%),
+        linear-gradient(145deg,#fff9a9,#ffc34f 48%,#ff6eac)!important;
+      box-shadow:inset 0 4px 8px #fff,inset 0 -8px 10px #c34c8388,
+        0 0 0 5px #fff8,0 6px 0 #a44875,0 10px 0 #60275f,
+        0 0 28px #fff,0 16px 24px #1b0b3d99!important;
+      animation:map3DCurrent 1.65s ease-in-out infinite alternate!important;
+    }
+    #levelsModal .map-node.locked{
+      background:radial-gradient(ellipse at 28% 12%,#fff9 0%,transparent 35%),
+        linear-gradient(145deg,#e0d9f0,#a49bbd 52%,#696487)!important;
+      box-shadow:inset 0 4px 6px #fff,inset 0 -7px 10px #4c466b88,
+        0 5px 0 #656080,0 9px 0 #40385e,0 12px 15px #1b0b3d88!important;
+    }
+    @keyframes map3DCurrent{
+      from{transform:translateZ(24px) translateY(0) scale(1)}
+      to{transform:translateZ(34px) translateY(-7px) scale(1.08)}
+    }
+    #levelsModal .map-scenery{
+      position:sticky!important;top:0;z-index:6!important;
+      border:2px solid #fff!important;border-radius:0 0 22px 22px!important;
+      background:linear-gradient(110deg,#ff85b9f2,#9a68e8f2 52%,#38bfd7f2)!important;
+      box-shadow:0 8px 0 #57317d,0 14px 24px #18082f88,
+        inset 0 3px 5px #fff!important;
+      transform:translateZ(38px)!important;
+    }
+    #levelsModal .map-scenery-emoji{
+      font-size:clamp(34px,9vw,48px)!important;
+      filter:drop-shadow(0 5px 2px #32104499) drop-shadow(0 0 12px #fff8)!important;
+      transform:rotateY(-14deg) rotateX(7deg)!important;
+    }
+    #levelsModal .map-landmark{
+      font-size:clamp(34px,9vw,54px)!important;
+      filter:drop-shadow(0 8px 5px #1a0a3b99)!important;
+      text-shadow:0 3px 0 #6b3b91,0 8px 12px #16082f99!important;
+      transform:translateZ(30px)!important;
+    }
+    #levelsModal .map-world-tab{
+      border-width:2px!important;
+      box-shadow:inset 0 2px 4px #fff,0 4px 0 #633b8c,
+        0 7px 12px #1b0b3d66!important;
+    }
+    #levelsModal .map-world-tab.active{
+      transform:translateY(-2px)!important;
+      box-shadow:inset 0 3px 5px #fff,0 6px 0 #9b5c72,
+        0 10px 17px #1b0b3d77,0 0 18px #fff8!important;
+    }
+    #levelsModal .map-topbar,#levelsModal .map-heading{
+      box-shadow:inset 0 2px 4px #fff8,0 6px 0 #633b8c,
+        0 10px 20px #1b0b3d66!important;
+    }
+    @media(prefers-reduced-motion:reduce){
+      #levelsModal .map-node.current{animation:none!important}
+    }
+
   </style>
 
   <style id="fruit-pop-candy-map-nodes">
