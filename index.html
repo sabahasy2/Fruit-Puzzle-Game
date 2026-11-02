@@ -1127,10 +1127,56 @@
     }
     @media(prefers-reduced-motion:reduce){.board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst,.board:before,.board:after{animation:none!important}}
 
+
+    /* v49 — cinematic branded opening screen with original synthesized fanfare */
+    .fruit-splash{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;overflow:hidden;padding:24px 18px max(24px,env(safe-area-inset-bottom));text-align:center;background:radial-gradient(ellipse at 50% 38%,#72502c 0%,#31203a 39%,#090d20 100%);opacity:1;visibility:visible;transition:opacity .8s ease,visibility .8s ease}
+    .fruit-splash.leaving{opacity:0;visibility:hidden;pointer-events:none}
+    .fruit-splash:before,.fruit-splash:after{content:"✦";position:absolute;color:#ffe7a0;opacity:.55;font-size:24px;animation:splashTwinkle 2.2s ease-in-out infinite alternate}
+    .fruit-splash:before{top:14%;left:14%}.fruit-splash:after{right:13%;bottom:18%;animation-delay:-1s}
+    .splash-logo-wrap{position:relative;width:150px;height:150px;display:grid;place-items:center;margin-bottom:25px;animation:splashFloat 3.2s ease-in-out infinite}
+    .splash-halo{position:absolute;inset:7px;border:2px solid #ffe6a0;border-radius:38px;transform:rotate(45deg);background:linear-gradient(145deg,#d19b43,#43233b 72%);box-shadow:0 0 0 9px #f8d88c12,0 0 38px #ffd66d99,inset 0 0 28px #fff3c455;animation:splashSpin 12s linear infinite}
+    .splash-logo{position:relative;z-index:1;width:104px;height:104px;display:grid;place-items:center;border:1px solid #fff0bc;border-radius:50%;background:radial-gradient(circle at 35% 25%,#fff5c7,#f5bb61 36%,#9c4c46 78%,#44213c);box-shadow:0 8px 28px #0008,inset 0 3px 10px #fff9}
+    .splash-logo span{font-size:62px;filter:drop-shadow(0 5px 5px #47213b99);animation:splashFruitSpin 5s ease-in-out infinite}
+    .splash-brand{color:#ffe7a6;font-size:clamp(32px,9vw,46px);font-weight:1000;letter-spacing:3px;text-shadow:0 3px 0 #613b32,0 0 22px #ffd76b99;animation:splashRise .9s .15s both}
+    .splash-arabic{margin-top:3px;color:#fff0c7;font-size:25px;font-weight:900;text-shadow:0 2px 12px #ffdf9a66;animation:splashRise .9s .3s both}
+    .splash-motto{margin-top:14px;color:#ffe6a2;font-family:"Amiri",serif;font-size:30px;font-weight:700;text-shadow:0 0 14px #ffd87d88;animation:splashRise .9s .4s both}
+    .splash-tagline{margin-top:6px;color:#d9c79e;font-size:9px;letter-spacing:2.4px;animation:splashRise .9s .5s both}
+    .splash-orbit{position:absolute;font-size:clamp(26px,8vw,38px);filter:drop-shadow(0 5px 9px #0009);animation:splashOrbit 6s ease-in-out infinite}
+    .orbit-one{top:19%;left:16%}.orbit-two{top:24%;right:15%;animation-delay:-2s}.orbit-three{bottom:23%;left:18%;animation-delay:-4s}
+    #splashStartBtn{margin-top:34px;min-height:54px;width:min(100%,310px);padding:12px 18px;border:2px solid #fff3c8;border-radius:20px;background:linear-gradient(110deg,#f8e5a4,#e8b85f 48%,#f6d98b);color:#43233b;font-size:15px;font-weight:1000;box-shadow:0 6px 0 #85512d,0 12px 28px #0006,inset 0 2px 5px #fff;animation:splashPulse 2.2s ease-in-out infinite}
+    #splashSkipBtn{margin-top:13px;padding:8px 20px;border:0;background:transparent;color:#f6e9c9;font-size:12px;text-decoration:underline}
+    .splash-sparkles{margin-top:23px;color:#ffe7a6;font-size:20px;letter-spacing:3px;animation:splashTwinkle 2s ease-in-out infinite alternate}
+    @keyframes splashSpin{to{transform:rotate(405deg)}}
+    @keyframes splashFruitSpin{0%,100%{transform:rotate(-12deg) scale(1)}50%{transform:rotate(12deg) scale(1.12)}}
+    @keyframes splashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes splashOrbit{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-20px) rotate(18deg)}}
+    @keyframes splashTwinkle{from{opacity:.25;filter:brightness(.8)}to{opacity:1;filter:brightness(1.5)}}
+    @keyframes splashRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+    @media(max-height:650px){.splash-logo-wrap{width:112px;height:112px;margin-bottom:12px}.splash-logo{width:80px;height:80px}.splash-logo span{font-size:46px}.splash-brand{font-size:32px}.splash-arabic{font-size:20px}.splash-motto{margin-top:6px;font-size:25px}#splashStartBtn{margin-top:18px;min-height:48px}.splash-sparkles{margin-top:10px}}
+    @media(prefers-reduced-motion:reduce){.fruit-splash *,.fruit-splash:before,.fruit-splash:after{animation:none!important}}
+
   </style>
 </head>
 
 <body>
+  <script>window.__fruitSplashActive = true;</script>
+  <section id="fruitSplash" class="fruit-splash" aria-label="Fruit Pop opening screen">
+    <div class="splash-orbit orbit-one" aria-hidden="true">🍓</div>
+    <div class="splash-orbit orbit-two" aria-hidden="true">🍊</div>
+    <div class="splash-orbit orbit-three" aria-hidden="true">🍇</div>
+    <div class="splash-logo-wrap">
+      <div class="splash-halo"></div>
+      <div class="splash-logo"><span>🍓</span></div>
+    </div>
+    <div class="splash-brand">FRUIT POP</div>
+    <div class="splash-arabic">آدم النور</div>
+    <div class="splash-motto">عابر🖤السبيل</div>
+    <div class="splash-tagline">A LITTLE MAGIC IN EVERY MATCH</div>
+    <button id="splashStartBtn" type="button">🎵 تشغيل موسيقى الافتتاح والدخول</button>
+    <button id="splashSkipBtn" type="button">تخطي</button>
+    <div class="splash-sparkles" aria-hidden="true">✦　✧　⭐　✧　✦</div>
+  </section>
   <section class="intro-screen" id="introScreen" aria-label="Fruit Pop main menu">
     <div class="intro-content main-menu-content">
       <div class="menu-sky" aria-hidden="true"><span class="menu-moon">☀️</span><span class="menu-cloud cloud-one">☁️</span><span class="menu-cloud cloud-two">☁️</span></div>
@@ -1466,6 +1512,7 @@
         audioEngine();
         musicTick();
       }
+      window.__fruitStartMusic = startMusic;
       function stopMusic() {
         if (musicTimer !== null) window.clearTimeout(musicTimer);
         musicTimer = null;
@@ -1489,7 +1536,7 @@
           soundButton.setAttribute("aria-pressed", String(soundsEnabled));
         }
       }
-      document.addEventListener("pointerdown", () => { if (musicEnabled) startMusic(); }, { once: true, capture: true });
+      document.addEventListener("pointerdown", () => { if (musicEnabled && !window.__fruitSplashActive) startMusic(); }, { once: true, capture: true });
       document.addEventListener("keydown", () => { if (musicEnabled) startMusic(); }, { once: true, capture: true });
       document.getElementById("musicToggle").addEventListener("click", () => {
         musicEnabled = !musicEnabled;
@@ -2528,6 +2575,56 @@
     $("introLevelsBtn").addEventListener("click",()=>{drawLevels();show(levelsModal);});
     $("introAccountBtn").addEventListener("click",()=>{note.textContent="";show(authModal);});
 
+  })();
+  </script>
+
+
+  <script>
+  (() => {
+    const splash=document.getElementById("fruitSplash");
+    const start=document.getElementById("splashStartBtn");
+    const skip=document.getElementById("splashSkipBtn");
+    let finished=false;
+    function playOpeningFanfare(){
+      if(localStorage.getItem("fruit-pop-music")==="off") return;
+      const AudioCtor=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtor)return;
+      try{
+        const ctx=new AudioCtor();
+        if(ctx.state==="suspended")ctx.resume();
+        const master=ctx.createGain();master.gain.value=.16;master.connect(ctx.destination);
+        const notes=[523.25,659.25,783.99,1046.5,783.99,987.77,1174.66,1567.98];
+        notes.forEach((hz,i)=>{
+          const t=ctx.currentTime+i*.24;
+          const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+          osc.type=i%3===0?"triangle":"sine";osc.frequency.setValueAtTime(hz,t);
+          filter.type="lowpass";filter.frequency.setValueAtTime(2600,t);
+          gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.24,t+.035);
+          gain.gain.exponentialRampToValueAtTime(.0001,t+.62);
+          osc.connect(filter);filter.connect(gain);gain.connect(master);osc.start(t);osc.stop(t+.66);
+          const overtone=ctx.createOscillator(),og=ctx.createGain();overtone.type="sine";overtone.frequency.setValueAtTime(hz*2,t);
+          og.gain.setValueAtTime(.0001,t);og.gain.exponentialRampToValueAtTime(.045,t+.04);og.gain.exponentialRampToValueAtTime(.0001,t+.38);
+          overtone.connect(og);og.connect(master);overtone.start(t);overtone.stop(t+.4);
+        });
+        const end=ctx.currentTime+2.4;
+        const shimmer=ctx.createOscillator(),sg=ctx.createGain();shimmer.type="sine";shimmer.frequency.setValueAtTime(2093,end-.15);shimmer.frequency.exponentialRampToValueAtTime(1046,end+.9);
+        sg.gain.setValueAtTime(.0001,end-.15);sg.gain.exponentialRampToValueAtTime(.08,end);sg.gain.exponentialRampToValueAtTime(.0001,end+1.05);
+        shimmer.connect(sg);sg.connect(master);shimmer.start(end-.15);shimmer.stop(end+1.1);
+        window.setTimeout(()=>{try{ctx.close()}catch(e){}},4200);
+      }catch(e){console.warn("Opening music unavailable",e)}
+    }
+    function leaveSplash(withMusic){
+      if(finished)return;finished=true;
+      if(withMusic){playOpeningFanfare();}
+      splash.classList.add("leaving");
+      window.__fruitSplashActive=false;
+      window.setTimeout(()=>{
+        splash.remove();
+        if(withMusic && localStorage.getItem("fruit-pop-music")!=="off" && window.__fruitStartMusic)window.__fruitStartMusic();
+      },850);
+    }
+    start.addEventListener("click",()=>leaveSplash(true));
+    skip.addEventListener("click",()=>leaveSplash(false));
   })();
   </script>
 
