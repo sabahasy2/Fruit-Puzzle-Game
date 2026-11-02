@@ -2733,15 +2733,15 @@
       let pendingNextLevel = null;
       function showLevelCelebration(completedLevel, earnedScore, movesLeft, stars) {
         const overlay = document.getElementById("levelCelebration");
+        const ar = localStorage.getItem("fruit-pop-language") !== "en";
         document.getElementById("levelCelebrationCrown").textContent = "👑";
-        document.getElementById("levelCelebrationKicker").textContent = "ROYAL VICTORY";
-        document.getElementById("levelCelebrationTitle").textContent = "LEVEL COMPLETE!";
-        document.getElementById("levelCelebrationSubtitle").textContent = "Amazing! You conquered level " + completedLevel + "!";
-        document.getElementById("levelCelebrationScore").textContent = earnedScore.toLocaleString();
+        document.getElementById("levelCelebrationKicker").textContent = ar ? "انتصار ملكي" : "ROYAL VICTORY";
+        document.getElementById("levelCelebrationTitle").textContent = ar ? "اكتملت المرحلة!" : "LEVEL COMPLETE!";
+        document.getElementById("levelCelebrationSubtitle").textContent = ar ? "رائع! لقد اجتزت المرحلة " + completedLevel + "!" : "Amazing! You conquered level " + completedLevel + "!";
         document.getElementById("levelCelebrationMoves").textContent = movesLeft;
         document.getElementById("levelCelebrationStars").innerHTML = [0,1,2].map(i => '<span class="' + (i < stars ? 'earned' : '') + '">⭐</span>').join("");
         document.getElementById("levelCelebrationStats").style.display = "grid";
-        document.getElementById("levelTransitionButton").textContent = "Continue to next level ✨";
+        document.getElementById("levelTransitionButton").textContent = ar ? "انتقل إلى المرحلة التالية ✨" : "Continue to next level ✨";
         overlay.classList.add("open");
         overlay.classList.remove("fireworks-active");
         void overlay.offsetWidth;
@@ -2768,11 +2768,23 @@
 
       document.getElementById("levelTransitionButton").addEventListener("click", () => {
         const overlay = document.getElementById("levelCelebration");
+        if (pendingNextLevel === "final") {
+          pendingNextLevel = null;
+          overlay.classList.remove("open");
+          moves = 0;
+          render();
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en"
+            ? "🏆 مبروك! أنهيت مغامرة Fruit Pop كاملة."
+            : "🏆 Congratulations! You completed the entire Fruit Pop adventure.";
+          return;
+        }
         if (pendingNextLevel === "intro") {
           pendingNextLevel = null;
           overlay.classList.remove("open");
           playSound("tap");
-          messageElement.textContent = "Level " + level + " — your new challenge begins!";
+          messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en"
+            ? "المرحلة " + level + " — مغامرتك الجديدة تبدأ الآن!"
+            : "Level " + level + " — your new challenge begins!";
           return;
         }
         pendingNextLevel = "intro";
@@ -2785,20 +2797,32 @@
           const earnedScore = score;
           const movesLeft = moves;
           const stars = movesLeft >= 16 ? 3 : movesLeft >= 8 ? 2 : 1;
+          const ar = localStorage.getItem("fruit-pop-language") !== "en";
           playSound("win");
-          level++;
+          level = Math.min(MAX_LEVEL, completedLevel + 1);
           objectiveProgress = 0;
           localStorage.setItem("fruit-pop-level", String(level));
+          const unlocked = Math.max(Number(localStorage.getItem("fruit-pop-unlocked-level") || 1), level);
+          localStorage.setItem("fruit-pop-unlocked-level", String(unlocked));
           window.dispatchEvent(new CustomEvent("fruit-pop:level", { detail: { level } }));
           localStorage.setItem("fruit-pop-stars", String(Math.max(Number(localStorage.getItem("fruit-pop-stars") || 0), completedLevel)));
+          if (completedLevel === MAX_LEVEL) localStorage.setItem("fruit-pop-completed", "1");
           window.__fruitPopSaveGuest?.();
           window.dispatchEvent(new Event("fruit-pop:progress"));
           saveBest();
           score = 0;
           moves = movesForLevel();
-          pendingNextLevel = "victory";
-          messageElement.textContent = "🎉 Level " + completedLevel + " completed!";
+          pendingNextLevel = completedLevel === MAX_LEVEL ? "final" : "victory";
+          messageElement.textContent = ar ? "🎉 أكملت المرحلة " + completedLevel + "!" : "🎉 Level " + completedLevel + " completed!";
           showLevelCelebration(completedLevel, earnedScore, movesLeft, stars);
+          if (completedLevel === MAX_LEVEL) {
+            document.getElementById("levelCelebrationKicker").textContent = ar ? "نهاية المغامرة الملكية" : "THE ROYAL FINALE";
+            document.getElementById("levelCelebrationTitle").textContent = ar ? "أكملت جميع العوالم!" : "ALL WORLDS COMPLETE!";
+            document.getElementById("levelCelebrationSubtitle").textContent = ar
+              ? "تهانينا! أنهيت العوالم الأربعة والعشرين وجميع المراحل الـ 1200. أنت بطل Fruit Pop!"
+              : "Congratulations! You conquered all 24 worlds and all 1,200 levels. You are a Fruit Pop champion!";
+            document.getElementById("levelTransitionButton").textContent = ar ? "🏆 إنهاء المغامرة" : "🏆 Finish adventure";
+          }
           return;
         }
 
@@ -2895,12 +2919,26 @@
         selected = null;
         hintPartner = null;
         busy = false;
-        messageElement.textContent = "Drag a fruit onto an adjacent fruit to swap!";
+        messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en"
+          ? "اسحب الفاكهة وبدّلها مع فاكهة مجاورة!"
+          : "Drag a fruit onto an adjacent fruit to swap!";
         localStorage.setItem("fruit-pop-level", String(level));
         makeBoard();
         render();
         scheduleIdleHint();
       }
+
+      // Replay any unlocked stage without lowering the saved highest level.
+      window.__fruitPopSelectLevel = selectedLevel => {
+        const unlocked = Math.max(1, Math.min(MAX_LEVEL, Number(localStorage.getItem("fruit-pop-unlocked-level") || localStorage.getItem("fruit-pop-level") || 1)));
+        const target = Math.floor(Number(selectedLevel));
+        if (!Number.isInteger(target) || target < 1 || target > unlocked || busy) return false;
+        level = target;
+        localStorage.setItem("fruit-pop-level", String(level));
+        window.dispatchEvent(new CustomEvent("fruit-pop:level", { detail: { level } }));
+        restart();
+        return true;
+      };
 
       const dailyRewardModal = document.getElementById("dailyRewardModal");
       const dailyRewards = [25, 35, 50, 65, 80, 100, 150];
