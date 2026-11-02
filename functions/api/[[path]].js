@@ -30,7 +30,7 @@ async function currentPlayer(request, db) {
     .bind(await tokenHash(token), now).first();
 }
 async function saveProgress(db, playerId, p) {
-  const level = Math.max(1, Math.min(10000, Math.floor(Number(p.level) || 1)));
+  const level = Math.max(1, Math.min(1200, Math.floor(Number(p.level) || 1)));
   const stars = Math.max(0, Math.min(30000, Math.floor(Number(p.stars) || 0)));
   const coins = Math.max(0, Math.min(10000000, Math.floor(Number(p.coins) || 0)));
   const lives = Math.max(0, Math.min(5, Math.floor(Number(p.lives) || 0)));
