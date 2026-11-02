@@ -617,6 +617,56 @@
     .level-celebration-card{background:linear-gradient(150deg,#ff5e9feF,#713fd0f5 55%,#087f9bf2);border-color:#fff0a3}
     @media(max-width:390px){.stats{gap:5px}.stats .stat{padding:9px 2px}.stat small{font-size:9px}}
     @media(prefers-reduced-motion:reduce){body:before{animation:none}}
+    
+    /* Player-selectable visual themes */
+    .theme-modal-card{max-width:420px}
+    .theme-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .theme-choice{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-height:112px;padding:9px!important;border-radius:16px!important;text-align:left;color:#fff!important;background:#ffffff12!important;border:1px solid #ffffff35!important;box-shadow:none!important}
+    .theme-choice[aria-pressed="true"]{outline:3px solid #fff0a0;box-shadow:0 0 18px #ffe27a66!important;transform:translateY(-2px)}
+    .theme-choice strong{font-size:12px}.theme-choice small{font-size:10px;opacity:.85}
+    .theme-preview{display:grid;place-items:center;min-height:48px;border-radius:10px;font-size:23px;letter-spacing:4px}
+    .preview-candy{background:linear-gradient(120deg,#ff5da2,#6e48d8,#13b9bd)}
+    .preview-royal{background:linear-gradient(120deg,#21182b,#bd8b32,#f6df91)}
+    .preview-ocean{background:linear-gradient(120deg,#063b68,#00a9c5,#74e4d5)}
+    .preview-sunset{background:linear-gradient(120deg,#7c245f,#ed594e,#ffb34d)}
+    .preview-forest{background:linear-gradient(120deg,#123d35,#2c986b,#b3d86d)}
+    body.skin-royal{background:radial-gradient(ellipse at 50% 0%,#b58a3d66,transparent 42%),linear-gradient(145deg,#090d1c,#21182d 55%,#382318);background-attachment:fixed}
+    body.skin-royal .game{background:linear-gradient(155deg,#17172b,#34233b 55%,#241a24);border-color:#e8c46d;box-shadow:0 20px 65px #000b,0 0 28px #d5a84944}
+    body.skin-royal h1,body.skin-royal .goal,body.skin-royal .message{color:#ffe7a0}
+    body.skin-royal .world-banner{background:linear-gradient(115deg,#493318,#211a30 55%,#614322);border-color:#e8c46d}
+    body.skin-royal .stats .stat{background:linear-gradient(145deg,#44334a,#211c30);border-color:#c5a45e}
+    body.skin-royal .board{background:linear-gradient(135deg,#8f6a3455,#251b35);border-color:#e8c46d}
+    body.skin-royal .tile{background:#fff8e610}
+    body.skin-royal button:not(.theme-choice){background:linear-gradient(110deg,#fff0b8,#d8ad52 55%,#9e6a2b);color:#2b1a16;border-color:#fff0b8}
+    body.skin-royal button.secondary{background:linear-gradient(140deg,#403047,#1b2034);color:#ffe9b4;border-color:#c6a65d}
+    body.skin-ocean{background:radial-gradient(ellipse at 12% 8%,#00d8e866,transparent 34%),radial-gradient(ellipse at 90% 20%,#2d7dff66,transparent 36%),linear-gradient(145deg,#062d55,#075d83 52%,#123b78);background-attachment:fixed}
+    body.skin-ocean .game{background:linear-gradient(155deg,#06385feF,#075b7af2 55%,#183e78ed);border-color:#8df5ee;box-shadow:0 20px 65px #001b3bbb,0 0 28px #26d8e955}
+    body.skin-ocean h1,body.skin-ocean .goal,body.skin-ocean .message{color:#aafff2;text-shadow:0 2px 10px #003d65}
+    body.skin-ocean .world-banner{background:linear-gradient(115deg,#007f91,#176fc2 55%,#343a9a);border-color:#9af9ef}
+    body.skin-ocean .stats .stat{background:linear-gradient(145deg,#087f9e,#1456a2 60%,#273b91);border-color:#a1f8ee}
+    body.skin-ocean .board{background:linear-gradient(135deg,#00d5d055,#287bff66);border-color:#8df5ee}
+    body.skin-ocean .tile{background:linear-gradient(145deg,#e5ffff2c,#50d9ff22)}
+    body.skin-ocean button:not(.theme-choice){background:linear-gradient(110deg,#a8fff0,#42d5df 52%,#4d8dff);color:#06395b;border-color:#c7fff5}
+    body.skin-ocean button.secondary{background:linear-gradient(110deg,#087f9e,#2457ad);color:#fff;border-color:#8df5ee}
+    body.skin-sunset{background:radial-gradient(ellipse at 10% 8%,#ffb13d88,transparent 34%),radial-gradient(ellipse at 90% 15%,#f64e8c77,transparent 35%),linear-gradient(145deg,#5c205e,#a83262 50%,#d45b3e);background-attachment:fixed}
+    body.skin-sunset .game{background:linear-gradient(155deg,#77275eF0,#a43b62f2 52%,#74304fed);border-color:#ffd08a;box-shadow:0 20px 65px #35102dbb,0 0 28px #ff985555}
+    body.skin-sunset h1,body.skin-sunset .goal,body.skin-sunset .message{color:#ffe8a2}
+    body.skin-sunset .world-banner{background:linear-gradient(115deg,#c34b53,#9c3478 55%,#6d3b9c);border-color:#ffd08a}
+    body.skin-sunset .stats .stat{background:linear-gradient(145deg,#d64e75,#923c8b 60%,#633b9b);border-color:#ffd1a0}
+    body.skin-sunset .board{background:linear-gradient(135deg,#ff9a6255,#f44d9a66);border-color:#ffd08a}
+    body.skin-sunset .tile{background:linear-gradient(145deg,#fff4d52c,#ff8db522)}
+    body.skin-sunset button:not(.theme-choice){background:linear-gradient(110deg,#ffe38d,#ff9d5b 52%,#f45c8d);color:#61244f;border-color:#ffe3a0}
+    body.skin-sunset button.secondary{background:linear-gradient(110deg,#8b397d,#593e9f);color:#fff0dc;border-color:#ffc4b5}
+    body.skin-forest{background:radial-gradient(ellipse at 10% 8%,#a4dc5c77,transparent 34%),radial-gradient(ellipse at 90% 20%,#27bd8a66,transparent 34%),linear-gradient(145deg,#103b37,#176b59 52%,#254d76);background-attachment:fixed}
+    body.skin-forest .game{background:linear-gradient(155deg,#174d42f2,#176653f2 55%,#234c62ef);border-color:#c4ed8b;box-shadow:0 20px 65px #061d1abb,0 0 28px #9bdb6755}
+    body.skin-forest h1,body.skin-forest .goal,body.skin-forest .message{color:#e1ff9e}
+    body.skin-forest .world-banner{background:linear-gradient(115deg,#27734c,#237f7b 55%,#315c91);border-color:#c4ed8b}
+    body.skin-forest .stats .stat{background:linear-gradient(145deg,#31845d,#216b73 60%,#315b91);border-color:#c4ed8b}
+    body.skin-forest .board{background:linear-gradient(135deg,#9bdc5d55,#38cba766);border-color:#c4ed8b}
+    body.skin-forest .tile{background:linear-gradient(145deg,#efffd42c,#72f1b522)}
+    body.skin-forest button:not(.theme-choice){background:linear-gradient(110deg,#e7ff9d,#8cdb70 52%,#4ac7a0);color:#164b3d;border-color:#eaffb5}
+    body.skin-forest button.secondary{background:linear-gradient(110deg,#277b61,#286e93);color:#fff;border-color:#bdeca0}
+    @media(max-width:350px){.theme-choices{gap:7px}.theme-choice{padding:7px!important;min-height:105px}.theme-preview{font-size:19px}}
 
   </style>
 </head>
@@ -635,6 +685,7 @@
         <button id="enterGameBtn" type="button">🎮 العب الآن</button>
         <button id="introLevelsBtn" class="menu-secondary" type="button">🗺️ خريطة العوالم والمراحل</button>
         <button id="introAccountBtn" class="menu-secondary" type="button">👤 تسجيل الدخول / إنشاء حساب</button>
+        <button id="introThemeBtn" class="menu-secondary" type="button">🎨 اختر مظهر اللعبة</button>
       </div>
       <div class="menu-footer">🍬 24 عالماً · 1,200 مرحلة · مغامرة لا تنتهي 🍬</div>
     </div>
@@ -652,7 +703,7 @@
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
-    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>
+    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button></div>
     <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
 
     <section class="stats">
@@ -687,6 +738,20 @@
 
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
+    <div class="modal" id="themeModal" role="dialog" aria-modal="true" aria-labelledby="themeTitle">
+      <div class="modal-card theme-modal-card">
+        <button class="secondary modal-close" id="closeTheme" type="button" aria-label="Close">✕</button>
+        <h2 id="themeTitle">🎨 اختر أجواء مغامرتك</h2>
+        <p>غيّر ألوان اللعبة في أي وقت. اختيارك سيبقى محفوظاً على جهازك.</p>
+        <div class="theme-choices" id="themeChoices">
+          <button class="theme-choice" type="button" data-theme-choice="candy" aria-pressed="false"><span class="theme-preview preview-candy">🍓🍋🍇</span><strong>🍬 Candy Pop</strong><small>ألوان حلوى مشرقة</small></button>
+          <button class="theme-choice" type="button" data-theme-choice="royal" aria-pressed="false"><span class="theme-preview preview-royal">👑💎✨</span><strong>👑 Royal Gold</strong><small>ذهبي ملكي فاخر</small></button>
+          <button class="theme-choice" type="button" data-theme-choice="ocean" aria-pressed="false"><span class="theme-preview preview-ocean">🌊🐬🫧</span><strong>🌊 Ocean Splash</strong><small>أزرق بحري منعش</small></button>
+          <button class="theme-choice" type="button" data-theme-choice="sunset" aria-pressed="false"><span class="theme-preview preview-sunset">🌅🍊🌺</span><strong>🌅 Sunset Berry</strong><small>غروب دافئ ومبهج</small></button>
+          <button class="theme-choice" type="button" data-theme-choice="forest" aria-pressed="false"><span class="theme-preview preview-forest">🌿🍏🦋</span><strong>🌿 Emerald Garden</strong><small>حديقة خضراء ساحرة</small></button>
+        </div>
+      </div>
+    </div>
     <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
     <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><button class="secondary modal-close" id="closeLevels" aria-label="Close map">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><div class="map-heading"><h2>🗺️ Royal Journey</h2><span class="map-progress" id="mapProgress">Level 1 / 1,200</span></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
  
@@ -1627,6 +1692,32 @@
 
     const guestProgress=()=>({level:Number(localStorage.getItem("fruit-pop-level")||1),stars:Number(localStorage.getItem("fruit-pop-stars")||0),coins:Number(localStorage.getItem("fruit-pop-coins")||0),lives:5});
     const show=(el)=>el.classList.add("open"), hide=(el)=>el.classList.remove("open");
+    const themeModal=$("themeModal");
+    const themeNames={candy:"Candy Pop",royal:"Royal Gold",ocean:"Ocean Splash",sunset:"Sunset Berry",forest:"Emerald Garden"};
+    function setGameTheme(theme){
+      if(!Object.prototype.hasOwnProperty.call(themeNames,theme)) theme="candy";
+      document.body.classList.remove("skin-candy","skin-royal","skin-ocean","skin-sunset","skin-forest");
+      document.body.classList.add("skin-"+theme);
+      localStorage.setItem("fruit-pop-theme",theme);
+      document.querySelectorAll("[data-theme-choice]").forEach(button=>{
+        const active=button.dataset.themeChoice===theme;
+        button.setAttribute("aria-pressed",String(active));
+      });
+      $("themeBtn").textContent="🎨 "+themeNames[theme];
+    }
+    function openThemePicker(){show(themeModal);}
+    $("themeBtn").addEventListener("click",openThemePicker);
+    $("introThemeBtn").addEventListener("click",()=>{ $("introScreen").classList.add("hide"); openThemePicker(); });
+    $("closeTheme").addEventListener("click",()=>hide(themeModal));
+    $("themeChoices").addEventListener("click",event=>{
+      const choice=event.target.closest("[data-theme-choice]");
+      if(!choice)return;
+      setGameTheme(choice.dataset.themeChoice);
+      $("message").textContent="🎨 Theme changed to "+themeNames[choice.dataset.themeChoice]+"!";
+      hide(themeModal);
+    });
+    themeModal.addEventListener("click",event=>{if(event.target===themeModal)hide(themeModal);});
+    setGameTheme(localStorage.getItem("fruit-pop-theme")||"candy");
     async function request(path, options={}) {
       const r=await fetch(path,{credentials:"same-origin",headers:{"content-type":"application/json",...(options.headers||{})},...options});
       const data=await r.json().catch(()=>({}));
