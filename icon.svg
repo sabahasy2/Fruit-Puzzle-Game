@@ -1,30 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
-  <title id="title">Fruit Pop</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Fruit Pop Adam</title>
+  <desc id="desc">A bright basket of strawberry, orange, apple and grapes.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#6b35b5"/>
-      <stop offset="1" stop-color="#101b3b"/>
-    </linearGradient>
-    <linearGradient id="fruit" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff8bb5"/>
-      <stop offset="1" stop-color="#e82e72"/>
-    </linearGradient>
-    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#b9f47a"/>
-      <stop offset="1" stop-color="#32b878"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3d8eea"/><stop offset=".52" stop-color="#7448c8"/><stop offset="1" stop-color="#32145f"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff4ae"/><stop offset=".45" stop-color="#ffc83d"/><stop offset="1" stop-color="#d87913"/></linearGradient>
+    <linearGradient id="berry" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff91ae"/><stop offset=".48" stop-color="#f52e67"/><stop offset="1" stop-color="#ad104c"/></linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff08a"/><stop offset=".4" stop-color="#ffad27"/><stop offset="1" stop-color="#ed5b13"/></linearGradient>
+    <linearGradient id="apple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9ff7a"/><stop offset=".5" stop-color="#6edc46"/><stop offset="1" stop-color="#168a53"/></linearGradient>
+    <linearGradient id="grape" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5a4ff"/><stop offset=".55" stop-color="#9a48df"/><stop offset="1" stop-color="#57209f"/></linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d6ff8a"/><stop offset="1" stop-color="#23a95c"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="9"/><feOffset dy="9"/><feComponentTransfer><feFuncA type="linear" slope=".42"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <circle cx="112" cy="116" r="22" fill="#ffe58a" opacity=".95"/>
-  <circle cx="398" cy="160" r="13" fill="#fff" opacity=".8"/>
-  <circle cx="376" cy="390" r="19" fill="#8fe9e1" opacity=".9"/>
-  <path d="M256 143c-26-42-78-49-108-16 33 3 58 18 76 47" fill="url(#leaf)" stroke="#d8ff9b" stroke-width="8" stroke-linejoin="round"/>
-  <path d="M263 144c22-48 75-59 111-30-34 7-60 25-75 56" fill="url(#leaf)" stroke="#d8ff9b" stroke-width="8" stroke-linejoin="round"/>
-  <path d="M254 152c-4-29 3-50 20-67" fill="none" stroke="#b9f47a" stroke-width="16" stroke-linecap="round"/>
-  <path d="M256 176c-70-55-143-3-143 92 0 99 63 163 143 163s143-64 143-163c0-95-73-147-143-92z" fill="url(#fruit)" stroke="#ffd0df" stroke-width="12"/>
-  <path d="M176 254c14-27 36-42 63-44" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" opacity=".65"/>
-  <g fill="#ffe7a0">
-    <circle cx="193" cy="321" r="8"/><circle cx="246" cy="351" r="8"/><circle cx="300" cy="310" r="8"/><circle cx="335" cy="354" r="7"/><circle cx="220" cy="390" r="6"/>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <circle cx="90" cy="94" r="33" fill="#fff" opacity=".12"/><circle cx="421" cy="117" r="17" fill="#fff" opacity=".2"/><circle cx="411" cy="390" r="25" fill="#7bf3e4" opacity=".18"/>
+  <rect x="27" y="27" width="458" height="458" rx="96" fill="none" stroke="url(#gold)" stroke-width="12"/>
+  <g filter="url(#shadow)">
+    <path d="M246 146c-31-51-88-55-122-19 39 0 70 18 89 51" fill="url(#leaf)" stroke="#cfff91" stroke-width="7"/>
+    <path d="M261 139c28-57 88-69 130-32-41 9-69 31-86 67" fill="url(#leaf)" stroke="#cfff91" stroke-width="7"/>
+    <path d="M253 143c-4-31 5-54 25-76" fill="none" stroke="#b5f36d" stroke-width="15" stroke-linecap="round"/>
+    <circle cx="145" cy="287" r="43" fill="url(#grape)" stroke="#f3c9ff" stroke-width="5"/>
+    <circle cx="108" cy="337" r="39" fill="url(#grape)" stroke="#f3c9ff" stroke-width="5"/>
+    <circle cx="156" cy="376" r="39" fill="url(#grape)" stroke="#f3c9ff" stroke-width="5"/>
+    <circle cx="195" cy="330" r="39" fill="url(#grape)" stroke="#f3c9ff" stroke-width="5"/>
+    <circle cx="195" cy="390" r="34" fill="url(#grape)" stroke="#f3c9ff" stroke-width="5"/>
+    <path d="M350 210c-35-33-87-17-93 30-6 48 29 91 79 112 49-22 84-65 77-112-7-47-57-63-94-30z" fill="url(#apple)" stroke="#d8ffb1" stroke-width="8"/>
+    <path d="M339 211c-4-23 2-41 17-55" fill="none" stroke="#754222" stroke-width="13" stroke-linecap="round"/>
+    <path d="M352 170c22-28 54-27 67-6-27 0-45 9-58 25" fill="url(#leaf)" stroke="#d5ff9d" stroke-width="5"/>
+    <path d="M251 180c-60-47-123-7-120 63 3 69 52 125 123 159 72-34 121-90 124-159 3-70-61-110-127-63z" fill="url(#berry)" stroke="#ffc0d3" stroke-width="9"/>
+    <path d="M252 185c-20-27-48-35-74-21 23 0 42 10 56 29" fill="url(#leaf)" stroke="#d7ff9b" stroke-width="5"/>
+    <path d="M260 184c21-33 53-39 78-22-27 4-46 17-60 37" fill="url(#leaf)" stroke="#d7ff9b" stroke-width="5"/>
+    <g fill="#fff0a8"><ellipse cx="206" cy="251" rx="5" ry="9" transform="rotate(-20 206 251)"/><ellipse cx="248" cy="240" rx="5" ry="9"/><ellipse cx="291" cy="256" rx="5" ry="9" transform="rotate(20 291 256)"/><ellipse cx="183" cy="300" rx="5" ry="9"/><ellipse cx="225" cy="315" rx="5" ry="9"/><ellipse cx="270" cy="309" rx="5" ry="9"/><ellipse cx="313" cy="302" rx="5" ry="9"/><ellipse cx="207" cy="355" rx="5" ry="9"/><ellipse cx="257" cy="367" rx="5" ry="9"/><ellipse cx="300" cy="351" rx="5" ry="9"/></g>
+    <path d="M166 247c10-24 27-37 48-40" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".55"/>
+    <circle cx="383" cy="351" r="56" fill="url(#orange)" stroke="#fff0a0" stroke-width="8"/>
+    <circle cx="383" cy="351" r="42" fill="none" stroke="#fff7d2" stroke-width="5"/>
+    <path d="M383 309v84M341 351h84M353 321l60 60M413 321l-60 60" stroke="#fff6cf" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="383" cy="351" r="12" fill="#fff4c4"/>
   </g>
-  <path d="M142 447h228" stroke="#ffe27a" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+  <path d="M91 443h330" stroke="url(#gold)" stroke-width="13" stroke-linecap="round"/>
+  <path d="M117 463h278" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".42"/>
+  <g fill="#fff7c1"><path d="M78 174l8 18 18 8-18 8-8 18-8-18-18-8 18-8z"/><path d="M421 226l6 13 13 6-13 6-6 13-6-13-13-6 13-6z"/></g>
 </svg>
