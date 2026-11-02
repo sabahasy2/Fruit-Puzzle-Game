@@ -671,6 +671,8 @@
     /* Main menu, quick return and Arabic/English language controls */
     .intro-screen{z-index:120;overflow-y:auto;align-items:center;transition:opacity .75s ease,visibility .75s ease,backdrop-filter .75s ease}
     .modal{z-index:130}
+    .return-menu-btn{z-index:140}
+    .intro-screen:not(.hide) ~ .game .return-menu-btn{display:none}
     .intro-screen:not(.hide){backdrop-filter:blur(9px)}
     .main-menu-content{max-height:calc(100dvh - 28px);overflow-y:auto;scrollbar-width:thin}
     .intro-owner{position:relative;color:#ffe69a;font-size:14px;font-weight:1000;letter-spacing:3px;text-shadow:0 0 14px #ffcf5a99;margin:0 0 10px}
@@ -1930,6 +1932,8 @@
     const intro=$("introScreen");
     const enter=()=>intro.classList.add("hide");
     function returnToMainMenu(){
+      document.querySelectorAll(".modal.open").forEach(el=>hide(el));
+      hide($("levelCelebration"));
       $("menuExitNote").textContent="";
       intro.classList.remove("hide");
       intro.scrollTop=0;
