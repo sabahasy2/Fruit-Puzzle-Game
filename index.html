@@ -89,7 +89,9 @@
       background: #ffffff16;
       border: 1px solid #ffffff25;
       box-shadow: 0 12px 35px #0005;
-      touch-action: manipulation;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .tile {
@@ -102,9 +104,11 @@
       display: grid;
       place-items: center;
       font-size: clamp(23px, 8vw, 34px);
-      cursor: pointer;
+      cursor: grab;
       transition: transform .12s, background .12s;
       user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
 
     .tile:active {
@@ -995,7 +999,8 @@
               tile.setAttribute("aria-label", "Suggested matching fruit");
             }
 
-            tile.addEventListener("click", () => choose(r, c));
+            tile.dataset.row = r;
+            tile.dataset.col = c;
             boardElement.appendChild(tile);
           }
         }
@@ -1142,32 +1147,20 @@
       }
 
       function choose(r, c) {
-        if (busy || moves <= 0) return;
+        if (busy || moves <= 0 || !selected) return;
 
         hintPartner = null;
         const current = { r, c };
-
-        if (!selected) {
-          selected = current;
-          playSound("tap");
-          render();
-          return;
-        }
-
-        if (selected.r === r && selected.c === c) {
-          selected = null;
-          render();
-          return;
-        }
-
-        if (!adjacent(selected, current)) {
-          selected = current;
-          render();
-          return;
-        }
-
         const first = selected;
         selected = null;
+        if (first.r === r && first.c === c) {
+          render();
+          return;
+        }
+        if (!adjacent(first, current)) {
+          render();
+          return;
+        }
         if ((crateGrid[first.r] && crateGrid[first.r][first.c]) || (crateGrid[current.r] && crateGrid[current.r][current.c])) {
           messageElement.textContent = "📦 Break the wooden crate before moving this fruit.";
           playSound("nope");
@@ -1403,7 +1396,7 @@
           render();
           messageElement.textContent = automatic
             ? "💡 Need a hand? These two glowing fruits can make a match!"
-            : "💡 Two fruits are highlighted: tap the green one next!";
+            : "💡 Drag one glowing fruit onto the other to make a match!";
           return;
         }
 
@@ -1428,17 +1421,53 @@
         selected = null;
         hintPartner = null;
         busy = false;
-        messageElement.textContent = "Tap a fruit, then an adjacent fruit!";
+        messageElement.textContent = "Drag a fruit onto an adjacent fruit to swap!";
         localStorage.setItem("fruit-pop-level", String(level));
         makeBoard();
         render();
         scheduleIdleHint();
       }
 
+      let dragStart = null;
+      function tileAt(target) {
+        const tile = target && target.closest ? target.closest(".tile") : null;
+        if (!tile || !boardElement.contains(tile)) return null;
+        return {
+          r: Number(tile.dataset.row),
+          c: Number(tile.dataset.col),
+          tile
+        };
+      }
+
+      boardElement.addEventListener("pointerdown", event => {
+        const start = tileAt(event.target);
+        if (!start || busy || moves <= 0 || event.button > 0) return;
+        dragStart = { r: start.r, c: start.c };
+        if (event.cancelable) event.preventDefault();
+      });
+
+      boardElement.addEventListener("pointerup", event => {
+        if (!dragStart) return;
+        const from = dragStart;
+        dragStart = null;
+        const destination = tileAt(event.target);
+        if (!destination) return;
+        selected = from;
+        if (from.r === destination.r && from.c === destination.c) {
+          selected = null;
+          return;
+        }
+        choose(destination.r, destination.c);
+        scheduleIdleHint();
+      });
+
+      boardElement.addEventListener("pointercancel", () => {
+        dragStart = null;
+      });
+
       document.getElementById("restart").addEventListener("click", restart);
       document.getElementById("hint").addEventListener("click", showHint);
       document.getElementById("hint").addEventListener("click", scheduleIdleHint);
-      boardElement.addEventListener("click", scheduleIdleHint);
 
       makeBoard();
       ensurePlayableBoard();
