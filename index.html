@@ -967,6 +967,120 @@
       .tile.special-fruit,.tile.special-fruit:after,.board.special-burst{animation:none}
     }
 
+  
+    /* v44 — premium candy-glass board, richer fruit lighting and cinematic power-up FX */
+    .game .stats .stat{
+      position:relative;overflow:hidden;border:1px solid #fff4b477!important;
+      background:linear-gradient(150deg,#fff7d933 0%,#ffffff0c 42%,#160d3c88 100%)!important;
+      box-shadow:inset 0 1px 0 #fff9,0 5px 15px #09051f66,0 0 16px #ffb9ec22!important;
+      backdrop-filter:blur(12px);
+    }
+    .game .stats .stat:before{
+      content:"";position:absolute;left:8%;right:8%;top:0;height:1px;
+      background:linear-gradient(90deg,transparent,#fff,transparent);opacity:.9;
+    }
+    .game .stats .stat strong{text-shadow:0 0 10px #ffe6a6aa,0 2px 3px #180c3c!important}
+    .game .board{
+      position:relative;isolation:isolate;overflow:visible!important;
+      gap:4px!important;padding:7px!important;border:2px solid #fff0b9!important;
+      border-radius:23px!important;
+      background:linear-gradient(145deg,#fff5c844,#7b56c8aa 42%,#241b60ee)!important;
+      box-shadow:0 0 0 3px #ffb6e522,0 12px 28px #08051f99,
+        0 0 24px #ffcf6c66,inset 0 2px 0 #fff9!important;
+    }
+    .game .tile{
+      position:relative;isolation:isolate;overflow:hidden!important;
+      border:1px solid #ffffff36!important;border-radius:12px!important;
+      background:linear-gradient(145deg,#ffffff2b 0%,#ffffff0c 48%,#110b3a55 100%)!important;
+      box-shadow:inset 0 2px 3px #fff5,inset 0 -4px 7px #09052855,0 2px 4px #07051f66!important;
+      transition:transform .16s cubic-bezier(.2,.9,.25,1.2),filter .16s,box-shadow .16s!important;
+    }
+    .game .tile:not(.special-fruit):before{
+      content:"";position:absolute;z-index:2;inset:2px 3px auto;height:34%;
+      border-radius:10px 10px 60% 60%;pointer-events:none;
+      background:linear-gradient(180deg,#ffffff70,#ffffff05);
+      opacity:.76;
+    }
+    .game .tile:not(.special-fruit):after{
+      content:"";position:absolute;z-index:2;right:5px;top:5px;width:5px;height:5px;
+      border-radius:50%;background:#fff;opacity:.56;filter:blur(.3px);
+      box-shadow:0 0 7px 2px #fff9;pointer-events:none;
+    }
+    .game .tile .fruit-face{
+      z-index:1;display:block;line-height:1;
+      filter:drop-shadow(0 2px 1px #120b3d99) drop-shadow(0 0 5px #fff4);
+      transform:translateY(1px) scale(1.04);
+    }
+    .game .tile.selected{
+      z-index:4;transform:scale(1.12)!important;
+      border:2px solid #fff7b8!important;
+      box-shadow:0 0 0 3px #ff70c766,0 0 22px #fff1a6, inset 0 0 13px #fff!important;
+    }
+    .game .tile.hint-partner{
+      border:2px solid #9effdb!important;
+      box-shadow:0 0 0 2px #2bf5c888,0 0 20px #6dffdd!important;
+    }
+    .game .tile.special-fruit{
+      overflow:visible!important;z-index:3;border:2px solid #fff!important;
+      box-shadow:inset 0 3px 8px #fff,0 0 0 2px #fff9,0 0 22px #ffe58c,
+        0 6px 12px #160b4f99!important;
+    }
+    .game .tile.special-fruit .fruit-face{
+      font-size:1.12em;filter:drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #fff9);
+    }
+    .game .message{
+      color:#fff3b9!important;font-weight:950!important;
+      text-shadow:0 0 10px #ffb9ed99,0 2px 3px #13072e;
+    }
+    .game-tools-panel button,.main-menu-actions button{
+      position:relative;overflow:hidden;
+      box-shadow:0 5px 0 #70418d,0 8px 18px #08051f88,inset 0 2px 0 #fff!important;
+      transition:transform .14s,filter .14s,box-shadow .14s;
+    }
+    .game-tools-panel button:before,.main-menu-actions button:before{
+      content:"";position:absolute;left:8%;right:8%;top:3px;height:42%;
+      border-radius:999px;background:linear-gradient(180deg,#fff9,transparent);pointer-events:none;
+    }
+    .game-tools-panel button:active,.main-menu-actions button:active{
+      transform:translateY(3px) scale(.985);filter:brightness(1.12);
+      box-shadow:0 2px 0 #70418d,0 4px 10px #08051f88,inset 0 2px 0 #fff!important;
+    }
+    .board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst{animation:boardCinematicHit .72s ease-out}
+    .board.thunder-burst:before,.board.fire-burst:before,.board.rainbow-burst:before,.board.supercombo-burst:before{
+      content:"";position:absolute;z-index:8;inset:-3px;border-radius:inherit;pointer-events:none;
+      opacity:0;animation:powerFlash .78s ease-out;
+    }
+    .board.thunder-burst:before{background:radial-gradient(ellipse,#dffaffcc 0%,#62d9ff77 30%,transparent 72%)}
+    .board.fire-burst:before{background:radial-gradient(ellipse,#fff2aacc 0%,#ff6c4388 36%,transparent 74%)}
+    .board.rainbow-burst:before{background:conic-gradient(from 0deg,#ff5e9a66,#ffe16b66,#58f2c466,#5abaff66,#a77aff66,#ff5e9a66)}
+    .board.supercombo-burst:before{background:radial-gradient(ellipse,#fff 0%,#ffe06dcc 18%,#ff65c477 45%,transparent 76%)}
+    .board.thunder-burst:after,.board.supercombo-burst:after{
+      content:"";position:absolute;z-index:9;left:37%;top:-8%;width:26%;height:118%;
+      pointer-events:none;opacity:0;
+      background:linear-gradient(180deg,#fff,#a9f5ff 55%,#4d9dff);
+      clip-path:polygon(52% 0,100% 0,62% 38%,88% 38%,22% 100%,42% 52%,12% 52%);
+      filter:drop-shadow(0 0 8px #8ef4ff) drop-shadow(0 0 18px #4cbaff);
+      animation:lightningStrike .62s ease-out;
+    }
+    .board.fire-burst:after{
+      content:"";position:absolute;z-index:9;inset:0;pointer-events:none;opacity:0;
+      background:radial-gradient(ellipse at center,#fff5b9aa 0%,#ff5a2e66 30%,transparent 70%);
+      animation:fireBloom .8s ease-out;
+    }
+    .board.rainbow-burst:after{
+      content:"✦   ✧   ✦   ✧   ✦";position:absolute;z-index:9;inset:0;
+      display:grid;place-items:center;pointer-events:none;opacity:0;
+      color:#fff;font-size:clamp(24px,9vw,48px);letter-spacing:8px;
+      text-shadow:0 0 10px #fff,0 0 24px #ff79d5;animation:rainbowSpark .85s ease-out;
+    }
+    @keyframes boardCinematicHit{0%{transform:scale(1);filter:brightness(1)}18%{transform:scale(1.018);filter:brightness(1.7) saturate(1.5)}48%{transform:scale(.995);filter:brightness(1.28)}100%{transform:scale(1);filter:none}}
+    @keyframes powerFlash{0%{opacity:0}18%{opacity:.95}42%{opacity:.48}100%{opacity:0}}
+    @keyframes lightningStrike{0%{opacity:0;transform:translateY(-18%) scaleY(.5)}18%{opacity:1;transform:translateY(0) scaleY(1.05)}48%{opacity:.8}100%{opacity:0;transform:translateY(12%) scaleY(1)}}
+    @keyframes fireBloom{0%{opacity:0;transform:scale(.3)}28%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(1.35)}}
+    @keyframes rainbowSpark{0%{opacity:0;transform:scale(.3) rotate(-18deg)}35%{opacity:1;transform:scale(1.12) rotate(5deg)}100%{opacity:0;transform:scale(1.55) rotate(20deg)}}
+    @media(max-width:380px){.game .board{gap:3px!important;padding:5px!important}.game .tile{border-radius:9px!important}}
+    @media(prefers-reduced-motion:reduce){.board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst,.board:before,.board:after{animation:none!important}}
+
   </style>
 </head>
 
@@ -1230,6 +1344,41 @@
             playTone(p(1540),.30,"sawtooth",.10,.16,p(430));
             playTone(p(2100),.36,"triangle",.085,.29,p(720));
             playNoise(.68,.22,"lowpass",190,.42);
+            break;
+          case "thunder":
+            // A sharp electric crack followed by a deep, rolling thunder tail.
+            playNoise(.16,.42,"highpass",3200,.015);
+            playNoise(.72,.58,"lowpass",185,.035);
+            playNoise(.54,.38,"bandpass",510,.075);
+            playNoise(.34,.22,"lowpass",330,.32);
+            playTone(48,.92,"sine",.46,.025,24);
+            playTone(112,.62,"sawtooth",.20,.04,38);
+            playTone(205,.38,"triangle",.13,.09,64);
+            break;
+          case "fireblast":
+            // A rising flame rush, explosive low-end hit and crisp ember crackle.
+            playNoise(.48,.34,"bandpass",980,.01);
+            playNoise(.22,.30,"highpass",3900,.06);
+            playNoise(.58,.40,"lowpass",310,.075);
+            playTone(62,.68,"sine",.42,.045,28);
+            playTone(174,.38,"sawtooth",.20,.06,52);
+            playTone(520,.22,"triangle",.10,.13,180);
+            break;
+          case "rainbow":
+            // A bright magical shimmer with a rising, layered chime.
+            playNoise(.32,.16,"highpass",4600,.01);
+            playNoise(.20,.10,"bandpass",2700,.08);
+            [659,784,988,1175,1568,2093].forEach((f,i)=>playTone(f,.34,"sine",.105,i*.055,f*1.12));
+            playTone(330,.52,"triangle",.12,.02,660);
+            break;
+          case "supercombo":
+            playNoise(.22,.45,"highpass",3000,.01);
+            playNoise(.95,.58,"lowpass",170,.04);
+            playNoise(.66,.34,"bandpass",620,.07);
+            playNoise(.40,.28,"highpass",2100,.16);
+            playTone(42,1.0,"sine",.48,.02,22);
+            playTone(96,.78,"sawtooth",.25,.04,34);
+            [523,659,784,1047,1568].forEach((f,i)=>playTone(f,.38,"triangle",.12,.16+i*.07,f*1.22));
             break;
           case "levelstart":
             playNoise(.18,.12,"highpass",2800);
@@ -1638,7 +1787,12 @@
         boardElement.classList.remove("special-burst");
         boardElement.classList.add("special-burst");
         render({ popping: cells });
-        playSound("special");
+        const burstClass = combo ? "supercombo-burst" : kind === "⚡" ? "thunder-burst" : kind === "🔥" ? "fire-burst" : "rainbow-burst";
+        boardElement.classList.remove("thunder-burst","fire-burst","rainbow-burst","supercombo-burst");
+        void boardElement.offsetWidth;
+        boardElement.classList.add(burstClass);
+        playSound(combo ? "supercombo" : kind === "⚡" ? "thunder" : kind === "🔥" ? "fireblast" : "rainbow");
+        window.setTimeout(() => boardElement.classList.remove(burstClass), 1150);
         messageElement.textContent = combo
           ? "💥 SUPER COMBO! A spectacular fruit explosion!"
           : kind === "🔥" ? "🔥 Fruit blaze! A whole row cleared!"
