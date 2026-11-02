@@ -9,6 +9,8 @@ on:
       - "manifest.webmanifest"
       - "sw.js"
       - ".github/workflows/deploy-pages.yml"
+      - "icon.svg"
+      - "tests/**"
   workflow_dispatch:
 
 permissions:
@@ -29,6 +31,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run release smoke tests
+        run: node --test tests/smoke.test.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
