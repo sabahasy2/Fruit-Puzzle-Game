@@ -1646,11 +1646,11 @@
     .game .board.bomb-burst{animation-duration:.30s!important}
     .game .board.bomb-burst:before{animation-duration:.28s!important}
 
-    /* v71 — immediate match fade and faster fruit refill */
-    .game .tile.match-pop .fruit-face{animation-duration:.07s!important;animation-delay:0ms!important}
-    .game .tile.fruit-fall .fruit-face{animation-duration:.10s!important;animation-delay:0ms!important}
-    .game .tile.match-pop:before{animation-duration:.07s!important}
-    .game .tile.match-pop:after{animation-duration:.07s!important}
+    /* v72 — near-instant matching, synchronized refill and louder effects */
+    .game .tile.match-pop .fruit-face{animation-duration:.045s!important;animation-delay:0ms!important}
+    .game .tile.fruit-fall .fruit-face{animation-duration:.065s!important;animation-delay:0ms!important}
+    .game .tile.match-pop:before{animation-duration:.045s!important}
+    .game .tile.match-pop:after{animation-duration:.045s!important}
     .game .tile.fruit-fall .fruit-face{--rain-delay:0ms!important}
 
 /* Fruit Pop Adam — premium original fruit-puzzle design */
@@ -2031,7 +2031,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           audioCompressor.attack.setValueAtTime(0.003, audioContext.currentTime);
           audioCompressor.release.setValueAtTime(0.25, audioContext.currentTime);
           audioMasterGain = audioContext.createGain();
-          audioMasterGain.gain.setValueAtTime(1.85, audioContext.currentTime);
+          audioMasterGain.gain.setValueAtTime(2.25, audioContext.currentTime);
           audioCompressor.connect(audioMasterGain);
           audioMasterGain.connect(audioContext.destination);
         }
@@ -2050,7 +2050,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           oscillator.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), start + duration);
         }
         gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(Math.min(0.82, Math.max(0.0002, volume * 1.35)), start + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         oscillator.connect(gain);
         gain.connect(audioCompressor || ctx.destination);
@@ -2077,11 +2077,11 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         filter.type = filterType;
         filter.frequency.setValueAtTime(frequency, start);
         gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.008);
+        gain.gain.exponentialRampToValueAtTime(Math.min(0.88, Math.max(0.0002, volume * 1.4)), start + 0.008);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         source.connect(filter);
         filter.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(audioCompressor || ctx.destination);
         source.start(start);
         source.stop(start + duration + 0.02);
       }
@@ -2373,7 +2373,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
             if (poppingSet.has(cellKey)) tile.classList.add("match-pop");
             if (fallingSet.has(cellKey)) {
               tile.classList.add("fruit-fall");
-              fruitFace.style.setProperty("--rain-delay", (r * 6 + c * 2) + "ms");
+              fruitFace.style.setProperty("--rain-delay", "0ms");
             }
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) {
               tile.classList.add("special-fruit");
@@ -2749,7 +2749,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           );
           render({ popping });
           // Let the short fade finish, then clear matched fruit without a visible pause.
-          await new Promise(resolve => setTimeout(resolve, 45));
+          await new Promise(resolve => setTimeout(resolve, 30));
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -2782,7 +2782,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           landingColumns.forEach((column, index) => {
             playImpactSound(.34 + index * .075);
           });
-          await new Promise(resolve => setTimeout(resolve, 75));
+          await new Promise(resolve => setTimeout(resolve, 65));
         }
 
         ensurePlayableBoard();
