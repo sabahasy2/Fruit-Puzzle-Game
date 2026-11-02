@@ -116,6 +116,17 @@
       background: #ffe27a35;
       transform: scale(1.08);
     }
+    .tile.hint-partner {
+      border: 2px dashed #8fffd0;
+      background: #39d6a044;
+      box-shadow: 0 0 13px #75ffd099, inset 0 0 9px #75ffd055;
+      animation: hintPulse .8s ease-in-out infinite alternate;
+    }
+    @keyframes hintPulse {
+      from { filter: brightness(1); }
+      to { filter: brightness(1.35); }
+    }
+    @media(prefers-reduced-motion:reduce){.tile.hint-partner{animation:none}}
     .tile.special-fruit{position:relative;z-index:1;border-color:#ffe7a0;background:radial-gradient(circle,#f8d87955,#ffffff12);box-shadow:inset 0 0 12px #ffe6a077,0 0 12px #e9bd5b88;animation:specialPulse 1.25s ease-in-out infinite alternate}
     @keyframes specialPulse{from{filter:brightness(1);transform:scale(1)}to{filter:brightness(1.28);transform:scale(1.06)}}
     @media(prefers-reduced-motion:reduce){.tile.special-fruit{animation:none}}
@@ -335,6 +346,7 @@
 
       let board = [];
       let selected = null;
+      let hintPartner = null;
       let score = 0;
       let moves = 25;
       // Test build: open with ?test=1 to start at level 3 and preview special-fruit mechanics.
@@ -449,6 +461,10 @@
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) tile.classList.add("special-fruit");
             if (selected && selected.r === r && selected.c === c) {
               tile.classList.add("selected");
+            }
+            if (hintPartner && hintPartner.r === r && hintPartner.c === c) {
+              tile.classList.add("hint-partner");
+              tile.setAttribute("aria-label", "Suggested matching fruit");
             }
 
             tile.addEventListener("click", () => choose(r, c));
@@ -592,6 +608,7 @@
       function choose(r, c) {
         if (busy || moves <= 0) return;
 
+        hintPartner = null;
         const current = { r, c };
 
         if (!selected) {
@@ -789,8 +806,9 @@
 
         if (hint) {
           selected = { r: hint.r, c: hint.c };
+          hintPartner = { r: hint.nr, c: hint.nc };
           render();
-          messageElement.textContent = "💡 Try the highlighted fruit!";
+          messageElement.textContent = "💡 Two fruits are highlighted: tap the green one next!";
           return;
         }
 
@@ -805,6 +823,7 @@
         objectiveProgress = 0;
         moves = 25;
         selected = null;
+        hintPartner = null;
         busy = false;
         messageElement.textContent = "Tap a fruit, then an adjacent fruit!";
         localStorage.setItem("fruit-pop-level", String(level));
