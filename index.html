@@ -2245,7 +2245,8 @@
       }
       const messageElement = document.getElementById("message");
 
-      const goal = () => 220 + Math.floor((level - 1) / 5) * 150;
+      // Score goals scale steadily and cap at a fair target for the 25-move late game.
+      const goal = () => Math.min(950, 220 + Math.floor((level - 1) / 10) * 35);
 
       function randomFruit() {
         return FRUITS[Math.floor(Math.random() * FRUITS.length)];
