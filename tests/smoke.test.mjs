@@ -53,7 +53,7 @@ test("guest progress includes coins and account progress is restored", () => {
 test("install metadata and offline cache include the app icon", () => {
   assert.ok(manifest.icons.some(item => item.src === "./icon.svg" && item.type === "image/svg+xml"));
   assert.match(icon, /<svg[\s>]/);
-  assert.match(sw, /fruit-pop-v72/);
+  assert.match(sw, /fruit-pop-v73/);
   assert.match(sw, /"\.\/icon\.svg"/);
   assert.match(sw, /pathname\.startsWith\("\/api\/"\)/);
 });
