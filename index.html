@@ -1293,8 +1293,60 @@
   </main>
 
   <script>
-    (() => {
+    (async () => {
       "use strict";
+      // Resolve the signed-in profile before the game reads or writes progress.
+      const progressKeys = ["level", "stars", "total-score"];
+      const guestKey = k => "fruit-pop-guest-" + k;
+      const legacy = Object.fromEntries(progressKeys.map(k => [k, localStorage.getItem("fruit-pop-" + k)]));
+      if (!localStorage.getItem(guestKey("level"))) {
+        for (const k of progressKeys) if (legacy[k] !== null) localStorage.setItem(guestKey(k), legacy[k]);
+      }
+      let bootPlayer = null;
+      let bootReady = false;
+      try {
+        const meResponse = await fetch("/api/me", { credentials: "same-origin", cache: "no-store" });
+        if (!meResponse.ok) throw new Error("Could not verify the saved session.");
+        const me = await meResponse.json();
+        bootPlayer = me.player || null;
+        if (bootPlayer) {
+          const progressResponse = await fetch("/api/progress", { credentials: "same-origin", cache: "no-store" });
+          if (!progressResponse.ok) throw new Error("Could not load account progress.");
+          const data = await progressResponse.json();
+          const saved = data.progress || {};
+          localStorage.setItem("fruit-pop-level", String(saved.level || 1));
+          localStorage.setItem("fruit-pop-stars", String(saved.stars || 0));
+          localStorage.setItem("fruit-pop-total-score", String(saved.totalScore || 0));
+          localStorage.setItem("fruit-pop-coins", String(saved.coins || 0));
+        } else {
+          for (const k of progressKeys) {
+            const value = localStorage.getItem(guestKey(k));
+            if (value !== null) localStorage.setItem("fruit-pop-" + k, value);
+          }
+        }
+        bootReady = true;
+      } catch (error) {
+        console.warn("Progress bootstrap deferred:", error);
+      }
+      window.__fruitPopBootPlayer = bootPlayer;
+      window.__fruitPopBootReady = bootReady;
+      window.__fruitPopSaveGuest = () => {
+        if (window.__fruitPopBootPlayer) return;
+        for (const k of progressKeys) {
+          const value = localStorage.getItem("fruit-pop-" + k);
+          if (value !== null) localStorage.setItem(guestKey(k), value);
+        }
+      };
+      window.__fruitPopRestoreGuest = () => {
+        window.__fruitPopBootPlayer = null;
+        for (const k of progressKeys) {
+          const value = localStorage.getItem(guestKey(k));
+          if (value !== null) localStorage.setItem("fruit-pop-" + k, value);
+        }
+      };
+      window.addEventListener("pagehide", () => window.__fruitPopSaveGuest?.());
+      window.setInterval(() => window.__fruitPopSaveGuest?.(), 1500);
+
 
       const SIZE = 8;
       const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
@@ -1723,6 +1775,8 @@
         score += points;
         totalScore += points;
         localStorage.setItem("fruit-pop-total-score", String(totalScore));
+        window.__fruitPopSaveGuest?.();
+        window.dispatchEvent(new Event("fruit-pop:progress"));
       }
 
       function findMatches() {
@@ -2098,6 +2152,8 @@
           localStorage.setItem("fruit-pop-level", String(level));
           window.dispatchEvent(new CustomEvent("fruit-pop:level", { detail: { level } }));
           localStorage.setItem("fruit-pop-stars", String(Math.max(Number(localStorage.getItem("fruit-pop-stars") || 0), completedLevel)));
+          window.__fruitPopSaveGuest?.();
+          window.dispatchEvent(new Event("fruit-pop:progress"));
           saveBest();
           score = 0;
           moves = movesForLevel();
@@ -2273,7 +2329,8 @@
   (() => {
     const $ = id => document.getElementById(id);
     const authModal=$("authModal"), levelsModal=$("levelsModal"), note=$("authNote");
-    let mode="login", player=null;
+    let mode="login", player=window.__fruitPopBootPlayer||null;
+    let authReady=window.__fruitPopBootReady===true;
     const worldSeeds=[
       {name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths"},
       {name:"Crystal Ice Kingdom",ar:"مملكة الجليد",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves"},
@@ -2315,7 +2372,7 @@
       $("levelsWorld").textContent=w.emoji+" "+w.name+" · Levels "+w.start+"–"+w.end;
     }
 
-    const guestProgress=()=>({level:Number(localStorage.getItem("fruit-pop-level")||1),stars:Number(localStorage.getItem("fruit-pop-stars")||0),coins:Number(localStorage.getItem("fruit-pop-coins")||0),lives:5});
+    const guestProgress=()=>({level:Number(localStorage.getItem("fruit-pop-level")||1),stars:Number(localStorage.getItem("fruit-pop-stars")||0),coins:Number(localStorage.getItem("fruit-pop-coins")||0),totalScore:Number(localStorage.getItem("fruit-pop-total-score")||0),lives:5});
     const show=(el)=>el.classList.add("open"), hide=(el)=>el.classList.remove("open");
     const themeModal=$("themeModal");
     const themeNames={candy:"Candy Pop",royal:"Royal Gold",ocean:"Ocean Splash",sunset:"Sunset Berry",forest:"Emerald Garden"};
@@ -2453,7 +2510,7 @@
         b.addEventListener("click",()=>{
           if(i>current)return;
           hide(levelsModal);
-          if(i!==current){localStorage.setItem("fruit-pop-level",String(i));location.reload();}
+          if(i!==current){localStorage.setItem("fruit-pop-level",String(i));window.__fruitPopSaveGuest?.();location.reload();}
           else $("message").textContent="✨ المرحلة "+i+" جاهزة! انطلق للمغامرة.";
         });
         nodes.push(wrap);
@@ -2524,7 +2581,10 @@
     }
     $("accountBtn").addEventListener("click",()=>{note.textContent="";show(authModal);});
     $("closeAuth").addEventListener("click",()=>hide(authModal));
-    $("guestBtn").addEventListener("click",()=>{player=null;accountLabel();hide(authModal);});
+    $("guestBtn").addEventListener("click",async()=>{
+      try { if(player) await request("/api/logout",{method:"POST"}); } catch(e) { note.textContent=e.message; return; }
+      player=null;authReady=true;window.__fruitPopRestoreGuest?.();accountLabel();location.reload();
+    });
     $("levelsBtn").addEventListener("click",()=>{drawLevels();show(levelsModal);});
     $("closeLevels").addEventListener("click",()=>hide(levelsModal));
     $("emailAuthBtn").addEventListener("click",async()=>{
@@ -2539,16 +2599,24 @@
         localStorage.setItem("fruit-pop-level",String(saved.level||1));
         localStorage.setItem("fruit-pop-stars",String(saved.stars||0));
         localStorage.setItem("fruit-pop-coins",String(saved.coins||0));
+        localStorage.setItem("fruit-pop-total-score",String(saved.totalScore||0));
+        window.__fruitPopBootPlayer=player;window.__fruitPopBootReady=true;
         $("message").textContent="Welcome back! Your account is connected.";
         location.reload();
       }catch(e){note.textContent=e.message;}
     });
     $("googleAuthBtn").addEventListener("click",()=>{location.href="/api/google/start";});
     let lastSynced="";
-    async function syncIfChanged(){ if(!player)return; const value=JSON.stringify(guestProgress()); if(value===lastSynced)return; try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){} }
+    async function syncIfChanged(){
+      if(!player||!authReady)return;
+      const value=JSON.stringify(guestProgress());
+      if(value===lastSynced)return;
+      try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){console.warn("Progress sync failed:",e);}
+    }
     applyWorld(guestProgress().level);
     window.addEventListener("fruit-pop:level", event=>applyWorld(event.detail.level));
-    request("/api/me").then(d=>{player=d.player;if(player)accountLabel();}).catch(()=>{});
+    if(player)accountLabel();
+    window.addEventListener("fruit-pop:progress",()=>{if(player)syncIfChanged();else window.__fruitPopSaveGuest?.();});
     setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}

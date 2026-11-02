@@ -26,7 +26,7 @@ async function currentPlayer(request, db) {
   const token = (request.headers.get("Cookie") || "").split(";").map(x => x.trim()).find(x => x.startsWith("fp_session="))?.slice(11);
   if (!token) return null;
   const now = Math.floor(Date.now() / 1000);
-  return db.prepare("SELECT p.id,p.email,p.display_name,pr.level,pr.stars,pr.coins,pr.lives FROM sessions s JOIN players p ON p.id=s.player_id LEFT JOIN progress pr ON pr.player_id=p.id WHERE s.token_hash=? AND s.expires_at>?")
+  return db.prepare("SELECT p.id,p.email,p.display_name,pr.level,pr.stars,pr.coins,pr.lives,pr.total_score FROM sessions s JOIN players p ON p.id=s.player_id LEFT JOIN progress pr ON pr.player_id=p.id WHERE s.token_hash=? AND s.expires_at>?")
     .bind(await tokenHash(token), now).first();
 }
 async function saveProgress(db, playerId, p) {
@@ -34,8 +34,9 @@ async function saveProgress(db, playerId, p) {
   const stars = Math.max(0, Math.min(30000, Math.floor(Number(p.stars) || 0)));
   const coins = Math.max(0, Math.min(10000000, Math.floor(Number(p.coins) || 0)));
   const lives = Math.max(0, Math.min(5, Math.floor(Number(p.lives) || 0)));
-  await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,updated_at=excluded.updated_at")
-    .bind(playerId, level, stars, coins, lives, Math.floor(Date.now()/1000)).run();
+  const totalScore = Math.max(0, Math.min(1000000000, Math.floor(Number(p.totalScore ?? p.total_score) || 0)));
+  await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,total_score,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,total_score=MAX(total_score,excluded.total_score),updated_at=excluded.updated_at")
+    .bind(playerId, level, stars, coins, lives, totalScore, Math.floor(Date.now()/1000)).run();
 }
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
@@ -72,7 +73,7 @@ export async function onRequest({ request, env }) {
     if (path === "/api/progress" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       if (!player) return json({error:"Sign in to sync progress."},401);
-      return json({progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,lives:player.lives??5}});
+      return json({progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,totalScore:player.total_score||0,lives:player.lives??5}});
     }
     if (path === "/api/progress" && request.method === "PUT") {
       const player = await currentPlayer(request,env.DB);
