@@ -1796,7 +1796,7 @@
     window.__fruitPopBootPromise = (async () => {
       "use strict";
       // Resolve the signed-in profile before the game reads or writes progress.
-      const progressKeys = ["level", "stars", "total-score"];
+      const progressKeys = ["level", "unlocked-level", "stars", "total-score", "coins"]
       const guestKey = k => "fruit-pop-guest-" + k;
       const legacy = Object.fromEntries(progressKeys.map(k => [k, localStorage.getItem("fruit-pop-" + k)]));
       if (!localStorage.getItem(guestKey("level"))) {
@@ -1814,7 +1814,8 @@
           if (!progressResponse.ok) throw new Error("Could not load account progress.");
           const data = await progressResponse.json();
           const saved = data.progress || {};
-          localStorage.setItem("fruit-pop-level", String(saved.level || 1));
+          localStorage.setItem("fruit-pop-level", String(Math.min(1200, Math.max(1, saved.level || 1))));
+          localStorage.setItem("fruit-pop-unlocked-level", String(Math.min(1200, Math.max(1, saved.level || 1))));
           localStorage.setItem("fruit-pop-stars", String(saved.stars || 0));
           localStorage.setItem("fruit-pop-total-score", String(saved.totalScore || 0));
           localStorage.setItem("fruit-pop-coins", String(saved.coins || 0));
@@ -1823,6 +1824,9 @@
             const value = localStorage.getItem(guestKey(k));
             if (value !== null) localStorage.setItem("fruit-pop-" + k, value);
           }
+        }
+        if (!localStorage.getItem("fruit-pop-unlocked-level")) {
+          localStorage.setItem("fruit-pop-unlocked-level", String(Math.min(1200, Math.max(1, Number(localStorage.getItem("fruit-pop-level") || 1)))));
         }
         bootReady = true;
       } catch (error) {
@@ -1849,6 +1853,7 @@
 
 
       const SIZE = 8;
+      const MAX_LEVEL = 1200;
       const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
 
       // Original, lightweight Fruit Pop soundtrack generated with Web Audio.
@@ -2205,23 +2210,27 @@
       }
 
       function objectiveForLevel() {
+        const ar = localStorage.getItem("fruit-pop-language") !== "en";
         const type = (level - 1) % 5;
-        if (type === 0) return { type: "score", target: goal(), label: "Reach " + goal() + " points" };
+        if (type === 0) {
+          const target = goal();
+          return { type: "score", target, label: ar ? "اجمع " + target + " نقطة" : "Reach " + target + " points" };
+        }
         if (type === 1) {
           const fruit = FRUITS[(level - 1) % FRUITS.length];
           const target = 8 + Math.min(14, Math.floor((level - 2) / 5) * 2);
-          return { type: "collect", fruit, target, label: "Collect " + target + " " + fruit };
+          return { type: "collect", fruit, target, label: ar ? "اجمع " + target + " من " + fruit : "Collect " + target + " " + fruit };
         }
         if (type === 2) {
           const target = 1 + Math.min(2, Math.floor((level - 1) / 15));
-          return { type: "special", target, label: "Create " + target + " special fruit" + (target > 1 ? "s" : "") };
+          return { type: "special", target, label: ar ? "أنشئ " + target + " فاكهة خاصة" : "Create " + target + " special fruit" + (target > 1 ? "s" : "") };
         }
         if (type === 3) {
           const target = 3 + Math.min(9, Math.floor((level - 4) / 20) * 2);
-          return { type: "ice", target, label: "Break " + target + " ice blocks" };
+          return { type: "ice", target, label: ar ? "حطّم " + target + " من كتل الجليد" : "Break " + target + " ice blocks" };
         }
         const target = 2 + Math.min(7, Math.floor((level - 5) / 25));
-        return { type: "crate", target, label: "Break " + target + " wooden crates" };
+        return { type: "crate", target, label: ar ? "حطّم " + target + " من الصناديق الخشبية" : "Break " + target + " wooden crates" };
       }
 
       function updateObjectiveUI() {
