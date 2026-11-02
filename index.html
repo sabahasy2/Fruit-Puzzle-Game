@@ -6,6 +6,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#ff78a8">
   <meta name="description" content="Fruit Pop - Match colorful fruits and reach your goals!">
   <title>Fruit Pop - Match & Bloom</title>
@@ -1085,6 +1088,21 @@
       .game .tile{min-width:0;border-radius:9px!important}
     }
     @media(min-width:521px){.game .board{gap:4px!important;padding:7px!important}}
+    /* v47 — Amiri player signature above the live score strip */
+    .game .player-signature{
+      order:0;position:relative;z-index:2;
+      margin:48px 0 7px;padding:0 8px;
+      color:#fff0c8;font-family:"Amiri",serif;
+      font-size:clamp(27px,7.5vw,36px);font-weight:700;
+      line-height:1.25;text-align:center;letter-spacing:0;
+      text-shadow:0 2px 0 #54234f,0 0 9px #ffd98caa,0 3px 12px #08051f;
+    }
+    .game .stats{margin-top:0!important}
+    @media(max-height:720px){
+      .game .player-signature{margin-top:42px;margin-bottom:4px;font-size:clamp(25px,7vw,32px)}
+      .game .stats{margin-top:0!important}
+    }
+
     /* v46 — keep every fruit glyph fully visible in the active play board */
     @media(max-width:520px){
       .game .board{
@@ -1166,6 +1184,7 @@
     </div>
       </div>
     </details>
+    <div class="player-signature" id="playerSignature" lang="ar" dir="rtl">عابر🖤السبيل</div>
     <section class="stats">
       <div class="stat">
         <small>SCORE</small>
