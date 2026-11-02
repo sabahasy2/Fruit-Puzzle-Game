@@ -879,10 +879,11 @@
       let hintPartner = null;
       let score = 0;
       let totalScore = Math.max(0, Number(localStorage.getItem("fruit-pop-total-score") || 0));
-      let moves = movesForLevel();
+      let moves = 25;
       // Test build: open with ?test=1 to start at level 3 and preview special-fruit mechanics.
       const testMode = new URLSearchParams(window.location.search).get("test") === "1";
       let level = testMode ? 3 : Number(localStorage.getItem("fruit-pop-level") || 1);
+      moves = movesForLevel();
       let busy = false;
 
       const boardElement = document.getElementById("board");
