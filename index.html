@@ -3715,8 +3715,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       route.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
       route.setAttribute("preserveAspectRatio","none");
       const routePoints=nodes.map((_,index)=>{
-        const pattern=[170,470,800,850,570,230,130,430,760,880,620,300];
-        return {x:pattern[index%pattern.length],y:index*76+27};
+        const x=500+335*Math.sin(index*.57-1.05)+34*Math.sin(index*.21);
+        return {x:Math.max(145,Math.min(855,x)),y:index*76+34};
       });
       const routePath=document.createElementNS("http://www.w3.org/2000/svg","path");
       const routeD=routePoints.map((p,index)=>index===0?"M "+p.x+" "+p.y:" Q "+((routePoints[index-1].x+p.x)/2)+" "+(p.y-34)+" "+p.x+" "+p.y).join("");
