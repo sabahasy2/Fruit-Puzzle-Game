@@ -780,9 +780,9 @@
     .menu-settings{position:relative;z-index:2;display:grid;gap:7px;padding:10px;border:1px solid #e7ca8066;border-radius:15px;background:#080e1d55;text-align:start}
     .menu-settings label{font-size:12px;color:#ffedc2;font-weight:900}
     .menu-settings select{width:100%;min-height:42px;border:1px solid #e7ca80;border-radius:11px;padding:8px 11px;background:#28243a;color:#fff4d4;font-size:14px}
-    .menu-audio-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-    .menu-audio-row button{font-size:11px!important;min-height:39px!important;padding:7px 4px!important}
-    .menu-audio-row button[aria-pressed="false"]{opacity:.6;filter:grayscale(.5)}
+    
+    
+    
     .menu-exit-note{position:relative;z-index:2;min-height:16px;margin:0;color:#ffe9a5;font-size:11px}
     .return-menu-btn{position:fixed;z-index:15;top:max(10px,env(safe-area-inset-top));left:10px;width:auto!important;max-width:170px;padding:9px 12px!important;border:1px solid #fff0a0!important;border-radius:999px!important;background:linear-gradient(110deg,#fff08c,#ff9c50)!important;color:#4b205b!important;font-size:12px!important;font-weight:1000;box-shadow:0 4px 0 #9c4b55,0 7px 20px #08051f88!important;opacity:.96}
     .return-menu-btn:active{transform:translateY(2px)}
@@ -883,8 +883,8 @@
       background:linear-gradient(145deg,#fff4f8,#ffb4d0);color:#176f36;font-size:14px;font-weight:900;
       box-shadow:0 4px 0 #c72c61;
     }
-    #introScreen .menu-audio-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    #introScreen .menu-audio-row button{min-height:40px!important;padding:7px!important;font-size:12px!important;border-radius:14px}
+    #introScreen 
+    #introScreen 
     #introScreen .menu-exit-note{grid-column:1/-1;color:#176f36;text-align:center}
     #introScreen #menuExitBtn{
       grid-column:1/-1;justify-self:center;width:auto;min-height:36px;margin-top:1px;padding:6px 18px;
@@ -913,7 +913,7 @@
       #introScreen #enterGameBtn{min-height:49px}
       #introScreen .menu-settings{gap:5px}
       #introScreen .menu-settings select{min-height:36px}
-      #introScreen .menu-audio-row button{min-height:34px!important}
+      #introScreen 
       #introScreen .menu-footer{margin-top:5px}
     }
     @media(prefers-reduced-motion:reduce){#introScreen:before,#introScreen:after{animation:none}}
@@ -1836,7 +1836,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         <div class="menu-settings">
           <label for="languageSelect">🌐 اللغة / Language</label>
           <select id="languageSelect" aria-label="Game language"><option value="ar">العربية</option><option value="en">English</option></select>
-          <div class="menu-audio-row"><button id="menuMusicToggle" class="menu-secondary" type="button">🎵 الموسيقى</button><button id="menuSoundToggle" class="menu-secondary" type="button">🔊 المؤثرات</button></div>
+          <button id="menuSoundToggle" class="menu-secondary" type="button">🔊 المؤثرات</button>
         </div>
         <button id="menuExitBtn" class="menu-secondary" type="button">🚪 إنهاء اللعبة</button>
         <p id="menuExitNote" class="menu-exit-note" aria-live="polite"></p>
@@ -1863,7 +1863,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
     <button id="returnMenuBtn" class="return-menu-btn" type="button" aria-label="Open main menu">☰ القائمة الرئيسية</button>
     <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button><button id="dailyRewardBtn" class="secondary" type="button">🎁 Daily gift</button></div>
-    <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
+    <div class="audio-controls" aria-label="Sound effects settings"><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
     <div class="controls">
       <button id="restart">↻ Restart</button>
       <button class="secondary" id="hint">💡 Hint</button>
@@ -2012,11 +2012,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       let audioContext = null;
       let audioCompressor = null;
       let audioMasterGain = null;
-      let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
-      let musicTimer = null;
-      let musicStep = 0;
-      const melody = [523.25,659.25,783.99,659.25,587.33,659.25,880,783.99,523.25,659.25,783.99,987.77,880,783.99,659.25,587.33];
       function audioEngine() {
         const AudioCtor = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtor) return null;
@@ -2206,115 +2202,6 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
             playTone(980,.085,"square",.075,0,430);
         }
       }
-      // Original high-energy arcade soundtrack: punchy drums, driving bass and bright lead.
-      let musicBusGain = null;
-      const musicVoices = new Set();
-      const musicProgression = [
-        { bass:110.00, root:220.00, chord:[220.00,277.18,329.63,440.00], lead:[659.25,783.99,880.00,783.99,987.77,880.00,783.99,659.25] },
-        { bass:130.81, root:261.63, chord:[261.63,329.63,392.00,493.88], lead:[783.99,880.00,987.77,1174.66,987.77,880.00,783.99,659.25] },
-        { bass:146.83, root:293.66, chord:[293.66,369.99,440.00,554.37], lead:[880.00,987.77,1174.66,1318.51,1174.66,987.77,880.00,783.99] },
-        { bass:98.00, root:196.00, chord:[196.00,246.94,293.66,392.00], lead:[587.33,659.25,783.99,880.00,987.77,880.00,783.99,659.25] }
-      ];
-      function playMusicVoice(frequency,duration,wave="sine",volume=.035,delay=0,attack=.012,endFrequency=null) {
-        const ctx=audioEngine();
-        if(!ctx)return;
-        if(!musicBusGain){
-          musicBusGain=ctx.createGain();
-          musicBusGain.gain.value=.96;
-          musicBusGain.connect(audioMasterGain||ctx.destination);
-        }
-        const start=ctx.currentTime+delay,osc=ctx.createOscillator(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
-        osc.type=wave;osc.frequency.setValueAtTime(frequency,start);
-        if(endFrequency!==null)osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFrequency),start+duration);
-        filter.type="lowpass";
-        filter.frequency.setValueAtTime(wave==="sawtooth"?2600:wave==="triangle"?3400:1800,start);
-        filter.Q.value=wave==="sawtooth"?.7:.25;
-        gain.gain.setValueAtTime(.0001,start);
-        gain.gain.linearRampToValueAtTime(volume,start+attack);
-        gain.gain.setValueAtTime(volume,start+Math.max(attack,duration*.55));
-        gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
-        osc.connect(filter);filter.connect(gain);gain.connect(musicBusGain);
-        musicVoices.add(osc);
-        osc.onended=()=>{musicVoices.delete(osc);try{osc.disconnect();filter.disconnect();gain.disconnect();}catch(e){}};
-        osc.start(start);osc.stop(start+duration+.025);
-      }
-      function musicTick() {
-        if(!musicEnabled){musicTimer=null;return;}
-        const step=musicStep%16;
-        const bar=Math.floor(musicStep/16);
-        const harmony=musicProgression[bar%musicProgression.length];
-        const delay=0;
-        // Full-power arcade drums: four-on-the-floor kick, sharp snare and busy hats.
-        if(step%2===0){
-          playMusicVoice(145,.20,"sine",.27,delay,.045,48);
-          playNoise(.075,.15,"lowpass",190,delay);
-        }
-        if(step===2||step===6||step===10||step===14){
-          playNoise(.105,.22,"bandpass",2100,delay);
-          playNoise(.075,.10,"highpass",5200,delay+.006);
-          playMusicVoice(205,.10,"triangle",.085,delay,.075,115);
-        }
-        // Driving sixteenth-style hat energy with strong offbeat accents.
-        playNoise(.038,step%2===0?.075:.052,"highpass",step%4===0?9800:7600,delay);
-        if(step===3||step===7||step===11||step===15)playNoise(.065,.075,"highpass",10800,delay);
-        // Heavy, moving bass with octave punches.
-        const bassPattern=[1,1,2,1,1,2,1,3,1,1,2,1,3,2,1,2];
-        const bassHz=harmony.bass*bassPattern[step];
-        playMusicVoice(bassHz,.145,"sawtooth",.085,delay,.006,bassHz*.975);
-        if(step===0||step===8)playMusicVoice(harmony.bass*.5,.30,"sine",.13,delay,.025,harmony.bass*.42);
-        // Wider, louder chord hits and a bright arcade lead hook.
-        if(step===0||step===4||step===8||step===12){
-          harmony.chord.forEach((note,i)=>playMusicVoice(note,.22,"sawtooth",.026,0,.012));
-        }
-        if(step%2===0){
-          const note=harmony.lead[(step/2+(bar%2)*2)%harmony.lead.length];
-          playMusicVoice(note,.145,"square",.045,0,.006,note*1.018);
-          if(step===6||step===14)playMusicVoice(note*2,.12,"triangle",.025,.018,.005);
-        }
-        musicStep++;
-        musicTimer=window.setTimeout(musicTick,170); // ~176 BPM, fast eighth-note pulse
-      }
-      function startMusic() {
-        if(!musicEnabled||musicTimer!==null)return;
-        const ctx=audioEngine();
-        if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
-        musicStep=0;musicTick();
-      }
-      window.__fruitStartMusic=startMusic;
-      function stopMusic() {
-        if(musicTimer!==null)window.clearTimeout(musicTimer);
-        musicTimer=null;
-        for(const voice of [...musicVoices]){try{voice.stop();}catch(e){}}
-        musicVoices.clear();
-      }
-      function updateAudioButtons() {
-        const musicButton = document.getElementById("musicToggle");
-        const soundButton = document.getElementById("soundToggle");
-        const menuMusicButton = document.getElementById("menuMusicToggle");
-        const menuSoundButton = document.getElementById("menuSoundToggle");
-        const arabic=localStorage.getItem("fruit-pop-language")!=="en";
-        const musicLabel=musicEnabled?(arabic?"🎵 الموسيقى: تعمل":"🎵 Music: ON"):(arabic?"🎵 الموسيقى: متوقفة":"🎵 Music: OFF");
-        const soundLabel=soundsEnabled?(arabic?"🔊 المؤثرات: تعمل":"🔊 Sounds: ON"):(arabic?"🔇 المؤثرات: متوقفة":"🔇 Sounds: OFF");
-        if(menuMusicButton){menuMusicButton.textContent=musicLabel;menuMusicButton.setAttribute("aria-pressed",String(musicEnabled));}
-        if(menuSoundButton){menuSoundButton.textContent=soundLabel;menuSoundButton.setAttribute("aria-pressed",String(soundsEnabled));}
-        if (musicButton) {
-          musicButton.textContent = musicEnabled ? "🎵 Music: ON" : "🎵 Music: OFF";
-          musicButton.setAttribute("aria-pressed", String(musicEnabled));
-        }
-        if (soundButton) {
-          soundButton.textContent = soundsEnabled ? "🔊 Sounds: ON" : "🔇 Sounds: OFF";
-          soundButton.setAttribute("aria-pressed", String(soundsEnabled));
-        }
-      }
-      document.addEventListener("pointerdown", () => { if (musicEnabled && !window.__fruitSplashActive) startMusic(); }, { once: true, capture: true });
-      document.addEventListener("keydown", () => { if (musicEnabled) startMusic(); }, { once: true, capture: true });
-      document.getElementById("musicToggle").addEventListener("click", () => {
-        musicEnabled = !musicEnabled;
-        localStorage.setItem("fruit-pop-music", musicEnabled ? "on" : "off");
-        if (musicEnabled) startMusic(); else stopMusic();
-        updateAudioButtons();
-        playSound("tap");
-      });
       document.getElementById("soundToggle").addEventListener("click", () => {
         soundsEnabled = !soundsEnabled;
         localStorage.setItem("fruit-pop-sounds", soundsEnabled ? "on" : "off");
@@ -2322,10 +2209,6 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         if (soundsEnabled) playSound("tap");
       });
       updateAudioButtons();
-      document.getElementById("menuMusicToggle").addEventListener("click",()=>{
-        musicEnabled=!musicEnabled;localStorage.setItem("fruit-pop-music",musicEnabled?"on":"off");
-        if(musicEnabled)startMusic();else stopMusic();updateAudioButtons();
-      });
       document.getElementById("menuSoundToggle").addEventListener("click",()=>{
         soundsEnabled=!soundsEnabled;localStorage.setItem("fruit-pop-sounds",soundsEnabled?"on":"off");
         updateAudioButtons();if(soundsEnabled)playSound("tap");
@@ -3307,7 +3190,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         moves:"الحركات",level:"المرحلة",restart:"↻ إعادة المرحلة",hint:"💡 تلميح",
         objective:"🎯 أكمل الهدف",message:"اسحب فاكهة وبدّل مكانها مع فاكهة مجاورة!",
         footer:"صُنعت بحب ❤️ لعشاق ألعاب الفواكه",levelsTitle:"🗺️ رحلة العوالم",
-        guest:"👤 زائر · تسجيل الدخول",musicOn:"🎵 الموسيقى: تعمل",musicOff:"🎵 الموسيقى: متوقفة",
+        guest:"👤 زائر · تسجيل الدخول",
         soundOn:"🔊 المؤثرات: تعمل",soundOff:"🔇 المؤثرات: متوقفة"
       },
       en:{
@@ -3316,7 +3199,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         moves:"MOVES",level:"LEVEL",restart:"↻ Restart",hint:"💡 Hint",
         objective:"🎯 Complete the goal",message:"Swap a fruit with an adjacent fruit!",
         footer:"Made with ❤️ for fruit puzzle lovers",levelsTitle:"🗺️ World Journey",
-        guest:"👤 Guest · Sign in",musicOn:"🎵 Music: ON",musicOff:"🎵 Music: OFF",
+        guest:"👤 Guest · Sign in",
         soundOn:"🔊 Sounds: ON",soundOff:"🔇 Sounds: OFF"
       }
     };
@@ -3336,11 +3219,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       document.querySelector(".footer").textContent=t.footer;
       $("levelsBtn").textContent=t.map;$("accountBtn").textContent=player?(lang==="ar"?"👤 "+(player.display_name||player.email):"👤 "+(player.display_name||player.email)):t.guest;
       $("mapProgress").textContent=(lang==="ar"?"المرحلة ":"LEVEL ")+guestProgress().level+" / 1,200"+(guestProgress().stars>=1200?(lang==="ar"?" · مكتملة":" · COMPLETE"):"");
-      const musicOn=localStorage.getItem("fruit-pop-music")!=="off";
       const soundsOn=localStorage.getItem("fruit-pop-sounds")!=="off";
-      $("menuMusicToggle").textContent=musicOn?t.musicOn:t.musicOff;
       $("menuSoundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
-      $("musicToggle").textContent=musicOn?t.musicOn:t.musicOff;
       $("soundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
@@ -3554,7 +3434,6 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     $("returnMenuBtn").addEventListener("click",returnToMainMenu);
     $("menuExitBtn").addEventListener("click",()=>{
       $("menuExitNote").textContent=languageSelect.value==="ar"?"تم إيقاف اللعب مؤقتاً وحفظ تقدمك. يمكنك إغلاق التطبيق من جهازك.":"Game paused and progress is saved. You can close the app from your device.";
-      stopMusic();
       try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
       try{window.close();}catch(e){}
       window.setTimeout(()=>{
@@ -3575,78 +3454,15 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     const start=document.getElementById("splashStartBtn");
     const skip=document.getElementById("splashSkipBtn");
     let finished=false;
-    function playOpeningFanfare(){
-      if(localStorage.getItem("fruit-pop-music")==="off") return;
-      const AudioCtor=window.AudioContext||window.webkitAudioContext;
-      if(!AudioCtor)return;
-      try{
-        const ctx=new AudioCtor();
-        if(ctx.state==="suspended")ctx.resume();
-        const master=ctx.createGain();master.gain.value=.16;master.connect(ctx.destination);
-        const notes=[523.25,659.25,783.99,1046.5,783.99,987.77,1174.66,1567.98];
-        notes.forEach((hz,i)=>{
-          const t=ctx.currentTime+i*.24;
-          const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
-          osc.type=i%3===0?"triangle":"sine";osc.frequency.setValueAtTime(hz,t);
-          filter.type="lowpass";filter.frequency.setValueAtTime(2600,t);
-          gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.24,t+.035);
-          gain.gain.exponentialRampToValueAtTime(.0001,t+.62);
-          osc.connect(filter);filter.connect(gain);gain.connect(master);osc.start(t);osc.stop(t+.66);
-          const overtone=ctx.createOscillator(),og=ctx.createGain();overtone.type="sine";overtone.frequency.setValueAtTime(hz*2,t);
-          og.gain.setValueAtTime(.0001,t);og.gain.exponentialRampToValueAtTime(.045,t+.04);og.gain.exponentialRampToValueAtTime(.0001,t+.38);
-          overtone.connect(og);og.connect(master);overtone.start(t);overtone.stop(t+.4);
-        });
-        const end=ctx.currentTime+2.4;
-        const shimmer=ctx.createOscillator(),sg=ctx.createGain();shimmer.type="sine";shimmer.frequency.setValueAtTime(2093,end-.15);shimmer.frequency.exponentialRampToValueAtTime(1046,end+.9);
-        sg.gain.setValueAtTime(.0001,end-.15);sg.gain.exponentialRampToValueAtTime(.08,end);sg.gain.exponentialRampToValueAtTime(.0001,end+1.05);
-        shimmer.connect(sg);sg.connect(master);shimmer.start(end-.15);shimmer.stop(end+1.1);
-        window.setTimeout(()=>{try{ctx.close()}catch(e){}},4200);
-      }catch(e){console.warn("Opening music unavailable",e)}
-    }
-    function leaveSplash(withMusic){
-      if(finished)return;finished=true;
-      
+    function leaveSplash(){
+      if(finished)return;
+      finished=true;
       splash.classList.add("leaving");
       window.__fruitSplashActive=false;
-      window.setTimeout(()=>{
-        splash.remove();
-        if(withMusic && localStorage.getItem("fruit-pop-music")!=="off" && window.__fruitStartMusic)window.__fruitStartMusic();
-      },850);
+      window.setTimeout(()=>splash.remove(),850);
     }
-    // Attempt audible playback at app launch; Android may defer it until first touch.
-    let fanfareStarted=false;
-    function tryOpeningMusic(){
-      if(fanfareStarted || localStorage.getItem("fruit-pop-music")==="off")return;
-      const AudioCtor=window.AudioContext||window.webkitAudioContext;
-      if(!AudioCtor)return;
-      try{
-        const ctx=new AudioCtor();
-        const begin=()=>{
-          if(fanfareStarted)return;
-          fanfareStarted=true;
-          const master=ctx.createGain();master.gain.value=.30;master.connect(ctx.destination);
-          const notes=[523.25,659.25,783.99,1046.5,783.99,987.77,1174.66,1567.98,1318.51,1567.98,2093];
-          notes.forEach((hz,i)=>{
-            const t=ctx.currentTime+i*.27;
-            const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
-            osc.type=i%3===0?"triangle":"sine";osc.frequency.setValueAtTime(hz,t);
-            filter.type="lowpass";filter.frequency.setValueAtTime(3400,t);
-            gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.32,t+.035);
-            gain.gain.exponentialRampToValueAtTime(.0001,t+.72);
-            osc.connect(filter);filter.connect(gain);gain.connect(master);osc.start(t);osc.stop(t+.76);
-            const overtone=ctx.createOscillator(),og=ctx.createGain();overtone.type="sine";overtone.frequency.setValueAtTime(hz*2,t);
-            og.gain.setValueAtTime(.0001,t);og.gain.exponentialRampToValueAtTime(.075,t+.04);og.gain.exponentialRampToValueAtTime(.0001,t+.48);
-            overtone.connect(og);og.connect(master);overtone.start(t);overtone.stop(t+.5);
-          });
-          window.setTimeout(()=>{try{ctx.close()}catch(e){}},5500);
-        };
-        if(ctx.state==="running")begin();
-        else ctx.resume().then(begin).catch(()=>{try{ctx.close()}catch(e){}});
-      }catch(e){}
-    }
-    
-    start.addEventListener("click",()=>leaveSplash(true));
-    skip.addEventListener("click",()=>leaveSplash(false));
+    start.addEventListener("click",leaveSplash);
+    skip.addEventListener("click",leaveSplash);
   })();
   </script>
 
