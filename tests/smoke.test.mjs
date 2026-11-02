@@ -70,10 +70,19 @@ test("guest progress includes coins and account progress is restored", () => {
   assert.match(html, /localStorage\.setItem\("fruit-pop-coins", String\(saved\.coins \|\| 0\)\)/);
 });
 
+test("Fruit Pop Adam branding and fruit-logo asset are wired into the app", () => {
+  assert.match(html, /<title>Fruit Pop Adam<\\/title>/);
+  assert.match(html, /FRUIT POP ADAM/);
+  assert.equal(manifest.name, "Fruit Pop Adam");
+  assert.equal(manifest.short_name, "Fruit Pop Adam");
+  assert.match(icon, /Fruit Pop Adam/);
+  assert.match(icon, /id="berry"/);
+});
+
 test("install metadata and offline cache include the app icon", () => {
   assert.ok(manifest.icons.some(item => item.src === "./icon.svg" && item.type === "image/svg+xml"));
   assert.match(icon, /<svg[\s>]/);
-  assert.match(sw, /fruit-pop-v73/);
+  assert.match(sw, /fruit-pop-v74/);
   assert.match(sw, /"\.\/icon\.svg"/);
   assert.match(sw, /pathname\.startsWith\("\/api\/"\)/);
 });
