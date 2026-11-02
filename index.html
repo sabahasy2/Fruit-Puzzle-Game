@@ -1555,6 +1555,42 @@
       filter:none!important;
     }
 
+    /* v67 — precisely center each fruit and give every cell even spacing */
+    .game .board{
+      grid-template-columns:repeat(8,minmax(0,1fr))!important;
+      gap:clamp(2px,.8vw,5px)!important;
+      padding:clamp(4px,1.2vw,7px)!important;
+      align-items:stretch!important;
+    }
+    .game .tile{
+      display:grid!important;
+      place-items:center!important;
+      align-content:center!important;
+      justify-content:center!important;
+      padding:0!important;
+      min-width:0!important;
+      min-height:0!important;
+      line-height:1!important;
+      border-radius:10px!important;
+    }
+    .game .tile .fruit-face{
+      position:absolute!important;
+      inset:0!important;
+      display:grid!important;
+      place-items:center!important;
+      width:100%!important;
+      height:100%!important;
+      margin:0!important;
+      padding:0!important;
+      text-align:center!important;
+      line-height:1!important;
+      font-size:1em!important;
+      z-index:1;
+    }
+    @media(max-width:380px){
+      .game .tile{font-size:clamp(22px,7.8vw,30px)!important}
+    }
+
   </style>
 </head>
 
