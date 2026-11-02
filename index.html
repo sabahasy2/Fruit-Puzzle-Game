@@ -1510,6 +1510,21 @@
     @media(max-width:380px){.game .board{gap:4px!important;padding:7px!important}.game .tile{border-radius:9px!important}}
     @media(prefers-reduced-motion:reduce){.game .tile{transition:none!important}}
 
+
+    /* Fruit visibility fix: keep complete emoji glyphs inside each candy tile */
+    .game .tile{overflow:visible!important}
+    .game .tile .fruit-face{
+      display:block!important;
+      width:auto!important;
+      height:auto!important;
+      max-width:100%!important;
+      font-size:clamp(20px,7vw,30px)!important;
+      line-height:1.15!important;
+      white-space:nowrap!important;
+      transform:none!important;
+      overflow:visible!important;
+    }
+
   </style>
 </head>
 
