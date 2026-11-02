@@ -1784,6 +1784,19 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
 @media(prefers-reduced-motion:reduce){.map-node.current{animation:none!important}}
 
 </style>
+
+  <style id="fruit-pop-candy-map-nodes">
+    /* Numbered, candy-like stage bubbles across every world */
+    #levelsModal .map-node-wrap{min-width:52px;filter:drop-shadow(0 3px 2px #59336b55)}
+    #levelsModal .map-node{position:relative;display:grid!important;place-items:center;width:48px!important;height:48px!important;min-width:48px!important;max-width:48px!important;padding:0!important;border:3px solid #fff!important;border-radius:50%!important;background:radial-gradient(circle at 32% 23%,#fff9 0 9%,transparent 27%),linear-gradient(145deg,#ffdb78 0%,#ff9b50 58%,#e86c69 100%)!important;color:#fff!important;font-size:15px!important;font-weight:1000!important;line-height:1!important;text-shadow:0 2px 2px #9d4b48,0 0 5px #fff7;box-shadow:0 4px 0 #a94e61,0 7px 13px #35204b66,inset 0 2px 5px #fff9!important}
+    #levelsModal .map-node.completed{background:radial-gradient(circle at 32% 23%,#fff9 0 9%,transparent 27%),linear-gradient(145deg,#ffe88b,#ffbd55 62%,#e99b46)!important;color:#7c4b35!important;text-shadow:0 1px #fff9;box-shadow:0 4px 0 #b77736,0 7px 13px #35204b55,inset 0 2px 5px #fff!important}
+    #levelsModal .map-node.current{width:56px!important;height:56px!important;min-width:56px!important;max-width:56px!important;border:4px solid #fff!important;background:radial-gradient(circle at 30% 22%,#fff 0 8%,transparent 27%),linear-gradient(145deg,#ff83b8,#ff4e91 65%,#d9347d)!important;color:#fff!important;font-size:17px!important;box-shadow:0 0 0 4px #ff8bb755,0 5px 0 #a72d68,0 0 22px #ff74b9aa!important;text-shadow:0 2px 2px #9c245c}
+    #levelsModal .map-node.locked{background:radial-gradient(circle at 32% 23%,#fff7 0 8%,transparent 27%),linear-gradient(145deg,#c4c8d7,#8995b2 70%,#65718f)!important;color:#fff!important;border-color:#eef1ff!important;box-shadow:0 4px 0 #59647d,0 7px 12px #35204b44,inset 0 2px 5px #fff9!important;text-shadow:0 1px 2px #45516b}
+    #levelsModal .map-node-label{display:none!important}
+    #levelsModal .map-node.current{animation:mapCandyBounce 1s ease-in-out infinite alternate}
+    @keyframes mapCandyBounce{from{transform:translateY(0) scale(1)}to{transform:translateY(-5px) scale(1.07)}}
+    @media(prefers-reduced-motion:reduce){#levelsModal .map-node.current{animation:none}}
+  </style>
 </head>
 
 <body>
@@ -3390,7 +3403,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         const state=allComplete&&i<=current?"completed":i<current?"completed":i===current?"current":"locked";
         b.type="button";
         b.className="map-node "+state;
-        b.textContent=(allComplete||i<current)?"★":i===current?"▶":"🔒";
+        b.textContent=String(i);
         b.setAttribute("aria-label",(ar?"المرحلة ":"Level ")+i+((allComplete||i<current)?(ar?"، مكتملة":", completed"):i===current?(ar?"، المرحلة الحالية":", current level"):(ar?"، مقفلة":", locked")));
         b.disabled=i>current;
         const label=document.createElement("span");
