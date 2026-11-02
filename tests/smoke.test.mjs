@@ -27,6 +27,7 @@ test("24 named worlds cover exactly 1,200 consecutive levels", () => {
   assert.equal(new Set(names.map(item => item[2])).size, 24);
   assert.match(html, /return \{\.\.\.seed,start,end:start\+49\}/);
   assert.match(html, /const MAX_LEVEL = 1200/);
+  assert.match(html, /Math\.min\(950, 220 \+ Math\.floor\(\(level - 1\) \/ 10\) \* 35\)/);
 });
 
 test("level 1200 ends the adventure without incrementing to 1201", () => {
