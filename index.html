@@ -1647,10 +1647,11 @@
     .game .board.bomb-burst:before{animation-duration:.28s!important}
 
     /* v71 — immediate match fade and faster fruit refill */
-    .game .tile.match-pop .fruit-face{animation-duration:.11s!important}
-    .game .tile.fruit-fall .fruit-face{animation-duration:.18s!important}
-    .game .tile.match-pop:before{animation-duration:.12s!important}
-    .game .tile.match-pop:after{animation-duration:.13s!important}
+    .game .tile.match-pop .fruit-face{animation-duration:.07s!important;animation-delay:0ms!important}
+    .game .tile.fruit-fall .fruit-face{animation-duration:.10s!important;animation-delay:0ms!important}
+    .game .tile.match-pop:before{animation-duration:.07s!important}
+    .game .tile.match-pop:after{animation-duration:.07s!important}
+    .game .tile.fruit-fall .fruit-face{--rain-delay:0ms!important}
 
 /* Fruit Pop Adam — premium original fruit-puzzle design */
 :root{--fpa-gold:#ffe4a0;--fpa-pink:#ff83b9;--fpa-purple:#8755c8}
@@ -2641,7 +2642,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           : kind === "⚡" ? (ar ? "⚡ برق الفاكهة! تم مسح عمود كامل!" : "⚡ Fruit lightning! A whole column cleared!")
           : kind === "💣" ? (ar ? "💣 قنبلة هائلة! انفجرت مساحة كبيرة!" : "💣 MEGA BOMB! A huge area exploded!")
           : (ar ? "🌟 انفجار قوس قزح السحري!" : "🌟 Rainbow burst! A magical fruit explosion!");
-        await new Promise(resolve => setTimeout(resolve, 65));
+        await new Promise(resolve => setTimeout(resolve, 25));
 
         cells.forEach(([y, x]) => { board[y][x] = null; });
         hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y, x); });
@@ -2748,7 +2749,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           );
           render({ popping });
           // Let the short fade finish, then clear matched fruit without a visible pause.
-          await new Promise(resolve => setTimeout(resolve, 120));
+          await new Promise(resolve => setTimeout(resolve, 45));
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -2781,7 +2782,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           landingColumns.forEach((column, index) => {
             playImpactSound(.34 + index * .075);
           });
-          await new Promise(resolve => setTimeout(resolve, 190));
+          await new Promise(resolve => setTimeout(resolve, 75));
         }
 
         ensurePlayableBoard();
