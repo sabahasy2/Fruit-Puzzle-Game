@@ -1775,6 +1775,7 @@
         score += points;
         totalScore += points;
         localStorage.setItem("fruit-pop-total-score", String(totalScore));
+        // Persist guest totals immediately; account totals are synced by the progress listener.
         window.__fruitPopSaveGuest?.();
         window.dispatchEvent(new Event("fruit-pop:progress"));
       }
@@ -2615,6 +2616,19 @@
       if(value===lastSynced)return;
       try{await request("/api/progress",{method:"PUT",body:value});lastSynced=value;}catch(e){console.warn("Progress sync failed:",e);}
     }
+    function flushProgressOnExit(){
+      // localStorage writes are synchronous for guests; keepalive protects account saves on app exit.
+      window.__fruitPopSaveGuest?.();
+      if(!player||!authReady)return;
+      const value=JSON.stringify(guestProgress());
+      fetch("/api/progress",{method:"PUT",credentials:"same-origin",keepalive:true,
+        headers:{"content-type":"application/json"},body:value})
+        .catch(error=>console.warn("Final progress save deferred:",error));
+    }
+    window.addEventListener("pagehide",flushProgressOnExit);
+    document.addEventListener("visibilitychange",()=>{
+      if(document.visibilityState==="hidden")flushProgressOnExit();
+    });
     applyWorld(guestProgress().level);
     window.addEventListener("fruit-pop:level", event=>applyWorld(event.detail.level));
     if(player)accountLabel();
