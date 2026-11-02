@@ -1599,51 +1599,80 @@
             playTone(980,.085,"square",.075,0,430);
         }
       }
-      // Refined cinematic lounge soundtrack: warm sustained chords, soft bass and a restrained arpeggio.
+      // Original high-energy arcade soundtrack: punchy drums, driving bass and bright lead.
       let musicBusGain = null;
       const musicVoices = new Set();
       const musicProgression = [
-        { bass:146.83, chord:[293.66,369.99,440.00,554.37], arp:[587.33,739.99,880.00,739.99] },
-        { bass:123.47, chord:[246.94,293.66,369.99,440.00], arp:[587.33,739.99,880.00,987.77] },
-        { bass:98.00,  chord:[196.00,246.94,293.66,369.99], arp:[493.88,587.33,739.99,880.00] },
-        { bass:110.00, chord:[220.00,277.18,329.63,440.00], arp:[554.37,659.25,830.61,880.00] }
+        { bass:110.00, root:220.00, chord:[220.00,277.18,329.63,440.00], lead:[659.25,783.99,880.00,783.99,987.77,880.00,783.99,659.25] },
+        { bass:130.81, root:261.63, chord:[261.63,329.63,392.00,493.88], lead:[783.99,880.00,987.77,1174.66,987.77,880.00,783.99,659.25] },
+        { bass:146.83, root:293.66, chord:[293.66,369.99,440.00,554.37], lead:[880.00,987.77,1174.66,1318.51,1174.66,987.77,880.00,783.99] },
+        { bass:98.00, root:196.00, chord:[196.00,246.94,293.66,392.00], lead:[587.33,659.25,783.99,880.00,987.77,880.00,783.99,659.25] }
       ];
-      function playMusicVoice(frequency,duration,wave="sine",volume=.012,delay=0,attack=.22) {
+      function playMusicVoice(frequency,duration,wave="sine",volume=.035,delay=0,attack=.012,endFrequency=null) {
         const ctx=audioEngine();
         if(!ctx)return;
-        if(!musicBusGain){musicBusGain=ctx.createGain();musicBusGain.gain.value=.38;musicBusGain.connect(audioMasterGain||ctx.destination);}
+        if(!musicBusGain){
+          musicBusGain=ctx.createGain();
+          musicBusGain.gain.value=.72;
+          musicBusGain.connect(audioMasterGain||ctx.destination);
+        }
         const start=ctx.currentTime+delay,osc=ctx.createOscillator(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
         osc.type=wave;osc.frequency.setValueAtTime(frequency,start);
-        filter.type="lowpass";filter.frequency.setValueAtTime(wave==="triangle"?1750:2200,start);filter.Q.value=.2;
+        if(endFrequency!==null)osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFrequency),start+duration);
+        filter.type="lowpass";
+        filter.frequency.setValueAtTime(wave==="sawtooth"?2600:wave==="triangle"?3400:1800,start);
+        filter.Q.value=wave==="sawtooth"?.7:.25;
         gain.gain.setValueAtTime(.0001,start);
         gain.gain.linearRampToValueAtTime(volume,start+attack);
-        gain.gain.setValueAtTime(volume,start+Math.max(attack,duration*.68));
+        gain.gain.setValueAtTime(volume,start+Math.max(attack,duration*.55));
         gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
         osc.connect(filter);filter.connect(gain);gain.connect(musicBusGain);
-        musicVoices.add(osc);osc.onended=()=>{musicVoices.delete(osc);try{osc.disconnect();filter.disconnect();gain.disconnect();}catch(e){}};
-        osc.start(start);osc.stop(start+duration+.04);
+        musicVoices.add(osc);
+        osc.onended=()=>{musicVoices.delete(osc);try{osc.disconnect();filter.disconnect();gain.disconnect();}catch(e){}};
+        osc.start(start);osc.stop(start+duration+.025);
       }
       function musicTick() {
-        if (!musicEnabled) { musicTimer = null; return; }
-        const beat=musicStep%16, harmony=musicProgression[Math.floor(musicStep/4)%musicProgression.length];
-        if(beat%4===0){
-          harmony.chord.forEach((note,i)=>playMusicVoice(note,2.65,"sine",i===0?.009:.006,i*.018,.48));
-          playMusicVoice(harmony.bass,2.5,"sine",.016,0,.55);
+        if(!musicEnabled){musicTimer=null;return;}
+        const step=musicStep%16;
+        const bar=Math.floor(musicStep/16);
+        const harmony=musicProgression[bar%musicProgression.length];
+        const delay=0;
+        // Four-on-the-floor kick with a punchy backbeat.
+        if(step%4===0)playMusicVoice(125,.19,"sine",.19,delay,.043);
+        if(step===4||step===12){
+          playNoise(.13,.13,"bandpass",1750,delay);
+          playMusicVoice(185,.11,"triangle",.045,delay,.09);
         }
-        const arpNote=harmony.arp[Math.floor(beat/1)%harmony.arp.length];
-        playMusicVoice(arpNote,.72,"triangle",.007,0,.14);
-        
+        // Bright, tight eighth-note hi-hats keep the groove moving.
+        if(step%2===0)playNoise(.045,step%4===0?.045:.028,"highpass",step%4===0?7800:6200,delay);
+        if(step===7||step===15)playNoise(.055,.035,"highpass",9200,delay);
+        // Driving bass line on every eighth note, with octave accents.
+        const bassPattern=[1,1,2,1,1,2,1,3,1,1,2,1,3,2,1,2];
+        const bassHz=harmony.bass*bassPattern[step];
+        playMusicVoice(bassHz,.17,"sawtooth",.052,delay,.008,bassHz*.985);
+        // Bright rhythmic chord stabs twice per bar.
+        if(step===0||step===8){
+          harmony.chord.forEach((note,i)=>playMusicVoice(note,.31,"sawtooth",.014,0,.018));
+        }
+        // Catchy, fast lead hook with a little variation each bar.
+        if(step%2===0){
+          const note=harmony.lead[(step/2+(bar%2)*2)%harmony.lead.length];
+          playMusicVoice(note,.16,"square",.025,0,.008,note*1.012);
+          if(step===6||step===14)playMusicVoice(note*2,.11,"triangle",.012,.025,.006);
+        }
         musicStep++;
-        musicTimer=window.setTimeout(musicTick,760);
+        musicTimer=window.setTimeout(musicTick,214); // ~140 BPM, eighth-note pulse
       }
       function startMusic() {
-        if (!musicEnabled || musicTimer !== null) return;
-        audioEngine();musicStep=0;musicTick();
+        if(!musicEnabled||musicTimer!==null)return;
+        const ctx=audioEngine();
+        if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
+        musicStep=0;musicTick();
       }
-      window.__fruitStartMusic = startMusic;
+      window.__fruitStartMusic=startMusic;
       function stopMusic() {
-        if (musicTimer !== null) window.clearTimeout(musicTimer);
-        musicTimer = null;
+        if(musicTimer!==null)window.clearTimeout(musicTimer);
+        musicTimer=null;
         for(const voice of [...musicVoices]){try{voice.stop();}catch(e){}}
         musicVoices.clear();
       }
