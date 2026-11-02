@@ -31,6 +31,26 @@ test("24 named worlds cover exactly 1,200 consecutive levels", () => {
   assert.match(html, /Math\.min\(950, 220 \+ Math\.floor\(\(level - 1\) \/ 10\) \* 35\)/);
 });
 
+test("all 1,200 level objectives have valid targets and a balanced distribution", () => {
+  const objectiveSource = html.match(/function objectiveForLevel\(\) \{[\s\S]*?\n      \}/);
+  assert.ok(objectiveSource, "objective function missing");
+  const goalExpression = html.match(/const goal = \(\) => ([^;]+);/);
+  assert.ok(goalExpression, "score goal formula missing");
+  const goalForLevel = new Function("level", "return " + goalExpression[1]);
+  const objectiveForLevel = new Function("level", "FRUITS", "goal", "localStorage", "return (" + objectiveSource[0] + ")()");
+  const counts = { score: 0, collect: 0, special: 0, ice: 0, crate: 0 };
+  const maxima = { score: 0, collect: 0, special: 0, ice: 0, crate: 0 };
+  for (let level = 1; level <= 1200; level++) {
+    const objective = objectiveForLevel(level, ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"], () => goalForLevel(level), { getItem: () => "en" });
+    assert.ok(Object.hasOwn(counts, objective.type), "unknown objective type at level " + level);
+    assert.ok(Number.isInteger(objective.target) && objective.target > 0, "invalid target at level " + level);
+    counts[objective.type]++;
+    maxima[objective.type] = Math.max(maxima[objective.type], objective.target);
+  }
+  for (const type of Object.keys(counts)) assert.equal(counts[type], 240, type + " objective count");
+  assert.deepEqual(maxima, { score: 950, collect: 22, special: 3, ice: 12, crate: 9 });
+});
+
 test("level 1200 ends the adventure without incrementing to 1201", () => {
   assert.match(html, /level = Math\.min\(MAX_LEVEL, completedLevel \+ 1\)/);
   assert.match(html, /completedLevel === MAX_LEVEL \? "final" : "victory"/);
