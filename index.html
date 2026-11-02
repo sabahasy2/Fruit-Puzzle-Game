@@ -1415,7 +1415,7 @@
       function scheduleIdleHint() {
         clearTimeout(idleHintTimer);
         idleHintTimer = setTimeout(() => {
-          if (!busy && moves > 0 && !selected && !hintPartner) showHint(true);
+          if (!busy && moves > 0 && !hintPartner) showHint(true);
         }, 8500);
       }
 
