@@ -501,7 +501,8 @@
     .audio-controls button[aria-pressed="false"]{opacity:.68;filter:saturate(.65)}
     .audio-controls button:focus-visible{outline:3px solid #fff;outline-offset:2px}
     @media(max-width:350px){.audio-controls button{font-size:10px;padding:7px 5px}}
-\n  </style>
+
+  </style>
 </head>
 
 <body>
@@ -535,7 +536,8 @@
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
-    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>\n    <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
+    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>
+    <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
 
     <section class="stats">
       <div class="stat">
@@ -574,7 +576,8 @@
       "use strict";
 
       const SIZE = 8;
-      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];\n
+      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
+
       // Original, lightweight Fruit Pop soundtrack generated with Web Audio.
       // Audio begins only after the player's first gesture (mobile autoplay policy).
       let audioContext = null;
