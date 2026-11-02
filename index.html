@@ -668,6 +668,38 @@
     body.skin-forest button.secondary{background:linear-gradient(110deg,#277b61,#286e93);color:#fff;border-color:#bdeca0}
     @media(max-width:350px){.theme-choices{gap:7px}.theme-choice{padding:7px!important;min-height:105px}.theme-preview{font-size:19px}}
 
+    /* Main menu, quick return and Arabic/English language controls */
+    .intro-screen{z-index:120;overflow-y:auto;align-items:center;transition:opacity .75s ease,visibility .75s ease,backdrop-filter .75s ease}
+    .intro-screen:not(.hide){backdrop-filter:blur(9px)}
+    .main-menu-content{max-height:calc(100dvh - 28px);overflow-y:auto;scrollbar-width:thin}
+    .intro-owner{position:relative;color:#ffe69a;font-size:14px;font-weight:1000;letter-spacing:3px;text-shadow:0 0 14px #ffcf5a99;margin:0 0 10px}
+    .menu-stars{position:relative;margin:7px auto 11px;color:#ffe68c;font-size:18px;letter-spacing:5px;text-shadow:0 0 12px #ffe58c;animation:menuSparkle 2.8s ease-in-out infinite alternate}
+    @keyframes menuSparkle{from{opacity:.55;transform:translateY(0)}to{opacity:1;transform:translateY(-3px)}}
+    .menu-settings{position:relative;z-index:2;display:grid;gap:7px;padding:10px;border:1px solid #e7ca8066;border-radius:15px;background:#080e1d55;text-align:start}
+    .menu-settings label{font-size:12px;color:#ffedc2;font-weight:900}
+    .menu-settings select{width:100%;min-height:42px;border:1px solid #e7ca80;border-radius:11px;padding:8px 11px;background:#28243a;color:#fff4d4;font-size:14px}
+    .menu-audio-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .menu-audio-row button{font-size:11px!important;min-height:39px!important;padding:7px 4px!important}
+    .menu-audio-row button[aria-pressed="false"]{opacity:.6;filter:grayscale(.5)}
+    .menu-exit-note{position:relative;z-index:2;min-height:16px;margin:0;color:#ffe9a5;font-size:11px}
+    .return-menu-btn{position:fixed;z-index:15;top:max(10px,env(safe-area-inset-top));left:10px;width:auto!important;max-width:170px;padding:9px 12px!important;border:1px solid #fff0a0!important;border-radius:999px!important;background:linear-gradient(110deg,#fff08c,#ff9c50)!important;color:#4b205b!important;font-size:12px!important;font-weight:1000;box-shadow:0 4px 0 #9c4b55,0 7px 20px #08051f88!important;opacity:.96}
+    .return-menu-btn:active{transform:translateY(2px)}
+    body.lang-ar{direction:rtl}
+    body.lang-ar .game{text-align:center}
+    body.lang-ar .royal-brand-copy{text-align:right}
+    body.lang-ar .intro-content,.lang-ar .menu-settings{text-align:center}
+    body.lang-ar .menu-settings label{text-align:right}
+    body.lang-ar .map-scenery{text-align:right}
+    .map-row:nth-child(odd){margin-right:3%;margin-left:0}
+    .map-row:nth-child(even){margin-left:3%;margin-right:0}
+    .map-row:nth-child(odd):after,.map-row:nth-child(even):after{content:"";position:absolute;z-index:0;width:22px;height:27px;bottom:-20px;border-right:5px dotted #fff0b9cc;filter:drop-shadow(0 2px 1px #5a553b88)}
+    .map-row:nth-child(odd):after{right:9%}
+    .map-row:nth-child(even):after{left:9%;border-right:0;border-left:5px dotted #fff0b9cc}
+    .map-row:last-child:after{display:none}
+    .map-node.completed:after{content:"";position:absolute;inset:-7px;border:1px solid #fff7a9;border-radius:50%;pointer-events:none}
+    @media(max-height:740px){.main-menu-content{max-height:calc(100dvh - 18px)}.menu-stars{margin:3px auto 6px}.intro-owner{margin-bottom:5px}}
+    @media(prefers-reduced-motion:reduce){.menu-stars{animation:none}.intro-screen{transition:none}}
+
   </style>
 </head>
 
@@ -677,15 +709,24 @@
       <div class="menu-sky" aria-hidden="true"><span class="menu-moon">☀️</span><span class="menu-cloud cloud-one">☁️</span><span class="menu-cloud cloud-two">☁️</span></div>
       <div class="menu-castle" aria-hidden="true"><span>🌳</span><span class="castle">🍭</span><span>🌳</span></div>
       <div class="intro-emblem"><span>🍓</span></div>
+      <div class="intro-owner">✦ ADAM AL NOOR ✦</div>
       <div class="intro-title">FRUIT POP</div>
-      <div class="intro-ar">عابر السبيل</div>
+      <div class="intro-ar">آدم النور</div>
       <div class="intro-caption">A HAPPY LITTLE FRUIT ADVENTURE</div>
       <div class="intro-signature">✦ Sabah Asy ✦</div>
+      <div class="menu-stars" aria-hidden="true">✦ ⭐ ✧ 🌟 ✦ ⭐ ✧</div>
       <div class="main-menu-actions">
         <button id="enterGameBtn" type="button">🎮 العب الآن</button>
         <button id="introLevelsBtn" class="menu-secondary" type="button">🗺️ خريطة العوالم والمراحل</button>
         <button id="introAccountBtn" class="menu-secondary" type="button">👤 تسجيل الدخول / إنشاء حساب</button>
         <button id="introThemeBtn" class="menu-secondary" type="button">🎨 اختر مظهر اللعبة</button>
+        <div class="menu-settings">
+          <label for="languageSelect">🌐 اللغة / Language</label>
+          <select id="languageSelect" aria-label="Game language"><option value="ar">العربية</option><option value="en">English</option></select>
+          <div class="menu-audio-row"><button id="menuMusicToggle" class="menu-secondary" type="button">🎵 الموسيقى</button><button id="menuSoundToggle" class="menu-secondary" type="button">🔊 المؤثرات</button></div>
+        </div>
+        <button id="menuExitBtn" class="menu-secondary" type="button">🚪 إنهاء اللعبة</button>
+        <p id="menuExitNote" class="menu-exit-note" aria-live="polite"></p>
       </div>
       <div class="menu-footer">🍬 24 عالماً · 1,200 مرحلة · مغامرة لا تنتهي 🍬</div>
     </div>
@@ -703,6 +744,7 @@
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
+    <button id="returnMenuBtn" class="return-menu-btn" type="button" aria-label="Open main menu">☰ القائمة الرئيسية</button>
     <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button></div>
     <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
 
@@ -964,6 +1006,10 @@
       function updateAudioButtons() {
         const musicButton = document.getElementById("musicToggle");
         const soundButton = document.getElementById("soundToggle");
+        const menuMusicButton = document.getElementById("menuMusicToggle");
+        const menuSoundButton = document.getElementById("menuSoundToggle");
+        if(menuMusicButton){menuMusicButton.textContent=musicEnabled?"🎵 الموسيقى: تعمل":"🎵 الموسيقى: متوقفة";menuMusicButton.setAttribute("aria-pressed",String(musicEnabled));}
+        if(menuSoundButton){menuSoundButton.textContent=soundsEnabled?"🔊 المؤثرات: تعمل":"🔇 المؤثرات: متوقفة";menuSoundButton.setAttribute("aria-pressed",String(soundsEnabled));}
         if (musicButton) {
           musicButton.textContent = musicEnabled ? "🎵 Music: ON" : "🎵 Music: OFF";
           musicButton.setAttribute("aria-pressed", String(musicEnabled));
@@ -989,7 +1035,14 @@
         if (soundsEnabled) playSound("tap");
       });
       updateAudioButtons();
-
+      $("menuMusicToggle").addEventListener("click",()=>{
+        musicEnabled=!musicEnabled;localStorage.setItem("fruit-pop-music",musicEnabled?"on":"off");
+        if(musicEnabled)startMusic();else stopMusic();updateAudioButtons();
+      });
+      $("menuSoundToggle").addEventListener("click",()=>{
+        soundsEnabled=!soundsEnabled;localStorage.setItem("fruit-pop-sounds",soundsEnabled?"on":"off");
+        updateAudioButtons();if(soundsEnabled)playSound("tap");
+      });
 
       let board = [];
       let selected = null;
@@ -1707,7 +1760,7 @@
     }
     function openThemePicker(){show(themeModal);}
     $("themeBtn").addEventListener("click",openThemePicker);
-    $("introThemeBtn").addEventListener("click",()=>{ $("introScreen").classList.add("hide"); openThemePicker(); });
+    $("introThemeBtn").addEventListener("click",()=>{openThemePicker();});
     $("closeTheme").addEventListener("click",()=>hide(themeModal));
     $("themeChoices").addEventListener("click",event=>{
       const choice=event.target.closest("[data-theme-choice]");
@@ -1718,6 +1771,61 @@
     });
     themeModal.addEventListener("click",event=>{if(event.target===themeModal)hide(themeModal);});
     setGameTheme(localStorage.getItem("fruit-pop-theme")||"candy");
+
+    const languageSelect=$("languageSelect");
+    const translations={
+      ar:{
+        enter:"🎮 العب الآن",map:"🗺️ خريطة العوالم والمراحل",account:"👤 التسجيل / الحساب",
+        theme:"🎨 المظهر والثيمات",return:"☰ القائمة الرئيسية",score:"النقاط",total:"🌟 مجموع النقاط",
+        moves:"الحركات",level:"المرحلة",restart:"↻ إعادة المرحلة",hint:"💡 تلميح",
+        objective:"🎯 أكمل الهدف",message:"اسحب فاكهة وبدّل مكانها مع فاكهة مجاورة!",
+        footer:"صُنعت بحب ❤️ لعشاق ألعاب الفواكه",levelsTitle:"🗺️ رحلة العوالم",
+        guest:"👤 زائر · تسجيل الدخول",musicOn:"🎵 الموسيقى: تعمل",musicOff:"🎵 الموسيقى: متوقفة",
+        soundOn:"🔊 المؤثرات: تعمل",soundOff:"🔇 المؤثرات: متوقفة"
+      },
+      en:{
+        enter:"🎮 Play now",map:"🗺️ Worlds & level map",account:"👤 Sign in / Account",
+        theme:"🎨 Themes & appearance",return:"☰ Main menu",score:"SCORE",total:"🌟 TOTAL POINTS",
+        moves:"MOVES",level:"LEVEL",restart:"↻ Restart",hint:"💡 Hint",
+        objective:"🎯 Complete the goal",message:"Swap a fruit with an adjacent fruit!",
+        footer:"Made with ❤️ for fruit puzzle lovers",levelsTitle:"🗺️ World Journey",
+        guest:"👤 Guest · Sign in",musicOn:"🎵 Music: ON",musicOff:"🎵 Music: OFF",
+        soundOn:"🔊 Sounds: ON",soundOff:"🔇 Sounds: OFF"
+      }
+    };
+    function applyLanguage(lang){
+      lang=lang==="en"?"en":"ar";
+      localStorage.setItem("fruit-pop-language",lang);
+      document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+      document.body.classList.toggle("lang-ar",lang==="ar");
+      languageSelect.value=lang;
+      const t=translations[lang];
+      $("enterGameBtn").textContent=t.enter;$("introLevelsBtn").textContent=t.map;
+      $("introAccountBtn").textContent=t.account;$("introThemeBtn").textContent=t.theme;
+      $("returnMenuBtn").textContent=t.return;$("score").previousElementSibling.textContent=t.score;
+      $("totalScore").previousElementSibling.textContent=t.total;$("moves").previousElementSibling.textContent=t.moves;
+      $("level").previousElementSibling.textContent=t.level;
+      $("restart").textContent=t.restart;$("hint").textContent=t.hint;
+      document.querySelector(".footer").textContent=t.footer;
+      $("levelsBtn").textContent=t.map;$("accountBtn").textContent=player?(lang==="ar"?"👤 "+(player.display_name||player.email):"👤 "+(player.display_name||player.email)):t.guest;
+      $("mapProgress").textContent=(lang==="ar"?"المرحلة ":"LEVEL ")+guestProgress().level+" / 1,200";
+      $("menuMusicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
+      $("menuSoundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
+      $("musicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
+      $("soundToggle").textContent=soundsEnabled?t.soundOn:t.soundOff;
+      $("message").textContent=t.message;
+      $("themeBtn").textContent=t.theme;
+      $("levelsWorld").textContent=lang==="ar"?$("mapWorldName").textContent+" · المراحل "+worlds[mapWorldIndex].start+"–"+worlds[mapWorldIndex].end:worlds[mapWorldIndex].name+" · Levels "+worlds[mapWorldIndex].start+"–"+worlds[mapWorldIndex].end;
+      $("themeTitle").textContent=lang==="ar"?"🎨 اختر أجواء مغامرتك":"🎨 Choose your adventure theme";
+      $("authEmail").placeholder=lang==="ar"?"البريد الإلكتروني":"Email address";
+      $("authPassword").placeholder=lang==="ar"?"كلمة المرور (8 أحرف على الأقل)":"Password (8+ characters)";
+      $("emailAuthBtn").textContent=lang==="ar"?"تسجيل الدخول / إنشاء حساب":"Sign in / Create account";
+      $("googleAuthBtn").textContent=lang==="ar"?"المتابعة باستخدام Google":"Continue with Google";
+      $("guestBtn").textContent=lang==="ar"?"اللعب كزائر":"Play as guest";
+      $("mapProgress").setAttribute("aria-label",t.level);
+    }
+    languageSelect.addEventListener("change",()=>applyLanguage(languageSelect.value));
+    applyLanguage(localStorage.getItem("fruit-pop-language")||"ar");
     async function request(path, options={}) {
       const r=await fetch(path,{credentials:"same-origin",headers:{"content-type":"application/json",...(options.headers||{})},...options});
       const data=await r.json().catch(()=>({}));
@@ -1814,9 +1922,21 @@
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}
     const intro=$("introScreen");
     const enter=()=>intro.classList.add("hide");
+    function returnToMainMenu(){
+      $("menuExitNote").textContent="";
+      intro.classList.remove("hide");
+      intro.scrollTop=0;
+    }
+    $("returnMenuBtn").addEventListener("click",returnToMainMenu);
+    $("menuExitBtn").addEventListener("click",()=>{
+      $("menuExitNote").textContent=languageSelect.value==="ar"?"تم إيقاف اللعب مؤقتاً وحفظ تقدمك. يمكنك إغلاق التطبيق من جهازك.":"Game paused and progress is saved. You can close the app from your device.";
+      stopMusic();
+      try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
+    });
     $("enterGameBtn").addEventListener("click",enter);
-    $("introLevelsBtn").addEventListener("click",()=>{enter();drawLevels();show(levelsModal);});
-    $("introAccountBtn").addEventListener("click",()=>{enter();note.textContent="";show(authModal);});
+    $("introLevelsBtn").addEventListener("click",()=>{drawLevels();show(levelsModal);});
+    $("introAccountBtn").addEventListener("click",()=>{note.textContent="";show(authModal);});
+
   })();
   </script>
 
