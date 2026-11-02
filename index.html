@@ -625,7 +625,7 @@
 
 
     [hidden]{display:none!important;}
-    /* Original Fruit Pop music and sound controls */
+    /* Original Fruit Pop sound-effects controls */
     .audio-controls{display:flex;gap:8px;margin:-3px 0 12px}
     .audio-controls button{min-height:36px;padding:8px 10px;border-radius:13px;font-size:11px}
     .audio-controls button[aria-pressed="false"]{opacity:.68;filter:saturate(.65)}
@@ -1813,7 +1813,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     <div class="splash-arabic">آدم النور</div>
     <div class="splash-motto">عابر🖤السبيل</div>
     <div class="splash-tagline">A LITTLE MAGIC IN EVERY MATCH</div>
-    <button id="splashStartBtn" type="button">🎵 تشغيل موسيقى الافتتاح والدخول</button>
+    <button id="splashStartBtn" type="button">🍓 ابدأ المغامرة</button>
     <button id="splashSkipBtn" type="button">تخطي</button>
     <div class="splash-sparkles" aria-hidden="true">✦　✧　⭐　✧　✦</div>
   </section>
@@ -2200,6 +2200,22 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
             break;
           default:
             playTone(980,.085,"square",.075,0,430);
+        }
+      }
+      function updateAudioButtons() {
+        const soundButton = document.getElementById("soundToggle");
+        const menuSoundButton = document.getElementById("menuSoundToggle");
+        const arabic = localStorage.getItem("fruit-pop-language") !== "en";
+        const label = soundsEnabled
+          ? (arabic ? "🔊 المؤثرات: تعمل" : "🔊 Sounds: ON")
+          : (arabic ? "🔇 المؤثرات: متوقفة" : "🔇 Sounds: OFF");
+        if (soundButton) {
+          soundButton.textContent = label;
+          soundButton.setAttribute("aria-pressed", String(soundsEnabled));
+        }
+        if (menuSoundButton) {
+          menuSoundButton.textContent = label;
+          menuSoundButton.setAttribute("aria-pressed", String(soundsEnabled));
         }
       }
       document.getElementById("soundToggle").addEventListener("click", () => {
