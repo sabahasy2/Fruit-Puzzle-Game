@@ -1613,7 +1613,7 @@
         if(!ctx)return;
         if(!musicBusGain){
           musicBusGain=ctx.createGain();
-          musicBusGain.gain.value=.72;
+          musicBusGain.gain.value=.96;
           musicBusGain.connect(audioMasterGain||ctx.destination);
         }
         const start=ctx.currentTime+delay,osc=ctx.createOscillator(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
@@ -1637,31 +1637,35 @@
         const bar=Math.floor(musicStep/16);
         const harmony=musicProgression[bar%musicProgression.length];
         const delay=0;
-        // Four-on-the-floor kick with a punchy backbeat.
-        if(step%4===0)playMusicVoice(125,.19,"sine",.19,delay,.043);
-        if(step===4||step===12){
-          playNoise(.13,.13,"bandpass",1750,delay);
-          playMusicVoice(185,.11,"triangle",.045,delay,.09);
+        // Full-power arcade drums: four-on-the-floor kick, sharp snare and busy hats.
+        if(step%2===0){
+          playMusicVoice(145,.20,"sine",.27,delay,.045,48);
+          playNoise(.075,.15,"lowpass",190,delay);
         }
-        // Bright, tight eighth-note hi-hats keep the groove moving.
-        if(step%2===0)playNoise(.045,step%4===0?.045:.028,"highpass",step%4===0?7800:6200,delay);
-        if(step===7||step===15)playNoise(.055,.035,"highpass",9200,delay);
-        // Driving bass line on every eighth note, with octave accents.
+        if(step===2||step===6||step===10||step===14){
+          playNoise(.105,.22,"bandpass",2100,delay);
+          playNoise(.075,.10,"highpass",5200,delay+.006);
+          playMusicVoice(205,.10,"triangle",.085,delay,.075,115);
+        }
+        // Driving sixteenth-style hat energy with strong offbeat accents.
+        playNoise(.038,step%2===0?.075:.052,"highpass",step%4===0?9800:7600,delay);
+        if(step===3||step===7||step===11||step===15)playNoise(.065,.075,"highpass",10800,delay);
+        // Heavy, moving bass with octave punches.
         const bassPattern=[1,1,2,1,1,2,1,3,1,1,2,1,3,2,1,2];
         const bassHz=harmony.bass*bassPattern[step];
-        playMusicVoice(bassHz,.17,"sawtooth",.052,delay,.008,bassHz*.985);
-        // Bright rhythmic chord stabs twice per bar.
-        if(step===0||step===8){
-          harmony.chord.forEach((note,i)=>playMusicVoice(note,.31,"sawtooth",.014,0,.018));
+        playMusicVoice(bassHz,.145,"sawtooth",.085,delay,.006,bassHz*.975);
+        if(step===0||step===8)playMusicVoice(harmony.bass*.5,.30,"sine",.13,delay,.025,harmony.bass*.42);
+        // Wider, louder chord hits and a bright arcade lead hook.
+        if(step===0||step===4||step===8||step===12){
+          harmony.chord.forEach((note,i)=>playMusicVoice(note,.22,"sawtooth",.026,0,.012));
         }
-        // Catchy, fast lead hook with a little variation each bar.
         if(step%2===0){
           const note=harmony.lead[(step/2+(bar%2)*2)%harmony.lead.length];
-          playMusicVoice(note,.16,"square",.025,0,.008,note*1.012);
-          if(step===6||step===14)playMusicVoice(note*2,.11,"triangle",.012,.025,.006);
+          playMusicVoice(note,.145,"square",.045,0,.006,note*1.018);
+          if(step===6||step===14)playMusicVoice(note*2,.12,"triangle",.025,.018,.005);
         }
         musicStep++;
-        musicTimer=window.setTimeout(musicTick,214); // ~140 BPM, eighth-note pulse
+        musicTimer=window.setTimeout(musicTick,170); // ~176 BPM, fast eighth-note pulse
       }
       function startMusic() {
         if(!musicEnabled||musicTimer!==null)return;
