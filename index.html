@@ -864,6 +864,68 @@
     }
     @media(prefers-reduced-motion:reduce){#introScreen:before,#introScreen:after{animation:none}}
 
+  
+    /* v42 — uncluttered play field with a compact tools drawer */
+    .game{
+      position:relative;width:min(100%,620px);min-height:100dvh;margin:0 auto;
+      padding:10px 10px max(12px,env(safe-area-inset-bottom));
+      border:0;border-radius:0;box-shadow:none;background:transparent;
+      display:flex;flex-direction:column;justify-content:flex-start;
+    }
+    .game-tools{position:absolute;z-index:18;top:max(9px,env(safe-area-inset-top));right:12px}
+    .game-tools>summary{
+      list-style:none;display:grid;place-items:center;width:43px;height:43px;cursor:pointer;
+      border:2px solid #fff;border-radius:15px;background:linear-gradient(145deg,#fff0b8,#ff8db6);
+      color:#8d3266;font-size:21px;box-shadow:0 4px 0 #b94b80,0 7px 16px #0003;
+      user-select:none;
+    }
+    .game-tools>summary::-webkit-details-marker{display:none}
+    .game-tools[open]>summary{transform:rotate(35deg)}
+    .game-tools-panel{
+      position:absolute;top:52px;right:0;width:min(88vw,340px);max-height:min(78dvh,650px);
+      overflow:auto;padding:15px;border:2px solid #fff;border-radius:22px;
+      background:linear-gradient(155deg,#fff0f7f7,#ffb7d4f7 48%,#ed739fF7);
+      box-shadow:0 16px 48px #6d173f66;backdrop-filter:blur(14px);
+      display:flex;flex-direction:column;gap:9px;
+    }
+    .tools-panel-heading{display:flex;justify-content:space-between;align-items:center;color:#176f36;font-weight:1000;font-size:16px}
+    .tools-panel-heading span{font-size:12px;color:#8e2854}
+    .game-tools-panel h1,.game-tools-panel .subtitle,.game-tools-panel .royal-brand,.game-tools-panel .world-banner{display:none!important}
+    .game-tools-panel .return-menu-btn{
+      position:static!important;inset:auto!important;display:block;width:100%!important;max-width:none!important;
+      margin:0!important;border-radius:14px!important;
+    }
+    .game-tools-panel .top-actions,.game-tools-panel .audio-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}
+    .game-tools-panel .top-actions button,.game-tools-panel .audio-controls button{min-height:42px;font-size:12px}
+    .game-tools-panel .controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+    .game-tools-panel .controls button{min-height:43px;margin:0}
+    .game-tools-panel .menu-settings{margin-top:8px}
+    .game .stats{
+      order:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+      margin:55px 0 10px;padding:0;
+    }
+    .game .stats .stat{min-width:0;padding:7px 4px;border-radius:14px}
+    .game .stats .total-score-stat{display:none!important}
+    .game .stats .stat small{font-size:9px;letter-spacing:.5px}
+    .game .stats .stat strong{font-size:clamp(19px,5vw,25px)}
+    .game .goal{display:none!important}
+    .game .board{
+      order:2;width:min(100%,560px);margin:0 auto;
+      align-self:center;flex:0 0 auto;
+    }
+    .game .message{
+      order:3;min-height:20px;margin:8px 0 0;padding:0 6px;
+      font-size:11px;line-height:1.3;text-align:center;opacity:.82;
+    }
+    .game>.footer{display:none!important}
+    @media(max-height:720px){
+      .game{padding-top:6px}
+      .game .stats{margin-top:48px;margin-bottom:7px}
+      .game .stats .stat{padding:5px 3px}
+      .game .board{padding:4px;gap:2px}
+      .game .message{margin-top:5px}
+    }
+
   </style>
 </head>
 
@@ -904,6 +966,10 @@
     </div>
   </section>
   <main class="game">
+    <details class="game-tools" id="gameTools">
+      <summary aria-label="Game tools and settings">⚙️</summary>
+      <div class="game-tools-panel">
+        <div class="tools-panel-heading">🍓 FRUIT POP <span>خيارات اللعبة</span></div>
     <h1>🍓 FRUIT POP 🍋</h1>
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
@@ -911,7 +977,12 @@
     <button id="returnMenuBtn" class="return-menu-btn" type="button" aria-label="Open main menu">☰ القائمة الرئيسية</button>
     <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button></div>
     <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
-
+    <div class="controls">
+      <button id="restart">↻ Restart</button>
+      <button class="secondary" id="hint">💡 Hint</button>
+    </div>
+      </div>
+    </details>
     <section class="stats">
       <div class="stat">
         <small>SCORE</small>
@@ -936,11 +1007,6 @@
     <section class="board" id="board" aria-label="Fruit puzzle board"></section>
 
     <div class="message" id="message">Tap a fruit, then an adjacent fruit!</div>
-
-    <div class="controls">
-      <button id="restart">↻ Restart</button>
-      <button class="secondary" id="hint">💡 Hint</button>
-    </div>
 
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
