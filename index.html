@@ -2018,8 +2018,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       let audioContext = null;
       let audioCompressor = null;
       let audioMasterGain = null;
-      const SOUND_SPEED = 1.7;
-      const soundTime = seconds => seconds / SOUND_SPEED;
+      const SOUND_SPEED = 1;
+      const soundTime = seconds => seconds;
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
       function audioEngine() {
         const AudioCtor = window.AudioContext || window.webkitAudioContext;
@@ -2080,7 +2080,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         const gain = ctx.createGain();
         const start = ctx.currentTime + delay;
         source.buffer = buffer;
-        source.playbackRate.setValueAtTime(SOUND_SPEED, start);
+        source.playbackRate.setValueAtTime(1, start);
         filter.type = filterType;
         filter.frequency.setValueAtTime(frequency, start);
         gain.gain.setValueAtTime(0.0001, start);
