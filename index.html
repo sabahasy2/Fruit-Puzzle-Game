@@ -530,6 +530,63 @@
     @keyframes celebrationDrift{from{transform:translateX(0)}to{transform:translateX(18%)}}
     @media(prefers-reduced-motion:reduce){.level-celebration.open,.level-celebration-card,.level-celebration-crown,.level-stars span.earned{animation:none}}
 
+  
+    /* Fruit Pop 1,200-level candy-bright visual refresh */
+    body{
+      background:
+        radial-gradient(ellipse at 12% 8%,#ff4fa866 0,transparent 32%),
+        radial-gradient(ellipse at 92% 18%,#24e4d466 0,transparent 30%),
+        radial-gradient(ellipse at 52% 100%,#ffb52f55 0,transparent 38%),
+        linear-gradient(145deg,#3b1685 0%,#152f86 42%,#7b1d91 100%);
+      background-attachment:fixed;
+    }
+    body:before{
+      content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.42;
+      background-image:
+        radial-gradient(circle at 8% 22%,#fff 0 2px,transparent 3px),
+        radial-gradient(circle at 82% 13%,#fff4a8 0 3px,transparent 4px),
+        radial-gradient(circle at 25% 76%,#ff8bd2 0 3px,transparent 4px),
+        radial-gradient(circle at 92% 78%,#7effe2 0 3px,transparent 4px);
+      background-size:170px 190px,230px 220px,190px 210px,250px 240px;
+      animation:candyTwinkle 8s ease-in-out infinite alternate;
+    }
+    @keyframes candyTwinkle{from{transform:translateY(0);opacity:.25}to{transform:translateY(-12px);opacity:.58}}
+    .game{
+      background:linear-gradient(155deg,#30166ff0 0%,#172b76f2 48%,#5c1c85ed 100%);
+      border:2px solid #ffcf70;box-shadow:0 20px 65px #10052dbb,0 0 30px #ff6fbd55,inset 0 1px #fff9;
+    }
+    h1{color:#fff28b;text-shadow:0 0 12px #ff70c7,0 4px 18px #16064f;letter-spacing:2px}
+    .subtitle{color:#dffcff}
+    .royal-brand{border:1px solid #ffe78b;background:linear-gradient(110deg,#ff5da2,#7139bf 55%,#16a9c4);box-shadow:0 7px 24px #08052c88,inset 0 0 18px #fff4}
+    .royal-brand-name,.royal-brand-signature{color:#fff8c9;text-shadow:0 1px 8px #4b176f}
+    .royal-brand-caption{color:#e6ffff}
+    .world-banner{background:linear-gradient(115deg,#00a98e,#2876d7 52%,#9439b9);border:1px solid #b9fff2;box-shadow:0 9px 30px #0005,inset 0 0 22px #fff3}
+    .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+    .stats .stat{padding:11px 3px;border:1px solid #ffffff9c;background:linear-gradient(145deg,#ff5ba7e8,#7138cbeF 55%,#126fa7e8);box-shadow:0 5px 14px #08052c66,inset 0 1px #fff8}
+    .stat small{color:#fff6d5;font-size:10px;font-weight:850}
+    .stat strong{font-size:clamp(17px,5vw,22px);color:#fff;text-shadow:0 2px 8px #1c145b}
+    .total-score-stat{background:linear-gradient(145deg,#ffbd38,#f05a85 58%,#a735a6)!important}
+    .goal,.message{color:#fff28b;text-shadow:0 1px 8px #251052}
+    .board{border:2px solid #ffdc7b;background:linear-gradient(135deg,#ff68b255,#3be3d655 50%,#8c6cff66);box-shadow:0 14px 38px #07052c99,0 0 24px #ff79cb66}
+    .tile{background:linear-gradient(145deg,#ffffff32,#77eaff22);border:1px solid #ffffff1f;border-radius:9px}
+    .tile.selected{border:2px solid #fff28b;background:#ffdc5e88;box-shadow:0 0 16px #fff28b}
+    .tile.hint-partner{border:2px dashed #fff;border-radius:11px;background:#29f4bd88;box-shadow:0 0 18px #8bffdf,inset 0 0 10px #fff9}
+    button{background:linear-gradient(110deg,#fff27e,#ffb43f 48%,#ff6e9f);border:1px solid #fff5b0;color:#42165f;box-shadow:0 5px 0 #a93d7a,0 9px 18px #09052d77,inset 0 1px #fff}
+    button.secondary{background:linear-gradient(110deg,#19d8c0,#398ce8 55%,#8c57dc);border:1px solid #b8fff1;color:#fff;box-shadow:0 4px 0 #174b9b,0 8px 16px #09052d66}
+    button:active{filter:brightness(1.14);transform:translateY(2px)}
+    .modal{background:#10052bdc;backdrop-filter:blur(10px)}
+    .modal-card{background:linear-gradient(150deg,#51238b,#1a3d91 55%,#087f91);border:2px solid #ffdf83}
+    .modal-card h2{color:#fff18b}
+    .modal-card p{color:#e9ffff}
+    .map-landscape{border-color:#fff18b;box-shadow:inset 0 0 24px #fff4,0 10px 25px #09052d77}
+    .map-world-tab{background:linear-gradient(110deg,#ff6aa7,#8050d8)!important;border:1px solid #fff8!important}
+    .map-world-tab.active{background:linear-gradient(110deg,#fff18b,#ff9f45)!important;color:#4c176e!important}
+    .map-node.current{background:linear-gradient(135deg,#fff18b,#ff7f50);box-shadow:0 0 18px #fff18b}
+    .level-celebration{background:radial-gradient(circle at 50% 15%,#ffca4e66,transparent 42%),linear-gradient(145deg,#ec3688ef,#5525b8f5 55%,#087e9cfa)}
+    .level-celebration-card{background:linear-gradient(150deg,#ff5e9feF,#713fd0f5 55%,#087f9bf2);border-color:#fff0a3}
+    @media(max-width:390px){.stats{gap:5px}.stats .stat{padding:9px 2px}.stat small{font-size:9px}}
+    @media(prefers-reduced-motion:reduce){body:before{animation:none}}
+
   </style>
 </head>
 
@@ -548,7 +605,7 @@
         <button id="introLevelsBtn" class="menu-secondary" type="button">🗺️ خريطة العوالم والمراحل</button>
         <button id="introAccountBtn" class="menu-secondary" type="button">👤 تسجيل الدخول / إنشاء حساب</button>
       </div>
-      <div class="menu-footer">🍬 8 عوالم · 400 مرحلة ·  مغامرة حلوة 🍬</div>
+      <div class="menu-footer">🍬 24 عالماً · 1,200 مرحلة · مغامرة لا تنتهي 🍬</div>
     </div>
   </section>
   <section class="world-transition hide" id="worldTransition" aria-live="polite">
@@ -571,6 +628,10 @@
       <div class="stat">
         <small>SCORE</small>
         <strong id="score">0</strong>
+      </div>
+      <div class="stat total-score-stat">
+        <small>🌟 TOTAL POINTS</small>
+        <strong id="totalScore">0</strong>
       </div>
       <div class="stat">
         <small>MOVES</small>
@@ -596,7 +657,7 @@
     <p class="footer">Made with ❤️ for fruit puzzle lovers</p>
 
     <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="googleAuthBtn" class="secondary">Continue with Google</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
-    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><button class="secondary modal-close" id="closeLevels" aria-label="Close map">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><div class="map-heading"><h2>🗺️ Royal Journey</h2><span class="map-progress" id="mapProgress">Level 1 / 400</span></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
+    <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><button class="secondary modal-close" id="closeLevels" aria-label="Close map">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><div class="map-heading"><h2>🗺️ Royal Journey</h2><span class="map-progress" id="mapProgress">Level 1 / 1,200</span></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
  
     <div class="level-celebration" id="levelCelebration" role="dialog" aria-modal="true" aria-labelledby="levelCelebrationTitle">
       <div class="level-celebration-card">
@@ -813,6 +874,7 @@
       let selected = null;
       let hintPartner = null;
       let score = 0;
+      let totalScore = Math.max(0, Number(localStorage.getItem("fruit-pop-total-score") || 0));
       let moves = 25;
       // Test build: open with ?test=1 to start at level 3 and preview special-fruit mechanics.
       const testMode = new URLSearchParams(window.location.search).get("test") === "1";
@@ -821,6 +883,7 @@
 
       const boardElement = document.getElementById("board");
       const scoreElement = document.getElementById("score");
+      const totalScoreElement = document.getElementById("totalScore");
       const movesElement = document.getElementById("moves");
       const levelElement = document.getElementById("level");
       const objectiveElement = document.getElementById("objectiveText");
@@ -937,10 +1000,17 @@
           }
         }
 
-        scoreElement.textContent = score;
+        scoreElement.textContent = score.toLocaleString();
+        totalScoreElement.textContent = totalScore.toLocaleString();
         movesElement.textContent = moves;
         levelElement.textContent = level;
         updateObjectiveUI();
+      }
+
+      function addPoints(points) {
+        score += points;
+        totalScore += points;
+        localStorage.setItem("fruit-pop-total-score", String(totalScore));
       }
 
       function findMatches() {
@@ -1058,7 +1128,7 @@
           }
         }
         hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y, x); });
-        score += cleared.length * 20;
+        addPoints(cleared.length * 20);
         messageElement.textContent = kind === "🔥" ? "🔥 Royal row blast!"
           : kind === "⚡" ? "⚡ Royal column blast!" : "🌟 Royal star explosion!";
         playSound("special");
@@ -1143,7 +1213,7 @@
           const multiplier = Math.min(chain, 4);
           const earned = matches.length * 10 * multiplier;
           bonusPoints += earned;
-          score += earned;
+          addPoints(earned);
           messageElement.textContent = chain > 1
             ? "🌈 Sweet combo x" + multiplier + "! +" + earned + " points"
             : "✨ Match! +" + earned + " points";
@@ -1322,7 +1392,7 @@
         }
       }
 
-      function showHint() {
+      function showHint(automatic = false) {
         if (busy || moves <= 0) return;
 
         const hint = findHintMove();
@@ -1331,12 +1401,22 @@
           selected = { r: hint.r, c: hint.c };
           hintPartner = { r: hint.nr, c: hint.nc };
           render();
-          messageElement.textContent = "💡 Two fruits are highlighted: tap the green one next!";
+          messageElement.textContent = automatic
+            ? "💡 Need a hand? These two glowing fruits can make a match!"
+            : "💡 Two fruits are highlighted: tap the green one next!";
           return;
         }
 
         ensurePlayableBoard();
         messageElement.textContent = "✨ The board has been refreshed. Find a match!";
+      }
+
+      let idleHintTimer = null;
+      function scheduleIdleHint() {
+        clearTimeout(idleHintTimer);
+        idleHintTimer = setTimeout(() => {
+          if (!busy && moves > 0 && !selected && !hintPartner) showHint(true);
+        }, 8500);
       }
 
       function restart() {
@@ -1352,14 +1432,18 @@
         localStorage.setItem("fruit-pop-level", String(level));
         makeBoard();
         render();
+        scheduleIdleHint();
       }
 
       document.getElementById("restart").addEventListener("click", restart);
       document.getElementById("hint").addEventListener("click", showHint);
+      document.getElementById("hint").addEventListener("click", scheduleIdleHint);
+      boardElement.addEventListener("click", scheduleIdleHint);
 
       makeBoard();
       ensurePlayableBoard();
       render();
+      scheduleIdleHint();
     })();
 
     // Enable offline support when the game is hosted over HTTPS.
@@ -1376,16 +1460,26 @@
     const $ = id => document.getElementById(id);
     const authModal=$("authModal"), levelsModal=$("levelsModal"), note=$("authNote");
     let mode="login", player=null;
-    const worlds=[
-      {start:1,end:50,name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths"},
-      {start:51,end:100,name:"Crystal Ice Kingdom",ar:"مملكة الجليد",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves"},
-      {start:101,end:150,name:"Tropical Treasure Isles",ar:"جزر الكنوز الاستوائية",emoji:"🏝️",theme:"island",desc:"Golden beaches, palms and secret treasure"},
-      {start:151,end:200,name:"Dragonfire Volcano",ar:"بركان التنين",emoji:"🌋",theme:"volcano",desc:"Lava rivers and fiery challenges"},
-      {start:201,end:250,name:"Crystal Palace",ar:"قصر الكريستال",emoji:"💎",theme:"crystal",desc:"A dazzling palace of magical gems"},
-      {start:251,end:300,name:"Kingdom of the Sky",ar:"مملكة السماء",emoji:"☁️",theme:"sky",desc:"Floating islands above the clouds"},
-      {start:301,end:350,name:"Mythic Star Realm",ar:"مملكة النجوم الأسطورية",emoji:"🌌",theme:"mythic",desc:"Ancient magic beneath a sky of stars"},
-      {start:351,end:400,name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits"}
+    const worldSeeds=[
+      {name:"Enchanted Forest",ar:"الغابة المسحورة",emoji:"🌿",theme:"forest",desc:"Ancient trees, glowing berries and hidden paths"},
+      {name:"Crystal Ice Kingdom",ar:"مملكة الجليد",emoji:"❄️",theme:"ice",desc:"Frozen lakes and sparkling crystal caves"},
+      {name:"Tropical Treasure Isles",ar:"جزر الكنوز الاستوائية",emoji:"🏝️",theme:"island",desc:"Golden beaches, palms and secret treasure"},
+      {name:"Dragonfire Volcano",ar:"بركان التنين",emoji:"🌋",theme:"volcano",desc:"Lava rivers and fiery challenges"},
+      {name:"Crystal Palace",ar:"قصر الكريستال",emoji:"💎",theme:"crystal",desc:"A dazzling palace of magical gems"},
+      {name:"Kingdom of the Sky",ar:"مملكة السماء",emoji:"☁️",theme:"sky",desc:"Floating islands above the clouds"},
+      {name:"Mythic Star Realm",ar:"مملكة النجوم الأسطورية",emoji:"🌌",theme:"mythic",desc:"Ancient magic beneath a sky of stars"},
+      {name:"Golden Crown Empire",ar:"إمبراطورية التاج الذهبي",emoji:"👑",theme:"mythic",desc:"The royal final frontier awaits"}
     ];
+    const worldEras=["","Legendary ","Celestial "];
+    const eraArabic=["","الأسطورية: ","السماوية: "];
+    const worlds=Array.from({length:24},(_,index)=>{
+      const seed=worldSeeds[index%8], era=Math.floor(index/8);
+      const start=index*50+1;
+      return {...seed,start,end:start+49,
+        name:worldEras[era]+seed.name,
+        ar:eraArabic[era]+seed.ar,
+        desc:era===0?seed.desc:(era===1?"Legendary quests — ":"Celestial adventures — ")+seed.desc};
+    });
     const activeWorld=(n)=>worlds.find(w=>n>=w.start&&n<=w.end)||worlds[worlds.length-1];
     let displayedWorld=-1, transitionTimer=null;
     function showKingdomReveal(w){
@@ -1434,7 +1528,7 @@
         tabs.appendChild(tab);
       });
       const w=worlds[mapWorldIndex];
-      $("mapProgress").textContent="LEVEL "+current+" / 400";
+      $("mapProgress").textContent="LEVEL "+current+" / 1,200";
       $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
       $("mapWorldName").textContent=w.ar;
       $("mapWorldDesc").textContent=w.desc;
