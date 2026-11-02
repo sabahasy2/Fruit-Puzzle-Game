@@ -494,7 +494,14 @@
     @media(max-width:380px){.game{padding:10px 8px 15px;border-radius:24px}.board{gap:2px;padding:4px}.tile{border-radius:8px}.main-menu-content{padding:18px 14px}.main-menu-content .intro-title{font-size:32px}}
     @media(prefers-reduced-motion:reduce){.intro-content{animation:none}.tile.special-fruit{animation:none}}
 
-  </style>
+
+    /* Original Fruit Pop music and sound controls */
+    .audio-controls{display:flex;gap:8px;margin:-3px 0 12px}
+    .audio-controls button{min-height:36px;padding:8px 10px;border-radius:13px;font-size:11px}
+    .audio-controls button[aria-pressed="false"]{opacity:.68;filter:saturate(.65)}
+    .audio-controls button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+    @media(max-width:350px){.audio-controls button{font-size:10px;padding:7px 5px}}
+\n  </style>
 </head>
 
 <body>
@@ -528,7 +535,7 @@
     <p class="subtitle">MATCH & BLOOM — A sweet fruit adventure</p>
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
-    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>
+    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button></div>\n    <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
 
     <section class="stats">
       <div class="stat">
@@ -567,7 +574,98 @@
       "use strict";
 
       const SIZE = 8;
-      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
+      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];\n
+      // Original, lightweight Fruit Pop soundtrack generated with Web Audio.
+      // Audio begins only after the player's first gesture (mobile autoplay policy).
+      let audioContext = null;
+      let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
+      let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
+      let musicTimer = null;
+      let musicStep = 0;
+      const melody = [523.25,659.25,783.99,659.25,587.33,659.25,880,783.99,523.25,659.25,783.99,987.77,880,783.99,659.25,587.33];
+      function audioEngine() {
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtor) return null;
+        if (!audioContext) audioContext = new AudioCtor();
+        if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+        return audioContext;
+      }
+      function playTone(frequency, duration=0.12, wave="sine", volume=0.045, delay=0) {
+        const ctx = audioEngine();
+        if (!ctx) return;
+        const start = ctx.currentTime + delay;
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.type = wave;
+        oscillator.frequency.setValueAtTime(frequency, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.start(start);
+        oscillator.stop(start + duration + 0.025);
+      }
+      function playSound(kind="tap") {
+        if (!soundsEnabled) return;
+        const patterns = {
+          tap: [[660,.055,"sine",.025]],
+          match: [[660,.11,"sine",.045],[784,.13,"sine",.04],[988,.16,"triangle",.035]],
+          combo: [[784,.12,"triangle",.05],[988,.14,"triangle",.05],[1175,.2,"sine",.045],[1568,.22,"sine",.03]],
+          special: [[392,.18,"triangle",.055],[587,.18,"triangle",.05],[880,.28,"sine",.045]],
+          win: [[523,.16,"sine",.05],[659,.16,"sine",.05],[784,.18,"sine",.05],[1047,.34,"triangle",.05]],
+          lose: [[392,.2,"sine",.04],[349,.22,"sine",.035],[294,.32,"triangle",.03]],
+          nope: [[260,.08,"sine",.025]]
+        };
+        (patterns[kind] || patterns.tap).forEach(([f,d,w,v],i)=>playTone(f,d,w,v,i*.075));
+      }
+      function musicTick() {
+        if (!musicEnabled) { musicTimer = null; return; }
+        const note = melody[musicStep % melody.length];
+        playTone(note, .23, "sine", .018);
+        if (musicStep % 4 === 0) playTone(note / 2, .34, "triangle", .012);
+        if (musicStep % 8 === 4) playTone(note * 1.5, .12, "sine", .008);
+        musicStep++;
+        musicTimer = window.setTimeout(musicTick, 285);
+      }
+      function startMusic() {
+        if (!musicEnabled || musicTimer !== null) return;
+        audioEngine();
+        musicTick();
+      }
+      function stopMusic() {
+        if (musicTimer !== null) window.clearTimeout(musicTimer);
+        musicTimer = null;
+      }
+      function updateAudioButtons() {
+        const musicButton = document.getElementById("musicToggle");
+        const soundButton = document.getElementById("soundToggle");
+        if (musicButton) {
+          musicButton.textContent = musicEnabled ? "🎵 Music: ON" : "🎵 Music: OFF";
+          musicButton.setAttribute("aria-pressed", String(musicEnabled));
+        }
+        if (soundButton) {
+          soundButton.textContent = soundsEnabled ? "🔊 Sounds: ON" : "🔇 Sounds: OFF";
+          soundButton.setAttribute("aria-pressed", String(soundsEnabled));
+        }
+      }
+      document.addEventListener("pointerdown", () => { if (musicEnabled) startMusic(); }, { once: true, capture: true });
+      document.addEventListener("keydown", () => { if (musicEnabled) startMusic(); }, { once: true, capture: true });
+      document.getElementById("musicToggle").addEventListener("click", () => {
+        musicEnabled = !musicEnabled;
+        localStorage.setItem("fruit-pop-music", musicEnabled ? "on" : "off");
+        if (musicEnabled) startMusic(); else stopMusic();
+        updateAudioButtons();
+        playSound("tap");
+      });
+      document.getElementById("soundToggle").addEventListener("click", () => {
+        soundsEnabled = !soundsEnabled;
+        localStorage.setItem("fruit-pop-sounds", soundsEnabled ? "on" : "off");
+        updateAudioButtons();
+        if (soundsEnabled) playSound("tap");
+      });
+      updateAudioButtons();
+
 
       let board = [];
       let selected = null;
