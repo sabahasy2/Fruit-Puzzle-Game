@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "fruit-pop-v75";
+const CACHE_NAME = "fruit-pop-v76";
 
 const APP_FILES = [
   "./",
@@ -38,6 +38,24 @@ self.addEventListener("fetch", (event) => {
   // Never cache account or progress API responses; they are private and session-specific.
   if (new URL(event.request.url).pathname.startsWith("/api/")) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  const isHtml = event.request.mode === "navigate" || requestUrl.pathname.endsWith("/index.html");
+
+  // Always check the network first for the game shell so new map/game updates
+  // cannot remain hidden behind an older offline cache.
+  if (isHtml) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      }).catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
+    );
     return;
   }
 
