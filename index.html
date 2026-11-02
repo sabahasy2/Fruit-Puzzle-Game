@@ -1800,8 +1800,8 @@
       const guestKey = k => "fruit-pop-guest-" + k;
       const legacy = Object.fromEntries(progressKeys.map(k => [k, localStorage.getItem("fruit-pop-" + k)]));
       if (!legacy["play-level"] && legacy.level) legacy["play-level"] = legacy.level;
-      if (!localStorage.getItem(guestKey("level"))) {
-        for (const k of progressKeys) if (legacy[k] !== null) localStorage.setItem(guestKey(k), legacy[k]);
+      for (const k of progressKeys) {
+        if (localStorage.getItem(guestKey(k)) === null && legacy[k] !== null) localStorage.setItem(guestKey(k), legacy[k]);
       }
       let bootPlayer = null;
       let bootReady = false;
@@ -3009,6 +3009,7 @@
       document.getElementById("hint").addEventListener("click", showHint);
       document.getElementById("hint").addEventListener("click", scheduleIdleHint);
 
+      window.addEventListener("fruit-pop:language", updateObjectiveUI);
       makeBoard();
       ensurePlayableBoard();
       render();
@@ -3162,6 +3163,8 @@
       $("logoutBtn").textContent=lang==="ar"?"🚪 تسجيل الخروج":"🚪 Sign out";
       $("logoutBtn").hidden=false;
       $("mapProgress").setAttribute("aria-label",t.level);
+      if ($("levelsModal").classList.contains("open")) drawLevels();
+      window.dispatchEvent(new Event("fruit-pop:language"));
     }
     languageSelect.addEventListener("change",()=>applyLanguage(languageSelect.value));
     applyLanguage(localStorage.getItem("fruit-pop-language")||"ar");
@@ -3174,10 +3177,10 @@
     function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=false; }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
-      const current=guestProgress().level, grid=$("levelsGrid"), tabs=$("mapWorldTabs"), ar=localStorage.getItem("fruit-pop-language")!=="en";
-      const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
+      const progress=guestProgress(), current=progress.level, playLevel=progress.playLevel, grid=$("levelsGrid"), tabs=$("mapWorldTabs"), ar=localStorage.getItem("fruit-pop-language")!=="en";
+      const currentWorldIndex=Math.max(0,worlds.findIndex(w=>playLevel>=w.start&&playLevel<=w.end));
       if(!mapWorldChosen || mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
-      applyWorld(current);
+      applyWorld(playLevel);
       tabs.innerHTML="";
       worlds.forEach((w,index)=>{
         const unlocked=w.start<=current;
