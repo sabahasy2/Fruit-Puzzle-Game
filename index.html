@@ -2018,6 +2018,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       let audioContext = null;
       let audioCompressor = null;
       let audioMasterGain = null;
+      const SOUND_SPEED = 1.7;
+      const soundTime = seconds => seconds / SOUND_SPEED;
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
       function audioEngine() {
         const AudioCtor = window.AudioContext || window.webkitAudioContext;
@@ -2031,7 +2033,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           audioCompressor.attack.setValueAtTime(0.003, audioContext.currentTime);
           audioCompressor.release.setValueAtTime(0.25, audioContext.currentTime);
           audioMasterGain = audioContext.createGain();
-          audioMasterGain.gain.setValueAtTime(2.25, audioContext.currentTime);
+          audioMasterGain.gain.setValueAtTime(1, audioContext.currentTime);
           audioCompressor.connect(audioMasterGain);
           audioMasterGain.connect(audioContext.destination);
         }
@@ -2041,6 +2043,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       function playTone(frequency, duration=0.12, wave="sine", volume=0.045, delay=0, endFrequency=null) {
         const ctx = audioEngine();
         if (!ctx) return;
+        duration = soundTime(duration);
+        delay = soundTime(delay);
         const start = ctx.currentTime + delay;
         const oscillator = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -2050,7 +2054,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           oscillator.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), start + duration);
         }
         gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(Math.min(0.82, Math.max(0.0002, volume * 1.35)), start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         oscillator.connect(gain);
         gain.connect(audioCompressor || ctx.destination);
@@ -2063,6 +2067,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         const ctx = audioEngine();
         if (!ctx) return;
         const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+        const fastDuration = soundTime(duration);
+        delay = soundTime(delay);
         const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < length; i++) {
@@ -2074,16 +2080,17 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         const gain = ctx.createGain();
         const start = ctx.currentTime + delay;
         source.buffer = buffer;
+        source.playbackRate.setValueAtTime(SOUND_SPEED, start);
         filter.type = filterType;
         filter.frequency.setValueAtTime(frequency, start);
         gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(Math.min(0.88, Math.max(0.0002, volume * 1.4)), start + 0.008);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.008);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
         source.connect(filter);
         filter.connect(gain);
         gain.connect(audioCompressor || ctx.destination);
         source.start(start);
-        source.stop(start + duration + 0.02);
+        source.stop(start + fastDuration + 0.02);
       }
 
       function playDropSound(delay=0) {
