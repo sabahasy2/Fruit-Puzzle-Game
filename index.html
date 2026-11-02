@@ -1293,7 +1293,7 @@
   </main>
 
   <script>
-    (async () => {
+    window.__fruitPopBootPromise = (async () => {
       "use strict";
       // Resolve the signed-in profile before the game reads or writes progress.
       const progressKeys = ["level", "stars", "total-score"];
@@ -2326,7 +2326,9 @@
   </script>
 
   <script>
-  (() => {
+  (async () => {
+    // The authentication UI must wait until the session bootstrap has finished.
+    await window.__fruitPopBootPromise;
     const $ = id => document.getElementById(id);
     const authModal=$("authModal"), levelsModal=$("levelsModal"), note=$("authNote");
     let mode="login", player=window.__fruitPopBootPlayer||null;
