@@ -138,6 +138,26 @@
     .tile.empty {
       opacity: .15;
     }
+    .tile.match-pop .fruit-face {
+      animation: fruitPopAway .32s cubic-bezier(.2,.75,.35,1) both;
+      transform-origin: center;
+    }
+    @keyframes fruitPopAway {
+      0% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+      45% { opacity: 1; transform: scale(1.28) rotate(12deg); filter: brightness(1.9) drop-shadow(0 0 9px #fff4a8); }
+      100% { opacity: 0; transform: scale(.12) rotate(-28deg); filter: blur(3px); }
+    }
+    .tile.fruit-fall .fruit-face {
+      animation: fruitRain .38s cubic-bezier(.18,.72,.25,1) both;
+    }
+    @keyframes fruitRain {
+      0% { opacity: 0; transform: translateY(-145%) scale(.72); filter: blur(2px); }
+      68% { opacity: 1; transform: translateY(9%) scale(1.06); filter: blur(0); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .tile.match-pop .fruit-face, .tile.fruit-fall .fruit-face { animation-duration: .01ms; }
+    }
     .tile .fruit-face{position:relative;z-index:1}
     .tile.ice-covered{border-color:#a9eaff;background:linear-gradient(145deg,#b8efff44,#fff8e60a);box-shadow:inset 0 0 12px #8bdcff88,0 0 8px #8bdcff55}
     .tile .ice-overlay{position:absolute;z-index:2;right:1px;top:0;font-size:clamp(10px,3vw,14px);line-height:1;filter:drop-shadow(0 1px 2px #06152b)}
@@ -968,7 +988,9 @@
         }
       }
 
-      function render() {
+      function render({ popping = [], falling = [] } = {}) {
+        const poppingSet = new Set(popping.map(([r, c]) => r + "," + c));
+        const fallingSet = new Set(falling.map(([r, c]) => r + "," + c));
         boardElement.innerHTML = "";
 
         for (let r = 0; r < SIZE; r++) {
@@ -998,6 +1020,9 @@
             tile.setAttribute("aria-label", crateGrid[r] && crateGrid[r][c] ? "Wooden crate, " + crateGrid[r][c] + " hits remaining" : iceGrid[r] && iceGrid[r][c] ? "Fruit under ice" : "Fruit tile");
 
             if (!board[r][c]) tile.classList.add("empty");
+            const cellKey = r + "," + c;
+            if (poppingSet.has(cellKey)) tile.classList.add("match-pop");
+            if (fallingSet.has(cellKey)) tile.classList.add("fruit-fall");
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) tile.classList.add("special-fruit");
             if (selected && selected.r === r && selected.c === c) {
               tile.classList.add("selected");
@@ -1090,6 +1115,7 @@
       }
 
       function collapseBoard() {
+        const falling = [];
         for (let c = 0; c < SIZE; c++) {
           let segmentTop = 0;
           while (segmentTop < SIZE) {
@@ -1100,14 +1126,21 @@
             for (let r = segmentBottom; r >= segmentTop; r--) {
               if (board[r][c]) {
                 board[write][c] = board[r][c];
-                if (write !== r) board[r][c] = null;
+                if (write !== r) {
+                  board[r][c] = null;
+                  falling.push([write, c]);
+                }
                 write--;
               }
             }
-            for (let r = write; r >= segmentTop; r--) board[r][c] = randomFruit();
+            for (let r = write; r >= segmentTop; r--) {
+              board[r][c] = randomFruit();
+              falling.push([r, c]);
+            }
             segmentTop = segmentBottom + 1;
           }
         }
+        return falling;
       }
 
       function damageCrate(r, c) {
@@ -1231,6 +1264,16 @@
               }
             });
           }
+          const special = specialForMatch(matches, null);
+          if (special && objective.type === "special") objectiveProgress++;
+
+          const popping = matches.filter(([r, c]) =>
+            (!special || r !== special.r || c !== special.c) &&
+            !(crateGrid[r] && crateGrid[r][c])
+          );
+          render({ popping });
+          await new Promise(resolve => setTimeout(resolve, 320));
+
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
             [[r,c],[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([y,x]) => {
@@ -1238,8 +1281,6 @@
             });
           });
           crateHits.forEach(key => { const [y,x] = key.split(",").map(Number); damageCrate(y,x); });
-          const special = specialForMatch(matches, null);
-          if (special && objective.type === "special") objectiveProgress++;
           matches.forEach(([r, c]) => {
             if ((!special || r !== special.r || c !== special.c) && !(crateGrid[r] && crateGrid[r][c])) board[r][c] = null;
           });
@@ -1253,12 +1294,11 @@
           }
 
           render();
-          await new Promise(resolve => setTimeout(resolve, 220));
+          await new Promise(resolve => setTimeout(resolve, 70));
 
-          collapseBoard();
-
-          render();
-          await new Promise(resolve => setTimeout(resolve, 180));
+          const falling = collapseBoard();
+          render({ falling });
+          await new Promise(resolve => setTimeout(resolve, 390));
         }
 
         ensurePlayableBoard();
