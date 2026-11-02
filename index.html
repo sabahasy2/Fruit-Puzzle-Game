@@ -575,8 +575,6 @@
 
 
     [hidden]{display:none!important;}
-    /* Keep one points counter: the visible SCORE is the lifetime total. */
-    .total-score-stat{display:none!important;}
     /* Original Fruit Pop music and sound controls */
     .audio-controls{display:flex;gap:8px;margin:-3px 0 12px}
     .audio-controls button{min-height:36px;padding:8px 10px;border-radius:13px;font-size:11px}
@@ -1796,9 +1794,8 @@
           }
         }
 
-        // The single visible points counter represents the player's lifetime total.
-        // The per-level score remains internal for objectives and level celebrations.
-        scoreElement.textContent = totalScore.toLocaleString();
+        // Show current-stage points separately from the lifetime total.
+        scoreElement.textContent = score.toLocaleString();
         totalScoreElement.textContent = totalScore.toLocaleString();
         movesElement.textContent = moves;
         levelElement.textContent = level;
@@ -2442,7 +2439,7 @@
     const translations={
       ar:{
         enter:"🎮 العب الآن",map:"🗺️ خريطة العوالم والمراحل",account:"👤 التسجيل / الحساب",
-        theme:"🎨 المظهر والثيمات",return:"☰ القائمة الرئيسية",score:"النقاط",total:"🌟 مجموع النقاط",
+        theme:"🎨 المظهر والثيمات",return:"☰ القائمة الرئيسية",score:"نقاط المرحلة",total:"🌟 النقاط الكلية",
         moves:"الحركات",level:"المرحلة",restart:"↻ إعادة المرحلة",hint:"💡 تلميح",
         objective:"🎯 أكمل الهدف",message:"اسحب فاكهة وبدّل مكانها مع فاكهة مجاورة!",
         footer:"صُنعت بحب ❤️ لعشاق ألعاب الفواكه",levelsTitle:"🗺️ رحلة العوالم",
@@ -2451,7 +2448,7 @@
       },
       en:{
         enter:"🎮 Play now",map:"🗺️ Worlds & level map",account:"👤 Sign in / Account",
-        theme:"🎨 Themes & appearance",return:"☰ Main menu",score:"SCORE",total:"🌟 TOTAL POINTS",
+        theme:"🎨 Themes & appearance",return:"☰ Main menu",score:"STAGE POINTS",total:"🌟 TOTAL POINTS",
         moves:"MOVES",level:"LEVEL",restart:"↻ Restart",hint:"💡 Hint",
         objective:"🎯 Complete the goal",message:"Swap a fruit with an adjacent fruit!",
         footer:"Made with ❤️ for fruit puzzle lovers",levelsTitle:"🗺️ World Journey",
