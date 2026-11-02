@@ -267,6 +267,26 @@
     .intro-caption{margin:8px 0 24px;color:#d7c18f;font-size:10px;letter-spacing:3px}
     .intro-screen button{max-width:210px}
     .world-transition{z-index:90;background:radial-gradient(ellipse at center,#725027 0%,#241a30 48%,#080c1b 100%);transition:opacity .45s ease,visibility .45s ease}
+    .main-menu-content{position:relative;width:min(100%,390px);padding:30px 22px 24px;border:1px solid #f2d58b;border-radius:30px;background:linear-gradient(180deg,#142b3bd9 0%,#172a31eF 48%,#21182eeF 100%);box-shadow:0 25px 75px #000b,0 0 45px #e3bd5b33;overflow:hidden}
+    .main-menu-content:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,#fff3b833,transparent 55%),linear-gradient(180deg,transparent 55%,#071b1a88)}
+    .menu-sky{position:absolute;inset:0 0 auto;height:130px;pointer-events:none;background:linear-gradient(180deg,#3e7180aa,#6b8c7555,transparent)}
+    .menu-moon{position:absolute;top:14px;right:28px;font-size:30px;filter:drop-shadow(0 0 15px #ffe6a0)}
+    .menu-cloud{position:absolute;font-size:30px;opacity:.75}
+    .cloud-one{top:50px;left:22px}.cloud-two{top:82px;right:18px;font-size:23px}
+    .menu-castle{position:relative;z-index:1;display:flex;align-items:end;justify-content:center;gap:3px;height:75px;margin:0 auto 12px;font-size:39px;filter:drop-shadow(0 5px 5px #0008)}
+    .menu-castle .castle{font-size:66px;line-height:1}
+    .main-menu-content .intro-emblem{width:82px;height:82px;margin-bottom:12px;border-radius:23px 23px 31px 31px}
+    .main-menu-content .intro-emblem span{font-size:43px}
+    .main-menu-content .intro-title{margin:20px 0 3px;font-size:34px}
+    .main-menu-content .intro-ar{font-size:24px}
+    .main-menu-content .intro-caption{margin:7px 0 8px}
+    .main-menu-content .intro-signature{margin:0 0 17px;font-size:18px}
+    .main-menu-actions{position:relative;z-index:2;display:grid;gap:10px}
+    .main-menu-actions button{width:100%;max-width:none;min-height:49px;margin:0;padding:12px 10px;border-radius:15px;font-size:15px}
+    .main-menu-actions .menu-secondary{color:#ffedc2;background:linear-gradient(140deg,#343044,#17273a);border:1px solid #d8b76d;box-shadow:inset 0 1px #fff2c322}
+    .menu-footer{position:relative;margin-top:17px;color:#e8d6ad;font-size:11px;letter-spacing:.5px}
+    @media(max-height:740px){.main-menu-content{padding:17px 18px}.menu-castle{height:52px;font-size:30px}.menu-castle .castle{font-size:50px}.main-menu-content .intro-emblem{width:68px;height:68px}.main-menu-content .intro-title{margin-top:13px;font-size:29px}.main-menu-content .intro-signature{margin-bottom:12px}.main-menu-actions{gap:7px}.main-menu-actions button{min-height:44px}}
+
     .world-transition .intro-title{font-size:25px}
     @keyframes royalRise{from{opacity:0;transform:translateY(24px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
     @media(prefers-reduced-motion:reduce){.intro-content{animation:none}.intro-screen,.world-transition{transition:none}}
@@ -320,14 +340,21 @@
 </head>
 
 <body>
-  <section class="intro-screen" id="introScreen" aria-label="Fruit Pop introduction">
-    <div class="intro-content">
+  <section class="intro-screen" id="introScreen" aria-label="Fruit Pop main menu">
+    <div class="intro-content main-menu-content">
+      <div class="menu-sky" aria-hidden="true"><span class="menu-moon">☀️</span><span class="menu-cloud cloud-one">☁️</span><span class="menu-cloud cloud-two">☁️</span></div>
+      <div class="menu-castle" aria-hidden="true"><span>🌲</span><span class="castle">🏰</span><span>🌳</span></div>
       <div class="intro-emblem"><span>♛</span></div>
       <div class="intro-title">FRUIT POP</div>
       <div class="intro-ar">عابر السبيل</div>
-      <div class="intro-caption">ROYAL GAME STUDIO</div>
+      <div class="intro-caption">A ROYAL FRUIT ADVENTURE</div>
       <div class="intro-signature">✦ Sabah Asy ✦</div>
-      <button id="enterGameBtn" type="button">ابدأ المغامرة ✨</button>
+      <div class="main-menu-actions">
+        <button id="enterGameBtn" type="button">🎮 العب الآن</button>
+        <button id="introLevelsBtn" class="menu-secondary" type="button">🗺️ خريطة العوالم والمراحل</button>
+        <button id="introAccountBtn" class="menu-secondary" type="button">👤 تسجيل الدخول / إنشاء حساب</button>
+      </div>
+      <div class="menu-footer">8 عوالم · 400 مرحلة · مغامرة لا تنتهي</div>
     </div>
   </section>
   <section class="world-transition hide" id="worldTransition" aria-live="polite">
@@ -1021,10 +1048,10 @@
     const params=new URLSearchParams(location.search);
     if(params.get("auth")==="google-error"){show(authModal);note.textContent="Google sign-in could not complete. Check the OAuth setup and try again.";history.replaceState({}, "", location.pathname);}
     const intro=$("introScreen");
-    const enter=()=>{intro.classList.add("hide");try{sessionStorage.setItem("fruit-pop-intro-seen","1");}catch(e){}};
+    const enter=()=>intro.classList.add("hide");
     $("enterGameBtn").addEventListener("click",enter);
-    try{if(sessionStorage.getItem("fruit-pop-intro-seen")==="1") intro.classList.add("hide");}catch(e){}
-    setTimeout(()=>intro.classList.add("hide"),6500);
+    $("introLevelsBtn").addEventListener("click",()=>{enter();drawLevels();show(levelsModal);});
+    $("introAccountBtn").addEventListener("click",()=>{enter();note.textContent="";show(authModal);});
   })();
   </script>
 
