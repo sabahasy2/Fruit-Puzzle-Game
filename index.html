@@ -1041,11 +1041,11 @@
         if (soundsEnabled) playSound("tap");
       });
       updateAudioButtons();
-      $("menuMusicToggle").addEventListener("click",()=>{
+      document.getElementById("menuMusicToggle").addEventListener("click",()=>{
         musicEnabled=!musicEnabled;localStorage.setItem("fruit-pop-music",musicEnabled?"on":"off");
         if(musicEnabled)startMusic();else stopMusic();updateAudioButtons();
       });
-      $("menuSoundToggle").addEventListener("click",()=>{
+      document.getElementById("menuSoundToggle").addEventListener("click",()=>{
         soundsEnabled=!soundsEnabled;localStorage.setItem("fruit-pop-sounds",soundsEnabled?"on":"off");
         updateAudioButtons();if(soundsEnabled)playSound("tap");
       });
