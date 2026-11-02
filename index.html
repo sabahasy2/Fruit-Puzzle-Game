@@ -1692,6 +1692,97 @@ body,body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.
 @media(max-width:380px){.game{padding:10px 8px 14px!important;border-radius:24px!important}.stats .stat{min-height:64px!important;padding:8px 3px!important}.top-actions button,.audio-controls button{font-size:11px!important;padding:8px 5px!important}.main-menu-content{padding-left:14px!important;padding-right:14px!important}}
 @media(prefers-reduced-motion:reduce){.game *,.main-menu-content *,.fruit-splash *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+
+/* v75 — carry the Fruit Pop Adam fruit-logo candy identity through EVERY world, screen and stage */
+:root{--fpa-bg:#321044;--fpa-plum:#4b1d70;--fpa-purple:#8958d3;--fpa-pink:#ff82b8;--fpa-cyan:#63d9e9;--fpa-gold:#ffe49b;--fpa-cream:#fff5d7}
+html,body,body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{
+ color:#fff8ed!important;
+ background:
+  radial-gradient(ellipse at 50% -8%,#ffb3d7 0%,#a96cdb 25%,transparent 57%),
+  radial-gradient(circle at 8% 72%,#ffcf6b2b,transparent 30%),
+  radial-gradient(circle at 94% 65%,#64e8dc2b,transparent 31%),
+  linear-gradient(155deg,#48206e 0%,#29164e 52%,#35104d 100%)!important;
+ background-attachment:fixed!important
+}
+/* Every gameplay world uses the same Fruit Pop Adam candy kingdom identity. */
+.game,.game-tools-panel{
+ border:2px solid #ffe7ae!important;border-radius:29px!important;
+ background:linear-gradient(155deg,#fff0c51c,#ff9dcc16 35%,#7545b344 100%)!important;
+ box-shadow:0 22px 65px #16082f88,inset 0 2px 0 #fff8!important
+}
+.game h1,.game-tools-panel h1{color:#fff2a6!important;text-shadow:0 3px 0 #a64f27,0 7px 0 #63315f,0 12px 22px #241044!important}
+.world-banner{background:linear-gradient(115deg,#ff86b8,#a66be8 52%,#43c8dc)!important;border:2px solid #fff0b7!important;box-shadow:0 7px 0 #58317e,0 13px 24px #17072f77,inset 0 2px #fff9!important}
+.world-kicker,.world-name,.world-meta{color:#fff!important;text-shadow:0 2px 5px #48215f!important}
+.game .board{border:3px solid #ffe9ae!important;border-radius:23px!important;background:linear-gradient(145deg,#7546a6,#40205f 58%,#8e4d9c)!important;box-shadow:0 9px 0 #45235f,0 18px 30px #13072299,inset 0 3px 7px #fff8!important}
+.game .tile{border:1px solid #fff0c6!important;border-radius:12px!important;background:linear-gradient(145deg,#fff0d7 0%,#ffb1d2 28%,#d96bb8 67%,#8d4fb4 100%)!important;box-shadow:inset 0 2px 4px #fff9,inset 0 -4px 7px #51265d66,0 3px 0 #51265d,0 5px 8px #1c0a3066!important}
+.game .tile.selected{outline:3px solid #fff3a5!important;filter:brightness(1.16) drop-shadow(0 0 9px #ffe77c)!important}
+/* World map and all 24 worlds: unified candy-land terrain, paths and fruit-like level buttons. */
+#levelsModal,.modal{background:radial-gradient(ellipse at 50% 0%,#ffb2d866,transparent 45%),#24113dcc!important;backdrop-filter:blur(12px) saturate(1.35)!important}
+#levelsModal .map-card{border:3px solid #fff0b5!important;border-radius:30px!important;background:linear-gradient(155deg,#ffacd0 0%,#b47ce8 42%,#58c9df 100%)!important;box-shadow:0 11px 0 #59347f,0 24px 65px #17072f99,inset 0 3px 7px #fff!important}
+.map-topbar,#levelsModal .map-heading,#levelsModal .map-world-tabs{background:linear-gradient(100deg,#ff83b6,#a46be4 52%,#42c5dc)!important;border:1px solid #fff8!important;border-radius:18px!important;box-shadow:inset 0 1px #fff8,0 4px 0 #70449b!important}
+.map-brand,.map-brand strong,.map-brand small,.map-progress,#levelsModal .map-heading h2{color:#fff!important;text-shadow:0 2px 5px #573078!important}
+.map-brand-mark{border:2px solid #fff0b5!important;border-radius:15px!important;background:linear-gradient(145deg,#fff3ae,#ff9bc5 52%,#9564e8)!important;box-shadow:0 4px 0 #70449b!important}
+.map-world-tab{border:1.5px solid #fff0b5!important;border-radius:18px!important;background:linear-gradient(145deg,#fff0d4,#ff9bc5 52%,#a16be4)!important;color:#53255f!important;font-weight:950!important;box-shadow:0 4px 0 #70449b!important}
+.map-world-tab.active{background:linear-gradient(145deg,#fff5b5,#ffc45c 55%,#ff8cae)!important;color:#66345f!important;outline:3px solid #fff!important;box-shadow:0 0 0 2px #ffe7a4,0 5px 0 #9b5c72,0 0 18px #fff8!important}
+.map-world-tab:disabled{opacity:.48!important;filter:saturate(.55)!important}
+#levelsModal .map-landscape,.map-landscape,.map-landscape.theme-forest,.map-landscape.theme-ice,.map-landscape.theme-island,.map-landscape.theme-volcano,.map-landscape.theme-crystal,.map-landscape.theme-sky,.map-landscape.theme-mythic{
+ border:3px solid #fff0b5!important;border-radius:24px!important;
+ background:
+  radial-gradient(circle at 12% 9%,#fff7b755 0 2%,transparent 15%),
+  radial-gradient(circle at 88% 24%,#fff8 0 1.5%,transparent 13%),
+  radial-gradient(ellipse at 50% 0%,#ffb7d6 0%,#c28be9 28%,transparent 62%),
+  linear-gradient(180deg,#7bd9d2 0%,#6dc9cf 24%,#8c82d9 57%,#624a9d 100%)!important;
+ box-shadow:inset 0 0 0 3px #fff4,inset 0 0 28px #fff5,0 7px 0 #70449b!important
+}
+.map-scenery,#levelsModal .map-scenery{border:2px solid #fff0b5!important;border-radius:18px!important;background:linear-gradient(105deg,#ff82b9ee,#a36be9ee 55%,#42c9dcee)!important;color:#fff!important;box-shadow:0 5px 0 #70449b,inset 0 2px #fff9!important}
+.map-scenery strong,.map-scenery small{color:#fff!important;text-shadow:0 1px 4px #563078!important}
+.map-scenery-emoji{filter:drop-shadow(0 3px 3px #32104466)!important}
+.map-path{filter:drop-shadow(0 2px 2px #32104455)!important}
+.map-node{border:3px solid #fff3c4!important;border-radius:50%!important;background:radial-gradient(circle at 32% 22%,#fff 0%,#fff4 15%,transparent 38%),linear-gradient(145deg,#fff18d,#ff9d55 48%,#ef5d9f)!important;color:#63335e!important;font-weight:1000!important;text-shadow:0 1px #fff9!important;box-shadow:0 5px 0 #a44875,0 8px 12px #2c104f66,inset 0 2px 3px #fff!important}
+.map-node.completed{background:radial-gradient(circle at 30% 20%,#fff 0%,#fff5 15%,transparent 38%),linear-gradient(145deg,#c5ff91,#52d68b 52%,#168f87)!important;box-shadow:0 5px 0 #267d70,0 8px 12px #2c104f66,inset 0 2px 3px #fff!important;color:#174d54!important}
+.map-node.current{background:radial-gradient(circle at 30% 20%,#fff 0%,#fff6 15%,transparent 38%),linear-gradient(145deg,#fff6a1,#ffc34f 48%,#ff75a9)!important;outline:4px solid #fff!important;box-shadow:0 0 0 7px #fff6,0 0 24px #fff,0 6px 0 #a44875!important;animation:mapCurrentPulse 1.8s ease-in-out infinite}
+.map-node.locked{background:linear-gradient(145deg,#d9c8e8,#9887bd)!important;color:#5d4d78!important;filter:saturate(.65)!important;box-shadow:0 4px 0 #65527e!important}
+.map-node-label,.map-stars{color:#fff!important;text-shadow:0 1px 4px #321044!important;font-weight:900!important}
+.map-landmark{filter:drop-shadow(0 4px 4px #32104466)!important}
+/* Consistent glossy candy treatment for every dialog, reward, transition, and settings panel. */
+.modal-card,.theme-modal-card,.daily-reward-card,.level-celebration-card{
+ border:3px solid #fff0b5!important;border-radius:27px!important;
+ background:linear-gradient(150deg,#fff0cf 0%,#ffacd0 34%,#b68ae9 70%,#75d9e4 100%)!important;
+ color:#512c70!important;box-shadow:0 9px 0 #70449b,0 22px 50px #18092f88,inset 0 3px 6px #fff!important
+}
+.modal-card h2,.daily-reward-card h2,.level-celebration-title{color:#8d347d!important;text-shadow:0 1px 0 #fff!important}
+.modal-card p,.daily-reward-card p,.level-celebration-subtitle{color:#54356f!important}
+.modal-card button,.daily-reward-card button,.level-transition-btn,.theme-choice{
+ border:2px solid #fff0b5!important;border-radius:16px!important;
+ background:linear-gradient(145deg,#ff8fba,#a16be6 58%,#46c4d9)!important;
+ color:#fff!important;font-weight:950!important;text-shadow:0 1px 3px #53235f!important;
+ box-shadow:0 5px 0 #70449b,inset 0 2px 3px #fff9!important
+}
+.daily-chest{filter:drop-shadow(0 5px 4px #7545a866)!important}
+.daily-reward-amount{border:2px dashed #fff!important;border-radius:17px!important;background:linear-gradient(100deg,#fff5a2,#ffc56c,#ff9ac2)!important;color:#713b65!important}
+.level-celebration{background:radial-gradient(circle at 50% 15%,#fff4c2 0%,#ff9fc9 32%,#9a69e4 72%,#3e277a 100%)!important}
+.level-celebration-card{background:linear-gradient(150deg,#fff0c9,#ff9fca 38%,#a36ce5 72%,#4cc6d9)!important}
+.level-celebration-kicker,.level-celebration-title,.level-celebration-subtitle{color:#fff!important;text-shadow:0 2px 5px #573078!important}
+.level-stat{border:1.5px solid #fff9!important;border-radius:15px!important;background:#fff3!important;box-shadow:inset 0 1px #fff9!important}
+.level-stat strong,.level-stat small{color:#fff!important;text-shadow:0 1px 4px #573078!important}
+#introScreen,.fruit-splash,.world-transition{background:radial-gradient(ellipse at 50% 12%,#fff2b9 0%,#ffacd0 24%,#a16be4 57%,#342064 100%)!important}
+#introScreen .main-menu-content,.main-menu-content{border:3px solid #fff0b5!important;border-radius:34px!important;background:linear-gradient(155deg,#fff0c9 0%,#ff9fc9 28%,#a36ce5 66%,#49c5d9 100%)!important;box-shadow:0 12px 0 #59347f,0 28px 70px #16082f99,inset 0 3px 8px #fff!important}
+#introScreen .intro-title,.intro-title{color:#fff4a5!important;text-shadow:0 3px 0 #a64f27,0 7px 0 #63315f,0 12px 20px #2b104e!important}
+#introScreen .intro-owner,#introScreen .intro-ar,#introScreen .intro-caption,#introScreen .menu-footer{color:#fff!important;text-shadow:0 2px 5px #48215f!important}
+.game-tools-panel{border:2px solid #fff0b5!important;border-radius:22px!important;background:linear-gradient(145deg,#ffacd0,#b68ae9 58%,#65d3df)!important;box-shadow:0 7px 0 #70449b!important}
+.game-tools-panel h1,.game-tools-panel .subtitle,.game-tools-panel .tools-panel-heading{color:#fff!important;text-shadow:0 2px 5px #573078!important}
+button,.game-tools-panel button,.main-menu-actions button,.top-actions button,.audio-controls button,.controls button,.return-menu-btn{
+ border-color:#fff0b5!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#ff8fba 0%,#a16be6 58%,#46c4d9 100%)!important;
+ color:#fff!important;font-weight:950!important;text-shadow:0 1px 3px #53235f!important;
+ box-shadow:0 5px 0 #70449b,inset 0 2px 3px #fff9!important
+}
+button:active,.game-tools-panel button:active,.main-menu-actions button:active{transform:translateY(2px)!important;filter:brightness(1.06)}
+button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,#a18abf,#786b9e)!important}
+.player-signature{color:#ffe18a!important;text-shadow:0 1px 4px #321044!important}
+@media(max-width:390px){#levelsModal .map-card{padding:10px 8px 12px!important}.map-landscape{min-height:390px!important}.map-world-tab{padding:7px 8px!important;font-size:10px!important}}
+@media(prefers-reduced-motion:reduce){.map-node.current{animation:none!important}}
+
 </style>
 </head>
 
