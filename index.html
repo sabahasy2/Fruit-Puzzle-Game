@@ -1789,7 +1789,119 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
 @media(max-width:390px){#levelsModal .map-card{padding:10px 8px 12px!important}.map-landscape{min-height:390px!important}.map-world-tab{padding:7px 8px!important;font-size:10px!important}}
 @media(prefers-reduced-motion:reduce){.map-node.current{animation:none!important}}
 
-</style>
+
+    /* v80 — premium glossy fruit kingdom: original vector fruit, luminous board, polished feedback */
+    .game{
+      max-width:480px!important;
+      border:1px solid #ffd9a7aa!important;
+      background:
+        radial-gradient(ellipse at 50% 0%,#ffb8df25,transparent 42%),
+        linear-gradient(155deg,#35134feF 0%,#24103ef5 54%,#170b2cf7 100%)!important;
+      box-shadow:0 25px 70px #080313bb,0 0 38px #ff9edb24,inset 0 1px 0 #fff8!important;
+    }
+    .game .board{
+      position:relative!important;
+      gap:clamp(3px,1vw,6px)!important;
+      padding:clamp(7px,1.8vw,11px)!important;
+      aspect-ratio:1!important;
+      border:3px solid #ffe5a8!important;
+      border-radius:25px!important;
+      background:
+        radial-gradient(ellipse at 50% 0%,#fff2c755,transparent 45%),
+        linear-gradient(145deg,#773c9d 0%,#46236e 55%,#281447 100%)!important;
+      box-shadow:0 8px 0 #29133f,0 17px 30px #080313bb,0 0 0 4px #fff2a522,0 0 30px #ff9edb55,inset 0 3px 8px #fff9,inset 0 -9px 18px #170a2bbb!important;
+    }
+    .game .board:before{
+      content:"";position:absolute;inset:4px;border-radius:17px;pointer-events:none;z-index:0;
+      background:linear-gradient(115deg,#fff2,transparent 24%,transparent 72%,#fff1);
+    }
+    .game .tile{
+      aspect-ratio:1!important;overflow:visible!important;isolation:isolate!important;
+      border:1px solid #ffe5f4aa!important;border-radius:13px!important;
+      background:
+        radial-gradient(ellipse at 28% 13%,#fff8 0%,#fff2 25%,transparent 53%),
+        linear-gradient(150deg,#ffb5dc 0%,#e96bb7 38%,#a83d9a 78%,#63296f 100%)!important;
+      box-shadow:inset 0 2px 3px #fff9,inset 0 -5px 8px #43104499,0 3px 0 #351347,0 5px 8px #09031388!important;
+      transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s,box-shadow .16s!important;
+    }
+    .game .tile:before{
+      content:"";position:absolute;z-index:5;pointer-events:none;left:12%;top:7%;width:43%;height:18%;
+      border-radius:50%;background:linear-gradient(180deg,#fff 0%,#fff9 45%,#fff0 100%);
+      filter:blur(.5px);opacity:.82;transform:rotate(-27deg);
+    }
+    .game .tile:after{
+      content:"";position:absolute;z-index:5;pointer-events:none;right:12%;bottom:8%;width:18%;height:7%;
+      border-radius:50%;background:#fff9;filter:blur(3px);
+    }
+    .game .tile .fruit-face{
+      position:absolute!important;inset:3%!important;width:94%!important;height:94%!important;
+      display:grid!important;place-items:center!important;z-index:4!important;
+      font-size:clamp(23px,7.8vw,36px)!important;line-height:1!important;
+      filter:drop-shadow(0 3px 2px #32104499) drop-shadow(0 0 5px #fff7)!important;
+      transform:translateY(-1px)!important;
+      -webkit-text-stroke:0!important;
+    }
+    .game .tile .fruit-face svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 2px 1px #3b104c66)}
+    .game .tile.selected{
+      transform:scale(1.075)!important;z-index:8!important;
+      border:2px solid #fff9b8!important;
+      background:linear-gradient(145deg,#fff5bc,#ffb4d8 48%,#d94b9d)!important;
+      box-shadow:0 0 0 3px #fff6,0 0 24px #fff0a9,0 0 38px #ff83d4aa,inset 0 3px 7px #fff!important;
+    }
+    .game .tile.hint-partner{
+      border:2px solid #bafff1!important;
+      box-shadow:0 0 0 3px #bafff155,0 0 22px #65ffe5,inset 0 2px 7px #fff!important;
+    }
+    .game .tile.special-fruit{
+      border:2px solid #fff3a6!important;
+      background:radial-gradient(circle at 35% 22%,#fffbd9,#ffe16c 35%,#ff9a51 66%,#bd397f)!important;
+      box-shadow:0 0 0 2px #fff8,0 0 25px #ffe27c,0 0 42px #ff9d5c88,inset 0 3px 8px #fff!important;
+    }
+    .game .tile.match-pop .fruit-face{animation:fruitJewelPop .38s cubic-bezier(.16,.8,.25,1) both!important}
+    .game .tile.fruit-fall .fruit-face{animation:fruitJewelFall .44s cubic-bezier(.18,.78,.24,1) both!important}
+    @keyframes fruitJewelPop{
+      0%{opacity:1;transform:scale(1) rotate(0);filter:brightness(1)}
+      22%{opacity:1;transform:scale(1.32) rotate(8deg);filter:brightness(1.8) drop-shadow(0 0 12px #fff5a8)}
+      52%{opacity:1;transform:scale(1.12) rotate(-5deg);filter:brightness(1.35) drop-shadow(0 0 16px #ff9fd9)}
+      100%{opacity:0;transform:scale(.25) rotate(28deg);filter:blur(4px)}
+    }
+    @keyframes fruitJewelFall{
+      0%{opacity:0;transform:translateY(-180%) scale(.72) rotate(-9deg);filter:blur(2px) brightness(1.5)}
+      64%{opacity:1;transform:translateY(8%) scale(1.1) rotate(4deg);filter:none}
+      82%{transform:translateY(-4%) scale(.97) rotate(-2deg)}
+      100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
+    }
+    .game .tile.match-pop:before{animation:fruitHalo .38s ease-out both!important}
+    @keyframes fruitHalo{0%{opacity:0;transform:scale(.35)}25%{opacity:1;filter:brightness(2)}100%{opacity:0;transform:scale(1.55)}}
+    .game .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
+    .game .stats .stat{
+      min-width:0!important;min-height:66px!important;padding:9px 3px!important;
+      border:1.5px solid #ffe3a9!important;border-radius:17px!important;
+      background:linear-gradient(155deg,#ffffff35,#ffffff0b 60%,#21103988)!important;
+      box-shadow:0 5px 0 #311749,0 9px 15px #09031366,inset 0 2px 3px #fff8!important;
+    }
+    .game .stats .stat small{font-size:clamp(8px,2.3vw,11px)!important;letter-spacing:.3px!important}
+    .game .stats .stat strong{font-size:clamp(17px,5vw,24px)!important}
+    .game .goal{
+      border:1.5px solid #fff0b6!important;border-radius:17px!important;
+      background:linear-gradient(100deg,#fff1a533,#ff8fca2c,#8cebd333)!important;
+      box-shadow:inset 0 1px #fff8,0 6px 16px #10051f55!important;
+    }
+    .game .world-banner{filter:drop-shadow(0 6px 9px #0b031b77)}
+    .game .message{border-color:#ffe6a9!important;box-shadow:inset 0 1px #fff8,0 7px 17px #10051f66,0 0 17px #ff9edb22!important}
+    @media(max-width:390px){
+      .game{padding-left:8px!important;padding-right:8px!important}
+      .game .board{gap:3px!important;padding:7px!important}
+      .game .tile{border-radius:10px!important}
+      .game .tile .fruit-face{font-size:clamp(21px,7.2vw,31px)!important}
+      .game .stats{gap:4px!important}
+      .game .stats .stat{min-height:60px!important;padding:7px 2px!important}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .game .tile.match-pop .fruit-face,.game .tile.fruit-fall .fruit-face{animation-duration:.01ms!important}
+    }
+
+  </style>
 
   <style id="fruit-pop-candy-map-nodes">
     /* Numbered, candy-like stage bubbles across every world */
@@ -2344,6 +2456,20 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
         }
       }
 
+
+      // Original, resolution-independent glossy fruit artwork (consistent across devices).
+      function fruitArtwork(emoji) {
+        const art = {
+          "🍓": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="berry" x2="0.9" y2="1"><stop stop-color="#ff9db8"/><stop offset=".38" stop-color="#f52e68"/><stop offset="1" stop-color="#a9003c"/></linearGradient><linearGradient id="leaf" x2="0" y2="1"><stop stop-color="#b8ff83"/><stop offset="1" stop-color="#168b3d"/></linearGradient></defs><path d="M50 24C35 8 14 22 19 48c4 24 22 43 31 47 9-4 27-23 31-47C86 22 65 8 50 24Z" fill="url(#berry)" stroke="#a90b43" stroke-width="2"/><path d="M50 28C37 15 25 26 28 43" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".48"/><path d="M50 25 36 12l4 15-15-3 13 12 12-8 12 8 13-12-15 3 4-15Z" fill="url(#leaf)" stroke="#237b39" stroke-width="1.5"/><g fill="#ffe58a"><ellipse cx="34" cy="45" rx="2" ry="3"/><ellipse cx="49" cy="42" rx="2" ry="3"/><ellipse cx="64" cy="46" rx="2" ry="3"/><ellipse cx="41" cy="61" rx="2" ry="3"/><ellipse cx="57" cy="61" rx="2" ry="3"/><ellipse cx="49" cy="78" rx="2" ry="3"/></g><ellipse cx="34" cy="36" rx="7" ry="12" fill="#fff" opacity=".2" transform="rotate(-28 34 36)"/></svg>`,
+          "🍋": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="lemon" x2=".9" y2="1"><stop stop-color="#fff8a6"/><stop offset=".42" stop-color="#ffdf32"/><stop offset="1" stop-color="#d89a00"/></linearGradient></defs><path d="M13 51Q27 37 18 28Q37 30 50 18Q63 30 82 28Q73 39 87 51Q73 64 82 75Q62 72 50 85Q38 72 18 75Q27 63 13 51Z" fill="url(#lemon)" stroke="#c78a00" stroke-width="2"/><path d="M29 39Q40 27 53 31" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".55"/><path d="M55 22Q70 5 82 16Q72 29 55 22Z" fill="#65bd4a" stroke="#287d36" stroke-width="2"/><path d="M56 22 76 17" stroke="#d9ff9a" stroke-width="2"/></svg>`,
+          "🍇": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="grape" cx=".3" cy=".2"><stop stop-color="#f4c5ff"/><stop offset=".35" stop-color="#a85be8"/><stop offset="1" stop-color="#4c168e"/></radialGradient></defs><path d="M49 28Q46 12 63 8" fill="none" stroke="#8c5a32" stroke-width="5" stroke-linecap="round"/><path d="M53 20Q72 2 87 16Q73 31 53 20Z" fill="#71ce53" stroke="#32863a" stroke-width="2"/><g stroke="#54208c" stroke-width="1.5" fill="url(#grape)"><circle cx="35" cy="34" r="15"/><circle cx="62" cy="35" r="15"/><circle cx="24" cy="57" r="14"/><circle cx="50" cy="58" r="16"/><circle cx="75" cy="57" r="14"/><circle cx="38" cy="80" r="13"/><circle cx="62" cy="80" r="13"/></g><g fill="#fff" opacity=".48"><ellipse cx="30" cy="28" rx="5" ry="8" transform="rotate(-25 30 28)"/><ellipse cx="57" cy="29" rx="5" ry="8" transform="rotate(-25 57 29)"/><ellipse cx="19" cy="52" rx="4" ry="7"/></g></svg>`,
+          "🍊": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="orange" cx=".28" cy=".2"><stop stop-color="#fff0a1"/><stop offset=".32" stop-color="#ffb52e"/><stop offset=".72" stop-color="#f47708"/><stop offset="1" stop-color="#bd3b00"/></radialGradient></defs><circle cx="50" cy="54" r="37" fill="url(#orange)" stroke="#c34b05" stroke-width="2"/><path d="M29 39Q37 23 54 25" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".5"/><path d="M49 18Q64 1 82 13Q70 31 49 18Z" fill="#64c94d" stroke="#287e38" stroke-width="2"/><path d="M50 19 73 15" stroke="#d9ff9b" stroke-width="2"/><path d="M47 18q3 7 3 12" stroke="#8b4b20" stroke-width="3" fill="none"/></svg>`,
+          "🍏": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="apple" cx=".28" cy=".18"><stop stop-color="#efffa4"/><stop offset=".35" stop-color="#9be54a"/><stop offset=".76" stop-color="#49a925"/><stop offset="1" stop-color="#216c1c"/></radialGradient></defs><path d="M50 31Q31 16 17 34Q4 52 20 78Q34 99 50 88Q66 99 80 78Q96 52 83 34Q69 16 50 31Z" fill="url(#apple)" stroke="#347d20" stroke-width="2"/><path d="M50 31Q49 20 54 12" stroke="#70452b" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M52 19Q69 1 83 12Q71 29 52 19Z" fill="#55bd48" stroke="#287b32" stroke-width="2"/><path d="M26 44Q33 30 45 36" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".52"/><ellipse cx="31" cy="61" rx="4" ry="8" fill="#fff" opacity=".16"/></svg>`,
+          "🍒": `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="cherry" cx=".28" cy=".2"><stop stop-color="#ffb1b9"/><stop offset=".34" stop-color="#fa3154"/><stop offset="1" stop-color="#980027"/></radialGradient></defs><path d="M49 54Q46 25 29 12M51 54Q58 22 76 12" fill="none" stroke="#5b9d37" stroke-width="4" stroke-linecap="round"/><path d="M49 24Q62 2 83 12Q71 32 49 24Z" fill="#70d34c" stroke="#32883a" stroke-width="2"/><circle cx="31" cy="65" r="24" fill="url(#cherry)" stroke="#a20d35" stroke-width="2"/><circle cx="72" cy="65" r="24" fill="url(#cherry)" stroke="#a20d35" stroke-width="2"/><path d="M17 54Q23 43 34 48M58 54Q65 43 76 48" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".48"/></svg>`
+        };
+        return art[emoji] || "";
+      }
+
       function render({ popping = [], falling = [] } = {}) {
         const poppingSet = new Set(popping.map(([r, c]) => r + "," + c));
         const fallingSet = new Set(falling.map(([r, c]) => r + "," + c));
@@ -2356,7 +2482,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
             tile.type = "button";
             const fruitFace = document.createElement("span");
             fruitFace.className = "fruit-face";
-            fruitFace.textContent = board[r][c] || "";
+            fruitFace.innerHTML = fruitArtwork(board[r][c]) || (board[r][c] || "");
             tile.appendChild(fruitFace);
             if (iceGrid[r] && iceGrid[r][c]) {
               tile.classList.add("ice-covered");
