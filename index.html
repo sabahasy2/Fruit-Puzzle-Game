@@ -748,6 +748,122 @@
     @media(max-height:740px){.main-menu-content{max-height:calc(100dvh - 18px)}.menu-stars{margin:3px auto 6px}.intro-owner{margin-bottom:5px}}
     @media(prefers-reduced-motion:reduce){.menu-stars{animation:none}.intro-screen{transition:none}}
 
+  
+    /* v41 — joyful, edge-to-edge candy-pink main menu */
+    html,body{min-height:100%;margin:0}
+    body:has(#introScreen:not(.hide)){overflow:hidden}
+    #introScreen{
+      position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;min-height:100dvh;
+      padding: max(12px,env(safe-area-inset-top)) 0 max(12px,env(safe-area-inset-bottom));
+      overflow-x:hidden;overflow-y:auto;align-items:stretch;justify-content:center;
+      background:
+        radial-gradient(ellipse at 50% 12%,#ffb5d2 0%,transparent 34%),
+        radial-gradient(ellipse at 8% 78%,#ff6b9d 0%,transparent 42%),
+        radial-gradient(ellipse at 95% 68%,#e92f68 0%,transparent 44%),
+        linear-gradient(145deg,#ff9fc5 0%,#ff6598 42%,#ed315f 100%);
+      backdrop-filter:none;
+    }
+    #introScreen:before,#introScreen:after{
+      content:"🍓   🍊";position:fixed;z-index:0;pointer-events:none;opacity:.28;
+      font-size:clamp(34px,8vw,72px);letter-spacing:24px;filter:drop-shadow(0 9px 8px #a51d4a44);
+      animation:fruitFloat 7s ease-in-out infinite alternate;
+    }
+    #introScreen:before{top:9%;left:-18px;transform:rotate(-17deg)}
+    #introScreen:after{content:"🍇   🍒";right:-18px;bottom:10%;transform:rotate(15deg);animation-delay:-3s}
+    @keyframes fruitFloat{from{translate:0 0}to{translate:0 -18px}}
+    #introScreen .main-menu-content{
+      z-index:1;position:relative;width:100%;max-width:560px;min-height:100%;
+      max-height:none;height:auto;margin:0 auto;padding:clamp(10px,2.5vh,24px) clamp(18px,5vw,34px);
+      overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none;
+      display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;
+    }
+    #introScreen .main-menu-content:before{display:none}
+    #introScreen .menu-sky{inset:0 0 auto;height:110px;background:linear-gradient(180deg,#fff4 0%,transparent 100%);opacity:.55}
+    #introScreen .menu-moon{top:12px;right:10%;font-size:clamp(25px,6vw,40px)}
+    #introScreen .menu-cloud{font-size:clamp(23px,5vw,36px)}
+    #introScreen .menu-castle{height:clamp(42px,8vh,70px);margin:0 auto 3px;font-size:clamp(30px,7vw,46px);filter:drop-shadow(0 5px 4px #a51d4a55)}
+    #introScreen .menu-castle .castle{font-size:clamp(48px,11vw,70px)}
+    #introScreen .intro-emblem{
+      width:clamp(64px,15vw,92px);height:clamp(64px,15vw,92px);margin:0 auto 8px;
+      border:3px solid #fff8e8;border-radius:28px 28px 36px 36px;transform:rotate(45deg);
+      background:linear-gradient(145deg,#fff4f8,#ffb2cf 55%,#ff6c9d);
+      box-shadow:0 0 0 7px #fff4,0 10px 28px #a51d4a55,inset 0 3px 9px #fff;
+    }
+    #introScreen .intro-emblem span{font-size:clamp(34px,8vw,52px);color:#278b42;text-shadow:0 2px 0 #fff}
+    #introScreen .intro-owner{margin:10px 0 1px;color:#187b39;font-size:clamp(11px,2.8vw,15px);font-weight:1000;letter-spacing:2.5px;text-shadow:0 1px 0 #fff9}
+    #introScreen .intro-title{
+      margin:0;color:#16833c;font-size:clamp(38px,10vw,58px);line-height:1.04;
+      font-weight:1000;letter-spacing:1.5px;text-shadow:0 3px 0 #fff1,0 6px 16px #a51d4a44;
+    }
+    #introScreen .intro-ar{margin-top:4px;color:#167b37;font-size:clamp(21px,5vw,29px);font-weight:1000;text-shadow:0 1px 0 #fff9}
+    #introScreen .intro-caption{margin:4px 0 3px;color:#276f3c;font-size:9px;font-weight:900;letter-spacing:2px}
+    #introScreen .intro-signature{margin:2px 0 3px;color:#1a7a39;font-size:clamp(14px,3.5vw,19px);font-weight:1000;text-shadow:0 1px 0 #fff9}
+    #introScreen .menu-stars{margin:3px auto 10px;color:#fff8b4;font-size:clamp(15px,4vw,21px);text-shadow:0 2px 8px #bd285b}
+    #introScreen .main-menu-actions{
+      width:min(100%,430px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:9px;align-items:stretch;
+    }
+    #introScreen .main-menu-actions button{
+      width:100%;max-width:none;min-width:0;min-height:clamp(47px,7vh,58px);margin:0;
+      padding:10px 8px;border:2px solid #fff9;border-radius:19px;
+      background:linear-gradient(150deg,#fff4f8 0%,#ffc0d8 48%,#ff8db6 100%);
+      color:#167a37;font-size:clamp(12px,3.1vw,15px);font-weight:1000;
+      text-shadow:0 1px 0 #fff;box-shadow:0 5px 0 #c72c61,0 9px 18px #a51d4a3d,inset 0 2px 5px #fff;
+      transition:transform .14s ease,filter .14s ease;overflow:hidden;
+    }
+    #introScreen .main-menu-actions button:active{transform:translateY(3px) scale(.98);box-shadow:0 2px 0 #c72c61,inset 0 2px 5px #fff}
+    #introScreen #enterGameBtn{
+      grid-column:1/-1;min-height:clamp(58px,9vh,72px);border:3px solid #fff;
+      border-radius:23px;background:linear-gradient(110deg,#e4ffad 0%,#b8f27d 38%,#78d95c 100%);
+      color:#176d32;font-size:clamp(18px,4.5vw,23px);letter-spacing:.3px;
+      box-shadow:0 7px 0 #398c43,0 13px 24px #a51d4a55,inset 0 3px 8px #fff;
+    }
+    #introScreen #introLevelsBtn,#introScreen #introAccountBtn,#introScreen #introThemeBtn{min-height:clamp(48px,7vh,58px)}
+    #introScreen .menu-settings{
+      grid-column:1/-1;width:100%;display:grid;grid-template-columns:1fr 1.5fr;gap:7px;
+      align-items:center;margin-top:2px;padding:0;border:0;border-radius:0;background:transparent;text-align:start;
+    }
+    #introScreen .menu-settings label{color:#176f36;font-size:12px;font-weight:1000;text-shadow:0 1px 0 #fff8}
+    #introScreen .menu-settings select{
+      width:100%;min-height:42px;border:2px solid #fff9;border-radius:14px;padding:7px 12px;
+      background:linear-gradient(145deg,#fff4f8,#ffb4d0);color:#176f36;font-size:14px;font-weight:900;
+      box-shadow:0 4px 0 #c72c61;
+    }
+    #introScreen .menu-audio-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    #introScreen .menu-audio-row button{min-height:40px!important;padding:7px!important;font-size:12px!important;border-radius:14px}
+    #introScreen .menu-exit-note{grid-column:1/-1;color:#176f36;text-align:center}
+    #introScreen #menuExitBtn{
+      grid-column:1/-1;justify-self:center;width:auto;min-height:36px;margin-top:1px;padding:6px 18px;
+      border:1px solid #fff8;border-radius:999px;background:#d92e64;color:#fff;font-size:11px;
+      box-shadow:0 3px 0 #9f1e4b;
+    }
+    #introScreen .menu-footer{margin:9px 0 0;color:#176f36;font-size:10px;font-weight:900;text-shadow:0 1px 0 #fff9;text-align:center}
+    @media(min-width:700px){
+      #introScreen .main-menu-content{max-width:680px}
+      #introScreen .main-menu-actions{max-width:470px;gap:12px}
+      #introScreen .main-menu-actions button{font-size:16px}
+    }
+    @media(max-height:680px){
+      #introScreen .main-menu-content{padding-top:8px;padding-bottom:8px}
+      #introScreen .menu-castle{height:34px;margin-bottom:0}
+      #introScreen .intro-emblem{width:56px;height:56px;margin-bottom:5px}
+      #introScreen .intro-emblem span{font-size:31px}
+      #introScreen .intro-owner{margin-top:6px}
+      #introScreen .intro-title{font-size:34px}
+      #introScreen .intro-ar{font-size:19px}
+      #introScreen .intro-caption{font-size:8px}
+      #introScreen .intro-signature{font-size:14px}
+      #introScreen .menu-stars{margin:1px auto 5px}
+      #introScreen .main-menu-actions{gap:6px}
+      #introScreen .main-menu-actions button{min-height:40px;padding:7px}
+      #introScreen #enterGameBtn{min-height:49px}
+      #introScreen .menu-settings{gap:5px}
+      #introScreen .menu-settings select{min-height:36px}
+      #introScreen .menu-audio-row button{min-height:34px!important}
+      #introScreen .menu-footer{margin-top:5px}
+    }
+    @media(prefers-reduced-motion:reduce){#introScreen:before,#introScreen:after{animation:none}}
+
   </style>
 </head>
 
