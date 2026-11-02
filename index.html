@@ -922,6 +922,7 @@
         score += cleared.length * 20;
         messageElement.textContent = kind === "🔥" ? "🔥 Royal row blast!"
           : kind === "⚡" ? "⚡ Royal column blast!" : "🌟 Royal star explosion!";
+        playSound("special");
         render();
         await new Promise(resolve => setTimeout(resolve, 250));
         collapseBoard();
@@ -939,6 +940,7 @@
 
         if (!selected) {
           selected = current;
+          playSound("tap");
           render();
           return;
         }
@@ -959,6 +961,7 @@
         selected = null;
         if ((crateGrid[first.r] && crateGrid[first.r][first.c]) || (crateGrid[current.r] && crateGrid[current.r][current.c])) {
           messageElement.textContent = "📦 Break the wooden crate before moving this fruit.";
+          playSound("nope");
           render();
           return;
         }
@@ -978,6 +981,7 @@
         if (findMatches().length === 0) {
           swap(first, current);
           messageElement.textContent = "No match! Try another move.";
+          playSound("nope");
           render();
           return;
         }
@@ -996,6 +1000,7 @@
           if (!matches.length) break;
 
           chain++;
+          playSound(chain > 1 ? "combo" : "match");
           const multiplier = Math.min(chain, 4);
           const earned = matches.length * 10 * multiplier;
           bonusPoints += earned;
@@ -1029,6 +1034,7 @@
             if ((!special || r !== special.r || c !== special.c) && !(crateGrid[r] && crateGrid[r][c])) board[r][c] = null;
           });
           if (special) {
+            playSound("special");
             board[special.r][special.c] = special.kind;
             messageElement.textContent = special.kind === "🔥"
               ? "🔥 Row-clearing fruit created!"
@@ -1055,6 +1061,7 @@
 
       function checkGame(feedback = "") {
         if (objectiveComplete()) {
+          playSound("win");
           level++;
           objectiveProgress = 0;
           localStorage.setItem("fruit-pop-level", String(level));
@@ -1070,6 +1077,7 @@
         }
 
         if (moves <= 0) {
+          playSound("lose");
           messageElement.textContent = "Game over! Press Restart to play again.";
           saveBest();
           return;
