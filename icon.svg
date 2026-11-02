@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Fruit Pop</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6b35b5"/>
+      <stop offset="1" stop-color="#101b3b"/>
+    </linearGradient>
+    <linearGradient id="fruit" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8bb5"/>
+      <stop offset="1" stop-color="#e82e72"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b9f47a"/>
+      <stop offset="1" stop-color="#32b878"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="112" cy="116" r="22" fill="#ffe58a" opacity=".95"/>
+  <circle cx="398" cy="160" r="13" fill="#fff" opacity=".8"/>
+  <circle cx="376" cy="390" r="19" fill="#8fe9e1" opacity=".9"/>
+  <path d="M256 143c-26-42-78-49-108-16 33 3 58 18 76 47" fill="url(#leaf)" stroke="#d8ff9b" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M263 144c22-48 75-59 111-30-34 7-60 25-75 56" fill="url(#leaf)" stroke="#d8ff9b" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M254 152c-4-29 3-50 20-67" fill="none" stroke="#b9f47a" stroke-width="16" stroke-linecap="round"/>
+  <path d="M256 176c-70-55-143-3-143 92 0 99 63 163 143 163s143-64 143-163c0-95-73-147-143-92z" fill="url(#fruit)" stroke="#ffd0df" stroke-width="12"/>
+  <path d="M176 254c14-27 36-42 63-44" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" opacity=".65"/>
+  <g fill="#ffe7a0">
+    <circle cx="193" cy="321" r="8"/><circle cx="246" cy="351" r="8"/><circle cx="300" cy="310" r="8"/><circle cx="335" cy="354" r="7"/><circle cx="220" cy="390" r="6"/>
+  </g>
+  <path d="M142 447h228" stroke="#ffe27a" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+</svg>
