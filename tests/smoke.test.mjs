@@ -70,6 +70,13 @@ test("guest progress includes coins and account progress is restored", () => {
   assert.match(html, /localStorage\.setItem\("fruit-pop-coins", String\(saved\.coins \|\| 0\)\)/);
 });
 
+test("all worlds and game screens use the unified Fruit Pop Adam candy theme", () => {
+  assert.ok(html.includes("v75 — carry the Fruit Pop Adam fruit-logo candy identity through EVERY world"));
+  for (const selector of [".map-landscape.theme-forest", ".map-landscape.theme-ice", ".map-landscape.theme-island", ".map-landscape.theme-volcano", ".map-landscape.theme-crystal", ".map-landscape.theme-sky", ".map-landscape.theme-mythic", ".map-node.completed", ".map-node.current", ".map-node.locked", ".daily-reward-card", ".level-celebration-card"]) {
+    assert.ok(html.includes(selector), "missing unified style for " + selector);
+  }
+});
+
 test("Fruit Pop Adam branding and fruit-logo asset are wired into the app", () => {
   assert.ok(html.includes("<title>Fruit Pop Adam</title>"));
   assert.match(html, /FRUIT POP ADAM/);
@@ -82,7 +89,7 @@ test("Fruit Pop Adam branding and fruit-logo asset are wired into the app", () =
 test("install metadata and offline cache include the app icon", () => {
   assert.ok(manifest.icons.some(item => item.src === "./icon.svg" && item.type === "image/svg+xml"));
   assert.match(icon, /<svg[\s>]/);
-  assert.match(sw, /fruit-pop-v74/);
+  assert.match(sw, /fruit-pop-v75/);
   assert.match(sw, /"\.\/icon\.svg"/);
   assert.match(sw, /pathname\.startsWith\("\/api\/"\)/);
 });
