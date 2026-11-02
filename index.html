@@ -139,24 +139,31 @@
       opacity: .15;
     }
     .tile.match-pop .fruit-face {
-      animation: fruitPopAway .32s cubic-bezier(.2,.75,.35,1) both;
+      animation: fruitPopAway .72s cubic-bezier(.18,.72,.22,1) both;
       transform-origin: center;
+      will-change: transform, opacity, filter;
     }
     @keyframes fruitPopAway {
       0% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
-      45% { opacity: 1; transform: scale(1.28) rotate(12deg); filter: brightness(1.9) drop-shadow(0 0 9px #fff4a8); }
-      100% { opacity: 0; transform: scale(.12) rotate(-28deg); filter: blur(3px); }
+      16% { opacity: 1; transform: scale(1.42) rotate(10deg); filter: brightness(2.2) drop-shadow(0 0 15px #fff4a8); }
+      34% { opacity: 1; transform: scale(1.12) rotate(-8deg); filter: brightness(1.5) drop-shadow(0 0 10px #ffd66e); }
+      100% { opacity: 0; transform: translateY(190%) rotate(38deg) scale(.42); filter: blur(5px); }
     }
     .tile.fruit-fall .fruit-face {
-      animation: fruitRain .38s cubic-bezier(.18,.72,.25,1) both;
+      animation: fruitRain .82s cubic-bezier(.16,.78,.2,1) both;
+      animation-delay: var(--rain-delay, 0ms);
+      will-change: transform, opacity, filter;
     }
     @keyframes fruitRain {
-      0% { opacity: 0; transform: translateY(-145%) scale(.72); filter: blur(2px); }
-      68% { opacity: 1; transform: translateY(9%) scale(1.06); filter: blur(0); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      0% { opacity: 0; transform: translateY(-720%) scale(.72) rotate(-12deg); filter: blur(3px) brightness(1.5); }
+      58% { opacity: 1; transform: translateY(13%) scale(1.12) rotate(5deg); filter: blur(0) brightness(1.35); }
+      76% { opacity: 1; transform: translateY(-7%) scale(.96) rotate(-3deg); }
+      90% { opacity: 1; transform: translateY(3%) scale(1.04) rotate(1deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: none; }
     }
+    .tile.fruit-fall { overflow: visible; }
     @media(prefers-reduced-motion:reduce) {
-      .tile.match-pop .fruit-face, .tile.fruit-fall .fruit-face { animation-duration: .01ms; }
+      .tile.match-pop .fruit-face, .tile.fruit-fall .fruit-face { animation-duration: .01ms; animation-delay: 0ms; }
     }
     .tile .fruit-face{position:relative;z-index:1}
     .tile.ice-covered{border-color:#a9eaff;background:linear-gradient(145deg,#b8efff44,#fff8e60a);box-shadow:inset 0 0 12px #8bdcff88,0 0 8px #8bdcff55}
@@ -711,6 +718,7 @@
       // Audio begins only after the player's first gesture (mobile autoplay policy).
       let audioContext = null;
       let audioCompressor = null;
+      let audioMasterGain = null;
       let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
       let musicTimer = null;
@@ -727,7 +735,10 @@
           audioCompressor.ratio.setValueAtTime(8, audioContext.currentTime);
           audioCompressor.attack.setValueAtTime(0.003, audioContext.currentTime);
           audioCompressor.release.setValueAtTime(0.25, audioContext.currentTime);
-          audioCompressor.connect(audioContext.destination);
+          audioMasterGain = audioContext.createGain();
+          audioMasterGain.gain.setValueAtTime(1.85, audioContext.currentTime);
+          audioCompressor.connect(audioMasterGain);
+          audioMasterGain.connect(audioContext.destination);
         }
         if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
         return audioContext;
@@ -780,6 +791,21 @@
         source.stop(start + duration + 0.02);
       }
 
+      function playDropSound(delay=0) {
+        if (!soundsEnabled) return;
+        playNoise(.22,.34,"lowpass",520,delay);
+        playNoise(.13,.16,"bandpass",1050,delay+.025);
+        playTone(145,.25,"sine",.30,delay,58);
+        playTone(420,.16,"triangle",.13,delay+.035,180);
+      }
+      function playImpactSound(delay=0) {
+        if (!soundsEnabled) return;
+        playNoise(.105,.30,"lowpass",760,delay);
+        playNoise(.075,.19,"highpass",1850,delay+.008);
+        playTone(82,.22,"sine",.38,delay,38);
+        playTone(235,.13,"triangle",.22,delay+.012,95);
+      }
+
       function playSound(kind="tap") {
         if (!soundsEnabled) return;
         const v = 0.92 + Math.random() * 0.16;
@@ -789,8 +815,14 @@
             playTone(p(980),.085,"square",.075,0,p(430));
             playNoise(.055,.055,"highpass",2900);
             break;
+          case "drop":
+            playDropSound();
+            break;
+          case "impact":
+            playImpactSound();
+            break;
           case "match":
-            playNoise(.22,.19,"bandpass",1650);
+            playNoise(.22,.27,"bandpass",1650);
             playNoise(.12,.10,"highpass",3600,.012);
             playTone(p(105),.30,"sine",.24,0,48);
             playTone(p(390),.20,"triangle",.18,0,p(155));
@@ -1022,7 +1054,10 @@
             if (!board[r][c]) tile.classList.add("empty");
             const cellKey = r + "," + c;
             if (poppingSet.has(cellKey)) tile.classList.add("match-pop");
-            if (fallingSet.has(cellKey)) tile.classList.add("fruit-fall");
+            if (fallingSet.has(cellKey)) {
+              tile.classList.add("fruit-fall");
+              fruitFace.style.setProperty("--rain-delay", (r * 42 + c * 11) + "ms");
+            }
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) tile.classList.add("special-fruit");
             if (selected && selected.r === r && selected.c === c) {
               tile.classList.add("selected");
@@ -1298,7 +1333,13 @@
 
           const falling = collapseBoard();
           render({ falling });
-          await new Promise(resolve => setTimeout(resolve, 390));
+          // A loud descending rush followed by staggered, punchy fruit landings.
+          playDropSound(.015);
+          const landingColumns = [...new Set(falling.map(([, c]) => c))].sort((a, b) => a - b);
+          landingColumns.forEach((column, index) => {
+            playImpactSound(.34 + index * .075);
+          });
+          await new Promise(resolve => setTimeout(resolve, 1120));
         }
 
         ensurePlayableBoard();
