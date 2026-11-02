@@ -1085,6 +1085,28 @@
       .game .tile{min-width:0;border-radius:9px!important}
     }
     @media(min-width:521px){.game .board{gap:4px!important;padding:7px!important}}
+    /* v46 — keep every fruit glyph fully visible in the active play board */
+    @media(max-width:520px){
+      .game .board{
+        width:100%;max-width:620px;
+        grid-template-columns:repeat(8,minmax(0,1fr));
+      }
+      .game .tile{
+        overflow:visible!important;
+        display:grid;place-items:center;
+        font-size:clamp(25px,8vw,34px)!important;
+        line-height:1.15!important;
+      }
+      .game .tile .fruit-face{
+        display:block;max-width:100%;line-height:1.15!important;
+        transform:none!important;font-size:1em!important;
+      }
+    }
+    @media(min-width:521px){
+      .game .board{max-width:620px;grid-template-columns:repeat(8,minmax(0,1fr))}
+      .game .tile{overflow:visible!important}
+      .game .tile .fruit-face{line-height:1.15!important;transform:none!important}
+    }
     @media(prefers-reduced-motion:reduce){.board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst,.board:before,.board:after{animation:none!important}}
 
   </style>
