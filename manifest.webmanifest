@@ -1,13 +1,13 @@
 {
-  "name": "Fruit Pop - Match & Bloom",
-  "short_name": "Fruit Pop",
-  "description": "A colorful and fun fruit matching puzzle game.",
+  "name": "Fruit Pop Adam",
+  "short_name": "Fruit Pop Adam",
+  "description": "Fruit Pop Adam — a colorful fruit-matching adventure with 24 worlds and 1,200 levels.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#111426",
-  "theme_color": "#ff78a8",
+  "background_color": "#321044",
+  "theme_color": "#9b5be1",
   "categories": [
     "games",
     "entertainment"
