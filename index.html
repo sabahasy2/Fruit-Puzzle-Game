@@ -1205,6 +1205,26 @@
     @media(max-height:650px){.splash-logo-wrap{width:112px;height:112px;margin-bottom:12px}.splash-logo{width:80px;height:80px}.splash-logo span{font-size:46px}.splash-brand{font-size:32px}.splash-arabic{font-size:20px}.splash-motto{margin-top:6px;font-size:25px}#splashStartBtn{margin-top:18px;min-height:48px}.splash-sparkles{margin-top:10px}}
     @media(prefers-reduced-motion:reduce){.fruit-splash *,.fruit-splash:before,.fruit-splash:after{animation:none!important}}
 
+    /* Daily treasure, mega-bomb and celebratory fireworks */
+    .daily-reward-card{text-align:center;background:linear-gradient(155deg,#fff8e9,#ffe1f0 55%,#e3f7ff);color:#68406f;border:3px solid #fff;box-shadow:0 9px 0 #e59ac2,0 18px 45px #4d3a8666}
+    .daily-reward-card h2{color:#e34c91!important;text-shadow:none!important}
+    .daily-reward-card p{color:#795b8d!important;font-weight:800}
+    .daily-chest{font-size:76px;line-height:1.25;filter:drop-shadow(0 7px 8px #c67b9c66);animation:chestBounce 1.15s ease-in-out infinite}
+    .daily-reward-amount{margin:15px auto;padding:12px;border:2px dashed #f1b84c;border-radius:16px;background:#fff5c9;color:#8b5b20;font-size:24px;font-weight:1000}
+    #claimDailyRewardBtn{width:100%;background:linear-gradient(110deg,#ffe88b,#ffb84e);color:#613b28}
+    #claimDailyRewardBtn:disabled{opacity:.62;filter:grayscale(.25)}
+    @keyframes chestBounce{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+    .tile.special-bomb{background:radial-gradient(circle,#fff2a9,#ff8e58)!important;box-shadow:0 0 0 3px #fff,0 0 22px #ff733f!important}
+    .board.bomb-burst{animation:megaBombShake .72s ease-out}
+    .board.bomb-burst:before{content:"";position:absolute;z-index:9;inset:-8px;border-radius:inherit;pointer-events:none;background:radial-gradient(circle,#fff 0%,#ffe17b 13%,#ff8b45aa 34%,#e83e8c55 58%,transparent 76%);animation:megaBombFlash .8s ease-out}
+    .board.bomb-burst:after{content:"💥";position:absolute;z-index:10;inset:0;display:grid;place-items:center;pointer-events:none;font-size:clamp(68px,22vw,130px);filter:drop-shadow(0 5px 12px #b33b4c);animation:megaBombEmoji .75s cubic-bezier(.15,1.4,.35,1) both}
+    @keyframes megaBombShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-5px) rotate(-.6deg)}30%{transform:translateX(5px) rotate(.6deg)}48%{transform:translateX(-3px)}68%{transform:translateX(2px)}}
+    @keyframes megaBombFlash{0%{opacity:0;transform:scale(.1)}25%{opacity:1;transform:scale(.85)}100%{opacity:0;transform:scale(1.5)}}
+    @keyframes megaBombEmoji{0%{opacity:0;transform:scale(.15) rotate(-25deg)}28%{opacity:1;transform:scale(1.18) rotate(8deg)}100%{opacity:0;transform:scale(1.65) rotate(18deg)}}
+    .level-celebration.fireworks-active:before{content:"✦     ✧       ✦   ✧      ✦";position:absolute;z-index:2;inset:4% 0 auto;text-align:center;color:#fff4a6;font-size:clamp(25px,8vw,42px);letter-spacing:9px;text-shadow:0 0 8px #fff,0 0 22px #ff75c8;pointer-events:none;animation:victoryFireworks 1.8s ease-out both}
+    .level-celebration.fireworks-active:after{content:"🎆   ✨   🎇";position:absolute;z-index:2;inset:auto 0 8%;text-align:center;font-size:clamp(28px,9vw,46px);pointer-events:none;animation:victoryFireworks 1.8s .15s ease-out both}
+    @keyframes victoryFireworks{0%{opacity:0;transform:scale(.35) translateY(18px)}24%{opacity:1;transform:scale(1.12) translateY(0)}100%{opacity:0;transform:scale(1.55) translateY(-16px)}}
+    @media(prefers-reduced-motion:reduce){.daily-chest,.level-celebration.fireworks-active:before,.level-celebration.fireworks-active:after,.board.bomb-burst{animation:none!important}}
   </style>
 </head>
 
@@ -1271,7 +1291,7 @@
     <div class="royal-brand" aria-label="عابر السبيل"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div>
     <section class="world-banner" id="worldBanner"><span class="world-kicker">SWEET WORLD</span><span class="world-name" id="worldName">🌿 Enchanted Forest</span><span class="world-meta" id="worldMeta">WORLD 1 · LEVELS 1–50</span></section>
     <button id="returnMenuBtn" class="return-menu-btn" type="button" aria-label="Open main menu">☰ القائمة الرئيسية</button>
-    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button></div>
+    <div class="top-actions"><button id="accountBtn" class="secondary">👤 Guest · Sign in</button><button id="levelsBtn" class="secondary">🗺️ Level map</button><button id="themeBtn" class="secondary" type="button">🎨 Theme</button><button id="dailyRewardBtn" class="secondary" type="button">🎁 Daily gift</button></div>
     <div class="audio-controls" aria-label="Audio settings"><button id="musicToggle" class="secondary" type="button" aria-pressed="true">🎵 Music: ON</button><button id="soundToggle" class="secondary" type="button" aria-pressed="true">🔊 Sounds: ON</button></div>
     <div class="controls">
       <button id="restart">↻ Restart</button>
@@ -1324,6 +1344,17 @@
     <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="logoutBtn" class="secondary" type="button">🚪 تسجيل الخروج</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
     <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><div class="map-topbar"><div class="map-brand"><span class="map-brand-mark">🌲</span><span><strong>ENCHANTED REALMS</strong><small>FRUIT POP · ADVENTURE MAP</small></span></div><div class="map-top-actions"><span class="map-progress" id="mapProgress">LEVEL 1 / 1,200</span><button class="map-exit" id="closeLevels" type="button" aria-label="Close map">✕ <span>رجوع</span></button></div></div><div class="map-heading"><h2>🗺️ رحلة العوالم</h2></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
  
+    <div class="modal" id="dailyRewardModal" role="dialog" aria-modal="true" aria-labelledby="dailyRewardTitle">
+      <div class="modal-card daily-reward-card">
+        <button class="secondary modal-close" id="closeDailyReward" type="button" aria-label="Close">✕</button>
+        <div class="daily-chest" id="dailyChest">🎁</div>
+        <h2 id="dailyRewardTitle">Daily Treasure</h2>
+        <p id="dailyRewardMessage">Come back every day for a bigger reward!</p>
+        <div class="daily-reward-amount" id="dailyRewardAmount">🪙 +25</div>
+        <button id="claimDailyRewardBtn" type="button">Open today's gift 🎁</button>
+      </div>
+    </div>
+
     <div class="level-celebration" id="levelCelebration" role="dialog" aria-modal="true" aria-labelledby="levelCelebrationTitle">
       <div class="level-celebration-card">
         <div class="level-celebration-crown" id="levelCelebrationCrown">👑</div>
@@ -1858,8 +1889,8 @@
             }
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) {
               tile.classList.add("special-fruit");
-              tile.classList.add(board[r][c] === "🔥" ? "special-fire" : board[r][c] === "⚡" ? "special-lightning" : "special-rainbow");
-              tile.setAttribute("aria-label", board[r][c] === "🔥" ? "Fire fruit — clears a row" : board[r][c] === "⚡" ? "Lightning fruit — clears a column" : "Rainbow star fruit — creates a burst");
+              tile.classList.add(board[r][c] === "🔥" || board[r][c] === "🚀" ? "special-fire" : board[r][c] === "⚡" ? "special-lightning" : board[r][c] === "💣" ? "special-bomb" : "special-rainbow");
+              tile.setAttribute("aria-label", board[r][c] === "🔥" || board[r][c] === "🚀" ? "Rocket fruit — clears a row" : board[r][c] === "⚡" ? "Lightning fruit — clears a column" : board[r][c] === "💣" ? "Mega bomb — clears a wide area" : "Rainbow star fruit — creates a burst");
             }
             if (selected && selected.r === r && selected.c === c) {
               tile.classList.add("selected");
@@ -1934,19 +1965,20 @@
         board[b.r][b.c] = temp;
       }
 
-      const SPECIAL_FRUITS = new Set(["🔥", "⚡", "🌟"]);
+      const SPECIAL_FRUITS = new Set(["🔥", "🚀", "⚡", "🌟", "💣"]);
 
       function specialForMatch(matches, preferred) {
         const coords = new Set(matches.map(([r, c]) => r + "," + c));
         let kind = null;
-        if (matches.length >= 5) kind = "🌟";
+        if (matches.length >= 6) kind = "💣";
+        else if (matches.length >= 5) kind = "🌟";
         else {
           const rows = new Map(), cols = new Map();
           matches.forEach(([r, c]) => {
             rows.set(r, (rows.get(r) || 0) + 1);
             cols.set(c, (cols.get(c) || 0) + 1);
           });
-          if ([...rows.values()].some(n => n >= 4)) kind = "🔥";
+          if ([...rows.values()].some(n => n >= 4)) kind = "🚀";
           else if ([...cols.values()].some(n => n >= 4)) kind = "⚡";
         }
         if (!kind) return null;
@@ -2012,9 +2044,14 @@
 
         if (combo && (kind === "🌟" || otherKind === "🌟")) {
           const target = kind === "🌟" ? otherKind : kind;
-          if (target === "🔥") { addRow(r); if (other) addRow(other.r); }
+          if (target === "🔥" || target === "🚀") { addRow(r); if (other) addRow(other.r); }
           else if (target === "⚡") { addColumn(c); if (other) addColumn(other.c); }
-          else {
+          else if (target === "💣") {
+            for (let y = Math.max(0,r-2); y <= Math.min(SIZE-1,r+2); y++)
+              for (let x = Math.max(0,c-2); x <= Math.min(SIZE-1,c+2); x++) addCell(y,x);
+            if (other) for (let y = Math.max(0,other.r-2); y <= Math.min(SIZE-1,other.r+2); y++)
+              for (let x = Math.max(0,other.c-2); x <= Math.min(SIZE-1,other.c+2); x++) addCell(y,x);
+          } else {
             const sample = other && otherKind !== "🌟" ? board[other.r][other.c] : null;
             for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) {
               if (sample && board[y][x] === sample) addCell(y, x);
@@ -2025,19 +2062,26 @@
             const sample = board[other.r][other.c];
             for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (board[y][x] === sample) addCell(y, x);
           }
-        } else if (combo && kind === "🔥" && otherKind === "⚡" || combo && kind === "⚡" && otherKind === "🔥") {
+        } else if (combo && (kind === "🔥" || kind === "🚀") && otherKind === "⚡" || combo && kind === "⚡" && (otherKind === "🔥" || otherKind === "🚀")) {
           addRow(r); addColumn(c);
           if (other) { addRow(other.r); addColumn(other.c); }
-        } else if (combo && kind === "🔥" && otherKind === "🔥") {
+        } else if (combo && (kind === "🔥" || kind === "🚀") && (otherKind === "🔥" || otherKind === "🚀")) {
           for (let y = Math.max(0, r - 1); y <= Math.min(SIZE - 1, r + 1); y++) addRow(y);
           if (other) for (let y = Math.max(0, other.r - 1); y <= Math.min(SIZE - 1, other.r + 1); y++) addRow(y);
         } else if (combo && kind === "⚡" && otherKind === "⚡") {
           for (let x = Math.max(0, c - 1); x <= Math.min(SIZE - 1, c + 1); x++) addColumn(x);
           if (other) for (let x = Math.max(0, other.c - 1); x <= Math.min(SIZE - 1, other.c + 1); x++) addColumn(x);
+        } else if (combo && (kind === "💣" || otherKind === "💣")) {
+          const centers = [[r,c], ...(other ? [[other.r,other.c]] : [])];
+          centers.forEach(([cy,cx]) => {
+            for (let y = Math.max(0,cy-2); y <= Math.min(SIZE-1,cy+2); y++)
+              for (let x = Math.max(0,cx-2); x <= Math.min(SIZE-1,cx+2); x++) addCell(y,x);
+          });
         } else {
           for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) {
-            const hit = kind === "🔥" ? y === r
+            const hit = kind === "🔥" || kind === "🚀" ? y === r
               : kind === "⚡" ? x === c
+              : kind === "💣" ? Math.abs(y-r) <= 2 && Math.abs(x-c) <= 2
               : Math.abs(y - r) <= 1 && Math.abs(x - c) <= 1;
             if (hit) addCell(y, x);
           }
@@ -2048,7 +2092,7 @@
         boardElement.classList.remove("special-burst");
         boardElement.classList.add("special-burst");
         render({ popping: cells });
-        const burstClass = combo ? "supercombo-burst" : kind === "⚡" ? "thunder-burst" : kind === "🔥" ? "fire-burst" : "rainbow-burst";
+        const burstClass = combo ? "supercombo-burst" : kind === "⚡" ? "thunder-burst" : kind === "💣" ? "bomb-burst" : kind === "🔥" || kind === "🚀" ? "fire-burst" : "rainbow-burst";
         boardElement.classList.remove("thunder-burst","fire-burst","rainbow-burst","supercombo-burst");
         void boardElement.offsetWidth;
         boardElement.classList.add(burstClass);
@@ -2056,8 +2100,9 @@
         window.setTimeout(() => boardElement.classList.remove(burstClass), 1150);
         messageElement.textContent = combo
           ? "💥 SUPER COMBO! A spectacular fruit explosion!"
-          : kind === "🔥" ? "🔥 Fruit blaze! A whole row cleared!"
+          : kind === "🔥" || kind === "🚀" ? "🚀 Rocket blast! A whole row cleared!"
           : kind === "⚡" ? "⚡ Fruit lightning! A whole column cleared!"
+          : kind === "💣" ? "💣 MEGA BOMB! A huge area exploded!"
           : "🌟 Rainbow burst! A magical fruit explosion!";
         await new Promise(resolve => setTimeout(resolve, 420));
 
@@ -2136,12 +2181,12 @@
 
           chain++;
           playSound(chain > 1 ? "combo" : "match");
-          const multiplier = Math.min(chain, 4);
+            const multiplier = chain >= 4 ? 5 : chain;
           const earned = matches.length * 10 * multiplier;
           bonusPoints += earned;
           addPoints(earned);
           messageElement.textContent = chain > 1
-            ? "🌈 Sweet combo x" + multiplier + "! +" + earned + " points"
+            ? "🌈 SWEET COMBO x" + multiplier + "! +" + earned + " points"
             : "✨ Match! +" + earned + " points";
 
           const objective = objectiveForLevel();
@@ -2202,7 +2247,7 @@
         ensurePlayableBoard();
         busy = false;
         const feedback = chain > 1
-          ? "👑 Royal combo x" + Math.min(chain, 4) + "! You earned " + bonusPoints + " bonus points!"
+          ? "👑 ROYAL COMBO x" + (chain >= 4 ? 5 : chain) + "! You earned " + bonusPoints + " bonus points!"
           : "✨ Nice match! Keep the royal adventure going.";
         checkGame(feedback);
       }
@@ -2220,6 +2265,9 @@
         document.getElementById("levelCelebrationStats").style.display = "grid";
         document.getElementById("levelTransitionButton").textContent = "Continue to next level ✨";
         overlay.classList.add("open");
+        overlay.classList.remove("fireworks-active");
+        void overlay.offsetWidth;
+        overlay.classList.add("fireworks-active");
         document.getElementById("levelTransitionButton").focus();
       }
 
@@ -2375,6 +2423,50 @@
         render();
         scheduleIdleHint();
       }
+
+      const dailyRewardModal = document.getElementById("dailyRewardModal");
+      const dailyRewards = [25, 35, 50, 65, 80, 100, 150];
+      const localDayKey = date => [date.getFullYear(), String(date.getMonth()+1).padStart(2,"0"), String(date.getDate()).padStart(2,"0")].join("-");
+      function dailyRewardState() {
+        const today = localDayKey(new Date());
+        const last = localStorage.getItem("fruit-pop-daily-date") || "";
+        let streak = Math.max(0, Number(localStorage.getItem("fruit-pop-daily-streak") || 0));
+        if (last !== today) {
+          const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+          if (last !== localDayKey(yesterday)) streak = 0;
+          streak = streak % 7 + 1;
+        }
+        return {today,last,streak,claimed:last===today,reward:dailyRewards[(streak-1)%dailyRewards.length]};
+      }
+      function refreshDailyReward() {
+        const state=dailyRewardState();
+        document.getElementById("dailyRewardAmount").textContent="🪙 +"+state.reward+" coins";
+        document.getElementById("dailyRewardMessage").textContent=state.claimed
+          ? "You already opened today's treasure. Come back tomorrow! 🎉"
+          : "Day "+state.streak+" of your streak — your treasure is ready!";
+        document.getElementById("dailyChest").textContent=state.claimed?"🏆":"🎁";
+        const claim=document.getElementById("claimDailyRewardBtn");
+        claim.disabled=state.claimed;
+        claim.textContent=state.claimed?"Come back tomorrow 🌟":"Open today's gift 🎁";
+      }
+      document.getElementById("dailyRewardBtn").addEventListener("click",()=>{
+        refreshDailyReward(); dailyRewardModal.classList.add("open");
+      });
+      document.getElementById("closeDailyReward").addEventListener("click",()=>dailyRewardModal.classList.remove("open"));
+      document.getElementById("claimDailyRewardBtn").addEventListener("click",()=>{
+        const state=dailyRewardState();
+        if(state.claimed)return;
+        const coins=Math.max(0,Number(localStorage.getItem("fruit-pop-coins")||0))+state.reward;
+        localStorage.setItem("fruit-pop-coins",String(coins));
+        localStorage.setItem("fruit-pop-daily-date",state.today);
+        localStorage.setItem("fruit-pop-daily-streak",String(state.streak));
+        window.__fruitPopSaveGuest?.();
+        window.dispatchEvent(new Event("fruit-pop:progress"));
+        playSound("win");
+        refreshDailyReward();
+        document.getElementById("dailyRewardMessage").textContent="Treasure opened! You received "+state.reward+" coins. See you tomorrow! 💛";
+        document.getElementById("dailyChest").textContent="🎉";
+      });
 
       let dragStart = null;
       function tileAt(target) {
