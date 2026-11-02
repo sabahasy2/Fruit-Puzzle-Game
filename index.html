@@ -1646,6 +1646,11 @@
     .game .board.bomb-burst{animation-duration:.30s!important}
     .game .board.bomb-burst:before{animation-duration:.28s!important}
 
+    /* v71 — immediate match fade and faster fruit refill */
+    .game .tile.match-pop .fruit-face{animation-duration:.11s!important}
+    .game .tile.fruit-fall .fruit-face{animation-duration:.18s!important}
+    .game .tile.match-pop:before{animation-duration:.12s!important}
+    .game .tile.match-pop:after{animation-duration:.13s!important}
 
 /* Fruit Pop Adam — premium original fruit-puzzle design */
 :root{--fpa-gold:#ffe4a0;--fpa-pink:#ff83b9;--fpa-purple:#8755c8}
@@ -2742,7 +2747,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
             !(crateGrid[r] && crateGrid[r][c])
           );
           render({ popping });
-          await new Promise(resolve => setTimeout(resolve, 65));
+          // Let the short fade finish, then clear matched fruit without a visible pause.
+          await new Promise(resolve => setTimeout(resolve, 120));
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -2775,7 +2781,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
           landingColumns.forEach((column, index) => {
             playImpactSound(.34 + index * .075);
           });
-          await new Promise(resolve => setTimeout(resolve, 270));
+          await new Promise(resolve => setTimeout(resolve, 190));
         }
 
         ensurePlayableBoard();
