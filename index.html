@@ -1369,6 +1369,119 @@
       .fruit-splash,.intro-screen,.world-transition{transition:none!important}
     }
 
+  
+    /* Deep berry + glossy candy board: original Fruit Pop visual refresh */
+    :root{--berry-night:#210014;--berry-panel:#3a082d;--berry-pink:#ff4f9a;--candy-glint:#fff5fb}
+    html,body{background:#210014!important}
+    body,body.world-forest,body.world-ice,body.world-island,body.world-volcano,body.world-crystal,body.world-sky,body.world-mythic{
+      background:
+        radial-gradient(ellipse at 50% -12%,#a51b68 0%,#5b0b43 27%,transparent 62%),
+        radial-gradient(circle at 8% 75%,#5b073d66,transparent 35%),
+        linear-gradient(165deg,#260018 0%,#170010 58%,#30001f 100%)!important;
+      background-attachment:fixed!important;
+    }
+    .game{
+      border:1px solid #ff91c477!important;
+      background:linear-gradient(155deg,#4a0a37f2 0%,#310522f5 52%,#210018f7 100%)!important;
+      box-shadow:0 24px 70px #080008c9,0 0 34px #ff3c9a2b,inset 0 1px #fff4fb30!important;
+    }
+    h1{color:#fff0f8!important;text-shadow:0 2px 0 #8d1456,0 0 18px #ff70b8aa!important}
+    .subtitle,.footer{color:#f5b8d8!important}
+    .stats .stat{
+      border:1px solid #ff8ac477!important;
+      background:linear-gradient(145deg,#7b1858e8,#3d0b36f2)!important;
+      box-shadow:inset 0 1px #fff6fb40,0 5px 15px #12000c66!important;
+    }
+    .stat small{color:#ffd0e7!important}
+    .stat strong{color:#fff5fb!important;text-shadow:0 1px 10px #ff5aa4aa!important}
+    .goal,.message{color:#ffe0f0!important;text-shadow:0 1px 8px #ff4e9a55}
+    .board{
+      gap:5px!important;padding:9px!important;border-radius:23px!important;
+      border:2px solid #ff9acb!important;
+      background:linear-gradient(145deg,#8b1b61 0%,#4a0a3b 48%,#2b0627 100%)!important;
+      box-shadow:0 16px 36px #090008aa,0 0 0 4px #ffb5d51c,inset 0 2px 9px #ffd9ec55,inset 0 -8px 18px #18001499!important;
+    }
+    .tile{
+      position:relative!important;isolation:isolate;overflow:hidden;
+      border:1px solid #ffb8d7a8!important;border-radius:12px!important;
+      background:linear-gradient(150deg,#ffacd5 0%,#ec579f 34%,#a91d70 72%,#68104f 100%)!important;
+      box-shadow:inset 0 2px 3px #fff9, inset 0 -4px 7px #5b063f99,0 3px 5px #18001488!important;
+      transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important;
+    }
+    .tile::before{
+      content:"";position:absolute;z-index:1;pointer-events:none;left:8%;right:8%;top:5%;height:35%;
+      border-radius:50% 50% 42% 42%;
+      background:linear-gradient(180deg,#fff9 0%,#fff3 38%,transparent 100%);
+      filter:blur(.3px);opacity:.9;
+    }
+    .tile::after{
+      content:"";position:absolute;z-index:1;pointer-events:none;left:17%;right:17%;bottom:5%;height:9%;
+      border-radius:50%;background:#fff7;filter:blur(3px);
+    }
+    .tile .fruit-face{
+      z-index:3!important;display:grid;place-items:center;width:100%;height:100%;
+      font-size:clamp(25px,8.4vw,37px)!important;line-height:1;
+      filter:drop-shadow(0 2px 1px #5a073d) drop-shadow(0 4px 4px #240016bb) drop-shadow(0 0 3px #fff7);
+      transform:translateY(-1px);
+      -webkit-text-stroke:.25px #fff6;
+    }
+    .tile:active{transform:scale(.91)!important;filter:brightness(1.18)}
+    .tile.selected{
+      border:2px solid #fff7c9!important;
+      background:linear-gradient(145deg,#fff0a8,#ff77b9 48%,#c51d78)!important;
+      box-shadow:0 0 0 3px #fff2a944,0 0 20px #fff0aacc,inset 0 2px 5px #fff!important;
+      transform:scale(1.07)!important;z-index:5!important;
+    }
+    .tile.hint-partner{
+      border:2px solid #bafff1!important;
+      background:linear-gradient(145deg,#a8fff0,#39d9c5 48%,#168b9a)!important;
+      box-shadow:0 0 0 3px #aaffef44,0 0 18px #65ffe5cc,inset 0 2px 5px #fff!important;
+    }
+    .tile.special-fruit{
+      border:2px solid #fff0a8!important;
+      background:linear-gradient(145deg,#fff0b0,#ff8d42 45%,#c62b7b)!important;
+      box-shadow:0 0 0 2px #fff5a833,0 0 22px #ffb84dcc,inset 0 2px 7px #fff!important;
+    }
+    .tile.ice-covered{
+      border:2px solid #c5f5ff!important;
+      background:linear-gradient(145deg,#efffffcc,#8ce5ff99 48%,#4295c9aa)!important;
+      box-shadow:inset 0 0 13px #fff,0 0 9px #79ddff99!important;
+    }
+    .tile.crate-covered{
+      border:2px solid #ffd39b!important;
+      background:linear-gradient(145deg,#c88a58,#8b4a38 60%,#512336)!important;
+      box-shadow:inset 0 2px 6px #fff8, inset 0 -5px 8px #321321aa!important;
+    }
+    .tile.empty{opacity:.18!important;filter:saturate(.5)}
+    .controls button,.top-actions button,button{
+      border:1px solid #ffd3e8!important;
+      box-shadow:0 5px 13px #15000f88,inset 0 2px 2px #fff9,inset 0 -3px 5px #8a174c55!important;
+    }
+    button:not(.secondary){background:linear-gradient(180deg,#fff0a8 0%,#ffbd69 48%,#ef6d9d 100%)!important;color:#571033!important}
+    button.secondary{background:linear-gradient(155deg,#a72b73,#5b104b)!important;color:#fff1fa!important;border-color:#ff9dcc!important}
+    .world-banner{
+      border:1px solid #ff9dcc!important;
+      background:linear-gradient(120deg,#8b185c,#4c0b43 55%,#2c062c)!important;
+      box-shadow:0 9px 26px #10000c99,inset 0 1px #fff5!important;
+    }
+    .world-kicker,.world-name,.world-meta{color:#ffe5f2!important}
+    .modal{background:#12000eeF!important;backdrop-filter:blur(10px)}
+    .modal-card{
+      border:1px solid #ff9dcc!important;
+      background:radial-gradient(circle at 50% 0%,#ff70b833,transparent 48%),linear-gradient(155deg,#5a1047,#29051f)!important;
+      box-shadow:0 22px 70px #000c,0 0 28px #ff4c9a33!important;
+    }
+    .modal-card h2{color:#ffe5f2!important}
+    .modal-card p{color:#f6c4df!important}
+    .modal-card input{border:1px solid #ff9dcc!important;background:#26051e!important;color:#fff2fa!important}
+    .level-chip{background:linear-gradient(145deg,#8c205f,#430b3a)!important;border:1px solid #ff9dcc88!important;color:#fff0f8!important}
+    .level-chip.current{background:linear-gradient(135deg,#fff0a8,#ff9bc8)!important;color:#58113b!important}
+    .royal-brand{border-color:#ff9dcc!important;background:linear-gradient(110deg,#681348,#310626 55%,#681348)!important}
+    .intro-screen,.world-transition{background:radial-gradient(ellipse at 50% 42%,#8c155c 0%,#3c082f 48%,#170010 100%)!important}
+    .main-menu-content{border-color:#ff9dcc!important;background:linear-gradient(180deg,#5a1244ee,#310825f5 58%,#210018f5)!important}
+    .main-menu-content:before{background:radial-gradient(ellipse at 50% 0%,#ffb5d844,transparent 55%),linear-gradient(180deg,transparent 55%,#19001299)!important}
+    @media(prefers-reduced-motion:reduce){.tile{transition:none!important}}
+
   </style>
 </head>
 
