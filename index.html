@@ -1167,13 +1167,13 @@
       }
       .game .tile .fruit-face{
         display:block;max-width:100%;line-height:1.15!important;
-        transform:none!important;font-size:1em!important;
+        font-size:1em!important;
       }
     }
     @media(min-width:521px){
       .game .board{max-width:620px;grid-template-columns:repeat(8,minmax(0,1fr))}
       .game .tile{overflow:visible!important}
-      .game .tile .fruit-face{line-height:1.15!important;transform:none!important}
+      .game .tile .fruit-face{line-height:1.15!important}
     }
     @media(prefers-reduced-motion:reduce){.board.thunder-burst,.board.fire-burst,.board.rainbow-burst,.board.supercombo-burst,.board:before,.board:after{animation:none!important}}
 
@@ -1497,7 +1497,7 @@
     .game .tile{position:relative!important;isolation:isolate!important;overflow:hidden!important;display:grid!important;place-items:center!important;min-width:0!important;aspect-ratio:1!important;border:1px solid #ffd1e8!important;border-radius:12px!important;background:radial-gradient(ellipse at 32% 15%,#fff9 0%,#fff3 18%,transparent 44%),linear-gradient(155deg,#ffb9dc 0%,#f46ab1 28%,#ce398c 62%,#8b155e 100%)!important;box-shadow:inset 0 2px 2px #fff9,inset 0 -5px 7px #65083f99,0 3px 0 #65083f,0 5px 7px #16000f99!important;transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important}
     .game .tile::before{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:8%!important;right:8%!important;top:5%!important;height:34%!important;border-radius:50% 50% 42% 42%!important;background:linear-gradient(180deg,#fff9 0%,#fff5 28%,#fff0 100%)!important;opacity:.88!important;filter:blur(.35px)!important}
     .game .tile::after{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:19%!important;right:19%!important;bottom:5%!important;height:8%!important;border-radius:50%!important;background:#fff8!important;filter:blur(3px)!important}
-    .game .tile .fruit-face{position:relative!important;z-index:4!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;font-size:clamp(25px,8.2vw,38px)!important;line-height:1!important;filter:drop-shadow(0 2px 0 #7b164e) drop-shadow(0 4px 4px #240016cc) drop-shadow(0 0 5px #fff9)!important;transform:translateY(-1px) scale(1.035)!important;-webkit-text-stroke:.3px #fff7!important}
+    .game .tile .fruit-face{position:relative!important;z-index:4!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;font-size:clamp(25px,8.2vw,38px)!important;line-height:1!important;filter:drop-shadow(0 2px 0 #7b164e) drop-shadow(0 4px 4px #240016cc) drop-shadow(0 0 5px #fff9)!important;-webkit-text-stroke:.3px #fff7!important}
     .game .tile:active{transform:scale(.91)!important;filter:brightness(1.2)!important}
     .game .tile.selected{border:2px solid #fff8b9!important;background:linear-gradient(145deg,#fff4b8 0%,#ff9dca 42%,#ce287d 100%)!important;box-shadow:0 0 0 3px #fff6,0 0 23px #fff0a9,inset 0 2px 5px #fff!important;transform:scale(1.07)!important;z-index:6!important}
     .game .tile.hint-partner{border:2px solid #baffef!important;background:linear-gradient(145deg,#c7fff2,#50e6cc 48%,#168c91)!important;box-shadow:0 0 0 3px #fff7,0 0 20px #68ffe6,inset 0 2px 5px #fff!important}
@@ -3195,7 +3195,29 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         return true;
       }
 
-      function choose(r, c) {
+      function animateSwap(a, b, reverse=false) {
+        const firstTile = boardElement.children[a.r * SIZE + a.c];
+        const secondTile = boardElement.children[b.r * SIZE + b.c];
+        if (!firstTile || !secondTile || typeof firstTile.animate !== "function") return Promise.resolve();
+        firstTile.classList.remove("selected");
+        secondTile.classList.remove("selected");
+        const firstRect = firstTile.getBoundingClientRect();
+        const secondRect = secondTile.getBoundingClientRect();
+        const dx = secondRect.left - firstRect.left;
+        const dy = secondRect.top - firstRect.top;
+        const fromA = reverse ? "translate3d(" + dx + "px," + dy + "px,0) scale(1.06)" : "translate3d(0,0,0) scale(1)";
+        const toA = reverse ? "translate3d(0,0,0) scale(1)" : "translate3d(" + dx + "px," + dy + "px,0) scale(1.06)";
+        const fromB = reverse ? "translate3d(" + (-dx) + "px," + (-dy) + "px,0) scale(1.06)" : "translate3d(0,0,0) scale(1)";
+        const toB = reverse ? "translate3d(0,0,0) scale(1)" : "translate3d(" + (-dx) + "px," + (-dy) + "px,0) scale(1.06)";
+        const options = { duration: 175, easing: "cubic-bezier(.2,.78,.22,1)", fill: "forwards" };
+        const animations = [
+          firstTile.animate([{ transform: fromA }, { transform: toA }], options),
+          secondTile.animate([{ transform: fromB }, { transform: toB }], options)
+        ];
+        return Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+      }
+
+      async function choose(r, c) {
         if (busy || moves <= 0 || !selected) return;
 
         hintPartner = null;
@@ -3216,6 +3238,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           render();
           return;
         }
+        busy = true;
+        await animateSwap(first, current);
         swap(first, current);
 
         if (SPECIAL_FRUITS.has(board[current.r][current.c]) || SPECIAL_FRUITS.has(board[first.r][first.c])) {
@@ -3237,10 +3261,12 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         }
 
         if (findMatches().length === 0) {
+          await animateSwap(first, current, true);
           swap(first, current);
           messageElement.textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "لا يوجد تطابق! جرّب حركة أخرى." : "No match! Try another move.";
           playSound("nope");
           render();
+          busy = false;
           return;
         }
 
