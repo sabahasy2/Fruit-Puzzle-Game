@@ -167,3 +167,14 @@ test("Play Now has an independent mobile-safe launch fallback", () => {
   assert.match(html, /game\.scrollIntoView\(\{ block: "start", behavior: "instant" \}\)/);
   assert.match(html, /window\.__fruitPopGameStarted = true/);
 });
+
+
+test("world map and main menu have independent mobile-safe navigation fallbacks", () => {
+  assert.match(html, /window\.__fruitPopOpenWorldMap = \(\) => \{ drawLevels\(\); show\(levelsModal\); \}/);
+  assert.match(html, /window\.__fruitPopReturnToMenu = returnToMainMenu/);
+  assert.match(html, /Independent touch-safe navigation fallback/);
+  assert.match(html, /#introLevelsBtn, #levelsBtn, #returnMenuBtn, #closeLevels/);
+  assert.match(html, /event\.stopImmediatePropagation\(\)/);
+  assert.match(html, /map\.classList\.add\("open"\)/);
+  assert.match(html, /intro\.classList\.remove\("hide"\)/);
+});
