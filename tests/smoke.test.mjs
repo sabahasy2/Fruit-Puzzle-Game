@@ -32,8 +32,8 @@ test("24 named worlds cover exactly 1,200 consecutive levels", () => {
 });
 
 test("each 50-stage world changes its six-fruit set every ten stages", () => {
-  const setsSource = html.match(/const FRUIT_SETS = (\\[[\\s\\S]*?\\n      \\]);/);
-  const selectorSource = html.match(/function fruitSetForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
+  const setsSource = html.match(/const FRUIT_SETS = (\[[\s\S]*?\n      \]);/);
+  const selectorSource = html.match(/function fruitSetForLevel\(\) \{[\s\S]*?\n      \}/);
   assert.ok(setsSource, "fruit set definitions missing");
   assert.ok(selectorSource, "fruit set selector missing");
   const sets = new Function("return " + setsSource[1])();
@@ -57,14 +57,14 @@ test("each 50-stage world changes its six-fruit set every ten stages", () => {
 });
 
 test("all 1,200 level objectives have valid targets and a balanced distribution", () => {
-  const objectiveSource = html.match(/function objectiveForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
-  const selectorSource = html.match(/function fruitSetForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
+  const objectiveSource = html.match(/function objectiveForLevel\(\) \{[\s\S]*?\n      \}/);
+  const selectorSource = html.match(/function fruitSetForLevel\(\) \{[\s\S]*?\n      \}/);
   assert.ok(objectiveSource, "objective function missing");
   assert.ok(selectorSource, "fruit set selector missing");
-  const setsSource = html.match(/const FRUIT_SETS = (\\[[\\s\\S]*?\\n      \\]);/);
+  const setsSource = html.match(/const FRUIT_SETS = (\[[\s\S]*?\n      \]);/);
   const sets = new Function("return " + setsSource[1])();
   const select = new Function("level", "FRUIT_SETS", "return (" + selectorSource[0] + ")()");
-  const goalExpression = html.match(/const goal = \\(\\) => ([^;]+);/);
+  const goalExpression = html.match(/const goal = \(\) => ([^;]+);/);
   assert.ok(goalExpression, "score goal formula missing");
   const goalForLevel = new Function("level", "return " + goalExpression[1]);
   const objectiveForLevel = new Function("level", "fruitsForLevel", "goal", "localStorage", "return (" + objectiveSource[0] + ")()");
