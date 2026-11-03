@@ -158,3 +158,12 @@ test("Arabic and English objective and world descriptions are available", () => 
   assert.match(html, /descAr:/);
   assert.match(html, /mapWorldDesc/);
 });
+
+test("Play Now has an independent mobile-safe launch fallback", () => {
+  assert.match(html, /Independent mobile-safe launch fallback/);
+  assert.match(html, /button\.addEventListener\("pointerup", launchGame, true\)/);
+  assert.match(html, /button\.addEventListener\("touchend", launchGame/);
+  assert.match(html, /intro\.classList\.add\("hide"\)/);
+  assert.match(html, /game\.scrollIntoView\(\{ block: "start", behavior: "instant" \}\)/);
+  assert.match(html, /window\.__fruitPopGameStarted = true/);
+});
