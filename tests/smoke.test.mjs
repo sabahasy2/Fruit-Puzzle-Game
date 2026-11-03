@@ -137,6 +137,19 @@ test("fruit swaps, match bursts, and gravity falls use full animations and varie
   assert.match(html, /await waitForFruitMotion\("\.tile\.fruit-fall \.fruit-face"/);
 });
 
+test("opening theme music is original, gesture-gated, controllable, and stops during gameplay", () => {
+  assert.match(html, /const INTRO_THEME = \[/);
+  assert.match(html, /function startIntroMusic\(\)/);
+  assert.match(html, /function stopIntroMusic\(\)/);
+  assert.match(html, /localStorage\.getItem\("fruit-pop-music"\) !== "off"/);
+  assert.match(html, /id="menuMusicToggle"/);
+  assert.match(html, /document\.addEventListener\("pointerdown"/);
+  assert.match(html, /stopIntroMusic\(\);\s*intro\.classList\.add\("hide"\)/);
+  assert.match(html, /if \(introMusicGestureSeen && musicEnabled\) startIntroMusic\(\)/);
+  assert.match(html, /musicOn:"🎵 Music: ON"/);
+  assert.match(html, /musicOn:"🎵 الموسيقى: تعمل"/);
+});
+
 test("Arabic and English objective and world descriptions are available", () => {
   assert.match(html, /"اجمع "/);
   assert.match(html, /" نقطة"/);
