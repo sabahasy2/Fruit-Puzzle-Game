@@ -2321,6 +2321,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           <label for="languageSelect">🌐 اللغة / Language</label>
           <select id="languageSelect" aria-label="Game language"><option value="ar">العربية</option><option value="en">English</option></select>
           <button id="menuSoundToggle" class="menu-secondary" type="button">🔊 المؤثرات</button>
+          <button id="menuMusicToggle" class="menu-secondary" type="button" aria-pressed="true">🎵 الموسيقى: تعمل</button>
         </div>
         <button id="menuExitBtn" class="menu-secondary" type="button">🚪 إنهاء اللعبة</button>
         <p id="menuExitNote" class="menu-exit-note" aria-live="polite"></p>
@@ -2516,6 +2517,13 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       let audioContext = null;
       let audioCompressor = null;
       let audioMasterGain = null;
+      let introMusicGain = null;
+      let introMusicTimer = null;
+      let introMusicStep = 0;
+      let introMusicNextTime = 0;
+      let introMusicStarted = false;
+      let introMusicGestureSeen = false;
+      let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
       const SOUND_SPEED = 0.5;
       const soundTime = seconds => seconds / SOUND_SPEED;
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
@@ -2534,10 +2542,108 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           audioMasterGain.gain.setValueAtTime(1, audioContext.currentTime);
           audioCompressor.connect(audioMasterGain);
           audioMasterGain.connect(audioContext.destination);
+          introMusicGain = audioContext.createGain();
+          introMusicGain.gain.setValueAtTime(0, audioContext.currentTime);
+          introMusicGain.connect(audioMasterGain);
         }
         if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
         return audioContext;
       }
+
+      // Original locally synthesized Fruit Pop opening theme.
+      // Mobile browsers require a real user gesture before audio can start.
+      const INTRO_THEME = [
+        [659,1],[784,1],[988,1.5],[784,1],[659,1],[587,1.5],[523,1],[587,1],
+        [659,2],[0,.5],[523,1],[659,1],[784,1.5],[659,1],[587,1],[523,2],
+        [392,1],[523,1],[659,1.5],[784,1],[988,1],[784,1.5],[659,1],[587,1],
+        [523,2],[587,1],[659,1],[784,1.5],[1047,2],[988,1],[784,1],[659,2]
+      ];
+      const INTRO_BEAT = 0.39;
+      function scheduleIntroNote(frequency, start, duration, accent=1) {
+        if (!frequency || !introMusicGain || !audioContext) return;
+        const voice = (freq, type, peak, detune=0) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, start);
+          if (detune) osc.detune.setValueAtTime(detune, start);
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.linearRampToValueAtTime(peak * accent, start + 0.035);
+          gain.gain.setValueAtTime(peak * accent, start + Math.max(0.05, duration * 0.55));
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+          osc.connect(gain);
+          gain.connect(introMusicGain);
+          osc.start(start);
+          osc.stop(start + duration + 0.025);
+        };
+        voice(frequency, "sine", 0.105);
+        voice(frequency * 2, "triangle", 0.025, 3);
+        if (introMusicStep % 4 === 0) voice(frequency / 2, "sine", 0.035);
+      }
+      function startIntroMusic() {
+        if (!musicEnabled || introMusicStarted) return;
+        const ctx = audioEngine();
+        if (!ctx || !introMusicGain) return;
+        introMusicStarted = true;
+        introMusicGestureSeen = true;
+        introMusicStep = 0;
+        introMusicNextTime = ctx.currentTime + 0.08;
+        introMusicGain.gain.cancelScheduledValues(ctx.currentTime);
+        introMusicGain.gain.setValueAtTime(Math.max(0.0001, introMusicGain.gain.value), ctx.currentTime);
+        introMusicGain.gain.linearRampToValueAtTime(0.72, ctx.currentTime + 0.9);
+        const scheduleAhead = () => {
+          if (!introMusicStarted || !audioContext || audioContext.state !== "running") return;
+          const horizon = audioContext.currentTime + 0.28;
+          while (introMusicNextTime < horizon) {
+            const [frequency, beats] = INTRO_THEME[introMusicStep];
+            const duration = beats * INTRO_BEAT;
+            scheduleIntroNote(frequency, introMusicNextTime, Math.max(0.12, duration * 0.88), frequency >= 988 ? 0.88 : 1);
+            introMusicNextTime += duration;
+            introMusicStep = (introMusicStep + 1) % INTRO_THEME.length;
+          }
+        };
+        scheduleAhead();
+        introMusicTimer = window.setInterval(scheduleAhead, 100);
+        updateMusicButton();
+      }
+      function stopIntroMusic() {
+        if (introMusicTimer !== null) window.clearInterval(introMusicTimer);
+        introMusicTimer = null;
+        if (introMusicGain && audioContext) {
+          const now = audioContext.currentTime;
+          introMusicGain.gain.cancelScheduledValues(now);
+          introMusicGain.gain.setValueAtTime(Math.max(0.0001, introMusicGain.gain.value), now);
+          introMusicGain.gain.linearRampToValueAtTime(0.0001, now + 0.45);
+        }
+        introMusicStarted = false;
+        updateMusicButton();
+      }
+      function updateMusicButton() {
+        const button = document.getElementById("menuMusicToggle");
+        if (!button) return;
+        const arabic = localStorage.getItem("fruit-pop-language") !== "en";
+        button.textContent = musicEnabled
+          ? (arabic ? "🎵 الموسيقى: تعمل" : "🎵 Music: ON")
+          : (arabic ? "🔇 الموسيقى: متوقفة" : "🔇 Music: OFF");
+        button.setAttribute("aria-pressed", String(musicEnabled));
+      }
+      document.getElementById("menuMusicToggle").addEventListener("click", () => {
+        musicEnabled = !musicEnabled;
+        localStorage.setItem("fruit-pop-music", musicEnabled ? "on" : "off");
+        if (musicEnabled) startIntroMusic();
+        else stopIntroMusic();
+        updateMusicButton();
+      });
+      document.addEventListener("pointerdown", () => {
+        if (!introMusicGestureSeen && musicEnabled) startIntroMusic();
+      }, { once: true, capture: true });
+      document.addEventListener("keydown", () => {
+        if (!introMusicGestureSeen && musicEnabled) startIntroMusic();
+      }, { once: true, capture: true });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") stopIntroMusic();
+        else if (introMusicGestureSeen && musicEnabled && !document.getElementById("introScreen")?.classList.contains("hide")) startIntroMusic();
+      });
       function playTone(frequency, duration=0.12, wave="sine", volume=0.045, delay=0, endFrequency=null) {
         const ctx = audioEngine();
         if (!ctx) return;
@@ -2754,6 +2860,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           menuSoundButton.textContent = label;
           menuSoundButton.setAttribute("aria-pressed", String(soundsEnabled));
         }
+        updateMusicButton();
       }
       document.getElementById("soundToggle").addEventListener("click", () => {
         soundsEnabled = !soundsEnabled;
@@ -3835,7 +3942,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         objective:"🎯 أكمل الهدف",message:"اسحب فاكهة وبدّل مكانها مع فاكهة مجاورة!",
         footer:"صُنعت بحب ❤️ لعشاق ألعاب الفواكه",levelsTitle:"🗺️ رحلة العوالم",
         guest:"👤 زائر · تسجيل الدخول",
-        soundOn:"🔊 المؤثرات: تعمل",soundOff:"🔇 المؤثرات: متوقفة"
+        soundOn:"🔊 المؤثرات: تعمل",soundOff:"🔇 المؤثرات: متوقفة",
+        musicOn:"🎵 الموسيقى: تعمل",musicOff:"🔇 الموسيقى: متوقفة"
       },
       en:{
         enter:"🎮 Play now",map:"🗺️ Worlds & level map",account:"👤 Sign in / Account",
@@ -3844,7 +3952,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         objective:"🎯 Complete the goal",message:"Swap a fruit with an adjacent fruit!",
         footer:"Made with ❤️ for fruit puzzle lovers",levelsTitle:"🗺️ World Journey",
         guest:"👤 Guest · Sign in",
-        soundOn:"🔊 Sounds: ON",soundOff:"🔇 Sounds: OFF"
+        soundOn:"🔊 Sounds: ON",soundOff:"🔇 Sounds: OFF",
+        musicOn:"🎵 Music: ON",musicOff:"🔇 Music: OFF"
       }
     };
     function applyLanguage(lang){
@@ -3866,6 +3975,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       const soundsOn=localStorage.getItem("fruit-pop-sounds")!=="off";
       $("menuSoundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
       $("soundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
+      $("menuMusicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
+      $("menuMusicToggle").setAttribute("aria-pressed",String(musicEnabled));
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
       window.__fruitPopRefreshLanguage?.();
@@ -4093,13 +4204,17 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     setInterval(syncIfChanged,5000);
     const params=new URLSearchParams(location.search);
     const intro=$("introScreen");
-    const enter=()=>intro.classList.add("hide");
+    const enter=()=>{
+      stopIntroMusic();
+      intro.classList.add("hide");
+    };
     function returnToMainMenu(){
       document.querySelectorAll(".modal.open").forEach(el=>hide(el));
       hide($("levelCelebration"));
       $("menuExitNote").textContent="";
       intro.classList.remove("hide");
       intro.scrollTop=0;
+      if (introMusicGestureSeen && musicEnabled) startIntroMusic();
     }
     $("returnMenuBtn").addEventListener("click",returnToMainMenu);
     $("menuExitBtn").addEventListener("click",()=>{
