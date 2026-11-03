@@ -1918,7 +1918,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     }
     .game .tile .fruit-face{
       inset:1%!important;width:98%!important;height:98%!important;
-      transform:translateY(-2px) scale(1.045)!important;
+      
       filter:drop-shadow(0 4px 2px #321044aa) drop-shadow(0 0 7px #fff9)!important;
     }
     .game .tile.selected{transform:translateY(-2px) scale(1.09)!important}
@@ -1927,7 +1927,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     @media(max-width:390px){
       .game .board{gap:3px!important;padding:7px!important}
       .game .tile{aspect-ratio:.90!important;border-radius:11px!important}
-      .game .tile .fruit-face{inset:0!important;width:100%!important;height:100%!important;transform:translateY(-1px) scale(1.04)!important}
+      .game .tile .fruit-face{inset:0!important;width:100%!important;height:100%!important}
     }
     @media(max-height:720px){
       .game .board{gap:3px!important;padding:7px!important}
@@ -2205,6 +2205,63 @@ button{border:2px solid white!important;border-radius:18px!important;background:
 @media(max-width:520px){#levelsModal .modal-card.map-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important}#levelsModal .map-node{width:52px!important;height:52px!important;min-width:52px!important;font-size:16px!important}#levelsModal .map-node.current{width:62px!important;height:62px!important;min-width:62px!important}}
 </style>
 
+<style id="fpa-motion-audio-rebuild">
+.game .tile.match-pop{overflow:visible!important;z-index:9!important}
+.game .tile.match-pop .fruit-face{
+  animation:fpaFruitBurst .54s cubic-bezier(.16,.78,.2,1) both!important;
+  transform-origin:50% 50%!important;
+  will-change:transform,opacity,filter;
+}
+@keyframes fpaFruitBurst{
+  0%{opacity:1;transform:scale(.78) rotate(0);filter:brightness(1) saturate(1)}
+  18%{opacity:1;transform:scale(1.38) rotate(9deg);filter:brightness(2.05) saturate(1.5) drop-shadow(0 0 13px #fff2a5)}
+  38%{opacity:1;transform:scale(1.12,.92) rotate(-7deg);filter:brightness(1.55) drop-shadow(0 0 12px #ffb1df)}
+  68%{opacity:.8;transform:scale(.82) rotate(12deg);filter:brightness(1.3) blur(.5px)}
+  100%{opacity:0;transform:translateY(16%) scale(.12) rotate(42deg);filter:blur(5px)}
+}
+.game .tile.match-pop:before{
+  inset:-5%!important;
+  background:
+    radial-gradient(circle at 50% 50%,#fff 0 4%,#fff5a8 5% 9%,transparent 12%),
+    radial-gradient(circle at 17% 22%,#ffe77b 0 3%,transparent 6%),
+    radial-gradient(circle at 82% 20%,#ff8bc7 0 3%,transparent 6%),
+    radial-gradient(circle at 19% 78%,#8ffff0 0 3%,transparent 6%),
+    radial-gradient(circle at 82% 79%,#a7d8ff 0 3%,transparent 6%),
+    radial-gradient(circle at 50% 5%,#fff 0 2%,transparent 5%),
+    radial-gradient(circle at 50% 95%,#ffd46c 0 3%,transparent 6%)!important;
+  animation:fpaFruitSparks .48s ease-out both!important;
+}
+@keyframes fpaFruitSparks{
+  0%{opacity:0;transform:scale(.22) rotate(0);filter:brightness(1)}
+  22%{opacity:1;transform:scale(.85) rotate(12deg);filter:brightness(2)}
+  100%{opacity:0;transform:scale(1.85) rotate(42deg);filter:brightness(1.35)}
+}
+.game .tile.match-pop:after{
+  inset:8%!important;border:2px solid #fff5c4!important;
+  box-shadow:0 0 12px #ffe27a,inset 0 0 9px #fff2a6!important;
+  animation:fpaFruitShockwave .46s cubic-bezier(.12,.72,.2,1) both!important;
+}
+@keyframes fpaFruitShockwave{
+  0%{opacity:0;transform:scale(.18)}
+  18%{opacity:1}
+  100%{opacity:0;transform:scale(2.05)}
+}
+.game .tile.fruit-fall .fruit-face{
+  animation:fpaFruitDrop var(--fall-duration,.42s) cubic-bezier(.18,.72,.22,1) both!important;
+  will-change:transform,opacity,filter;
+}
+@keyframes fpaFruitDrop{
+  0%{opacity:.72;transform:translateY(var(--fall-offset,-120%)) scale(.78) rotate(-8deg);filter:blur(1.5px) brightness(1.22)}
+  62%{opacity:1;transform:translateY(8%) scale(1.1,.9) rotate(4deg);filter:none}
+  78%{transform:translateY(-5%) scale(.94,1.06) rotate(-2deg)}
+  90%{transform:translateY(2%) scale(1.03,.98) rotate(1deg)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .game .tile.match-pop .fruit-face,.game .tile.fruit-fall .fruit-face,
+  .game .tile.match-pop:before,.game .tile.match-pop:after{animation-duration:.01ms!important}
+}
+</style>
 </head>
 
 <body>
@@ -2495,19 +2552,22 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         source.stop(start + fastDuration + 0.02);
       }
 
-      function playDropSound(delay=0) {
+      function playDropSound(delay=0, variation=0) {
         if (!soundsEnabled) return;
-        playNoise(.22,.34,"lowpass",520,delay);
-        playNoise(.13,.16,"bandpass",1050,delay+.025);
-        playTone(145,.25,"sine",.30,delay,58);
-        playTone(420,.16,"triangle",.13,delay+.035,180);
+        const roots = [196, 220, 247, 277, 311];
+        const root = roots[Math.abs(variation) % roots.length] * (0.96 + Math.random() * 0.08);
+        playNoise(.19,.11,"lowpass",470 + variation * 65,delay);
+        playNoise(.105,.065,"highpass",1750 + variation * 110,delay+.018);
+        playTone(root,.22,"sine",.12,delay,root*.52);
+        playTone(root*2.35,.15,"triangle",.075,delay+.025,root*1.55);
       }
-      function playImpactSound(delay=0) {
+      function playImpactSound(delay=0, variation=0) {
         if (!soundsEnabled) return;
-        playNoise(.105,.30,"lowpass",760,delay);
-        playNoise(.075,.19,"highpass",1850,delay+.008);
-        playTone(82,.22,"sine",.38,delay,38);
-        playTone(235,.13,"triangle",.22,delay+.012,95);
+        const notes = [494, 554, 587, 659, 740];
+        const note = notes[Math.abs(variation) % notes.length];
+        playNoise(.065,.075,"highpass",2100 + variation * 170,delay);
+        playTone(note,.13,"triangle",.09,delay,note*.86);
+        playTone(note*1.48,.105,"sine",.055,delay+.018,note*1.12);
       }
 
       function playSound(kind="tap") {
@@ -2525,25 +2585,47 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           case "impact":
             playImpactSound();
             break;
-          case "match":
-            playNoise(.22,.27,"bandpass",1650);
-            playNoise(.12,.10,"highpass",3600,.012);
-            playTone(p(105),.30,"sine",.24,0,48);
-            playTone(p(390),.20,"triangle",.18,0,p(155));
-            playTone(p(690),.16,"triangle",.14,.035,p(940));
-            playTone(p(980),.20,"sine",.13,.10,p(1320));
-            playTone(p(1480),.24,"sine",.10,.17,p(1880));
+          case "match": {
+            // Four distinct candy-like match voices; each clear gets a fresh variation.
+            const variant = Math.floor(Math.random() * 4);
+            const roots = [392, 440, 494, 523];
+            const root = roots[variant] * v;
+            if (variant === 0) {
+              playNoise(.10,.09,"bandpass",1450);
+              playTone(root,.19,"sine",.13,0,root*.58);
+              playTone(root*1.5,.16,"triangle",.09,.035,root*1.9);
+              playTone(root*2.25,.20,"sine",.085,.085,root*2.8);
+            } else if (variant === 1) {
+              playNoise(.075,.07,"highpass",2900);
+              playTone(root*1.25,.17,"triangle",.10,0,root*1.05);
+              playTone(root*2,.22,"sine",.09,.045,root*2.4);
+              playTone(root*3,.18,"triangle",.07,.095,root*2.6);
+            } else if (variant === 2) {
+              playNoise(.13,.085,"bandpass",920);
+              playTone(root*.75,.22,"sine",.12,0,root*.42);
+              playTone(root*1.33,.17,"triangle",.09,.025,root*1.7);
+              playTone(root*2.1,.20,"sine",.075,.07,root*2.5);
+            } else {
+              playNoise(.11,.085,"highpass",3650);
+              playTone(root,.15,"triangle",.10,0,root*1.35);
+              playTone(root*1.6,.19,"sine",.095,.04,root*2.15);
+              playTone(root*2.4,.22,"triangle",.075,.09,root*3.1);
+              playTone(root*3.1,.18,"sine",.06,.14,root*2.7);
+            }
             break;
-          case "combo":
-            playNoise(.34,.25,"bandpass",1350);
-            playNoise(.20,.13,"highpass",2500,.025);
-            playTone(p(72),.48,"sine",.30,0,38);
-            playTone(p(185),.38,"sawtooth",.22,0,p(82));
-            playTone(p(440),.25,"triangle",.17,.045,p(880));
-            playTone(p(740),.26,"sawtooth",.13,.12,p(1480));
-            playTone(p(1180),.30,"triangle",.13,.22,p(1760));
-            playTone(p(1760),.38,"sine",.11,.32,p(2200));
+          }
+          case "combo": {
+            const variant = Math.floor(Math.random() * 3);
+            const roots = [330, 370, 415];
+            const root = roots[variant] * v;
+            playNoise(.16,.12,"bandpass",1150 + variant*360);
+            playNoise(.10,.08,"highpass",2700,.025);
+            playTone(root*.5,.32,"sine",.16,0,root*.28);
+            [1,1.25,1.5,2,2.5].forEach((ratio,i) =>
+              playTone(root*ratio,.22 + i*.018,"triangle",.085,.035+i*.045,root*ratio*1.16)
+            );
             break;
+          }
           case "special":
             playNoise(.16,.34,"highpass",3100);
             playNoise(.30,.25,"bandpass",1050,.018);
@@ -2762,7 +2844,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
 
       function render({ popping = [], falling = [] } = {}) {
         const poppingSet = new Set(popping.map(([r, c]) => r + "," + c));
-        const fallingSet = new Set(falling.map(([r, c]) => r + "," + c));
+        const fallingMap = new Map(falling.map(([r, c, distance]) => [r + "," + c, Math.max(1, distance || 1)]));
+        const fallingSet = new Set(fallingMap.keys());
         boardElement.innerHTML = "";
 
         for (let r = 0; r < SIZE; r++) {
@@ -2796,7 +2879,9 @@ button{border:2px solid white!important;border-radius:18px!important;background:
             if (poppingSet.has(cellKey)) tile.classList.add("match-pop");
             if (fallingSet.has(cellKey)) {
               tile.classList.add("fruit-fall");
-              fruitFace.style.setProperty("--rain-delay", "0ms");
+              const distance = fallingMap.get(cellKey) || 1;
+              fruitFace.style.setProperty("--fall-offset", "-" + (distance * 100) + "%");
+              fruitFace.style.setProperty("--fall-duration", Math.min(.64, .27 + distance * .045) + "s");
             }
             if (typeof SPECIAL_FRUITS !== "undefined" && SPECIAL_FRUITS.has(board[r][c])) {
               tile.classList.add("special-fruit");
@@ -2933,14 +3018,14 @@ button{border:2px solid white!important;border-radius:18px!important;background:
                 board[write][c] = board[r][c];
                 if (write !== r) {
                   board[r][c] = null;
-                  falling.push([write, c]);
+                  falling.push([write, c, write - r]);
                 }
                 write--;
               }
             }
             for (let r = write; r >= segmentTop; r--) {
               board[r][c] = randomFruit();
-              falling.push([r, c]);
+              falling.push([r, c, r - segmentTop + 1]);
             }
             segmentTop = segmentBottom + 1;
           }
@@ -2973,7 +3058,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         const ctx = canvas.getContext("2d"); ctx.scale(dpr, dpr);
         const w = boardRect.width, h = boardRect.height;
         const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const duration = reduced ? 480 : 1350;
+        const duration = reduced ? 360 : 680;
         const colors = ["#fff7b0","#ffd34e","#ff8138","#ff4f68","#ffffff","#ffb2e1"];
         const particles = Array.from({length: reduced ? 22 : 110}, (_,i) => ({
           angle: Math.random()*Math.PI*2, speed: 65+Math.random()*(reduced?95:260),
@@ -3086,15 +3171,26 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           : kind === "⚡" ? (ar ? "⚡ برق الفاكهة! تم مسح عمود كامل!" : "⚡ Fruit lightning! A whole column cleared!")
           : kind === "💣" ? (ar ? "💣 قنبلة هائلة! انفجرت مساحة كبيرة!" : "💣 MEGA BOMB! A huge area exploded!")
           : (ar ? "🌟 انفجار قوس قزح السحري!" : "🌟 Rainbow burst! A magical fruit explosion!");
-        await new Promise(resolve => setTimeout(resolve, 25));
+        // Keep the burst particles, fruit flash and explosion audio together on screen.
+        await waitForFruitMotion(".tile.match-pop .fruit-face", 720);
 
         cells.forEach(([y, x]) => { board[y][x] = null; });
-        hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y, x); });
+        hitCrates.forEach(key => { const [y, x] = key.split(",").map(Number); damageCrate(y,x); });
         addPoints(cells.length * (combo ? 35 : 20));
-        boardElement.classList.remove("special-burst");
-        collapseBoard();
-        render();
-        await new Promise(resolve => setTimeout(resolve, 10));
+        boardElement.classList.remove("special-burst", burstClass);
+        const falling = collapseBoard();
+        render({ falling });
+        if (falling.length) {
+          requestAnimationFrame(() => {
+            playDropSound(0, cells.length);
+            const columns = [...new Set(falling.map(([, x]) => x))].sort((a,b) => a-b);
+            columns.forEach((column, index) => {
+              const distance = Math.max(1, ...falling.filter(([, x]) => x === column).map(([, , d]) => d || 1));
+              playImpactSound(Math.min(.58, (.27 + distance * .045) * .72), index + 2);
+            });
+          });
+          await waitForFruitMotion(".tile.fruit-fall .fruit-face", 760);
+        }
         await resolveBoard();
         return true;
       }
@@ -3194,8 +3290,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           render({ popping });
           // Start the match cue on the same frame as the fruit-pop animation.
           requestAnimationFrame(() => playSound(matchSound));
-          // Keep matched fruit on screen until its fade animation has actually finished.
-          await waitForFruitMotion(".tile.match-pop .fruit-face", 340);
+          // Let the fruit burst, spark ring and fade complete before changing the board.
+          await waitForFruitMotion(".tile.match-pop .fruit-face", 620);
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -3217,21 +3313,20 @@ button{border:2px solid white!important;border-radius:18px!important;background:
               : (ar ? "🌟 تم إنشاء فاكهة النجمة الملكية!" : "🌟 Royal star fruit created!");
           }
 
-          render();
-          await new Promise(resolve => setTimeout(resolve, 5));
-
           const falling = collapseBoard();
           render({ falling });
-          // Falling motion and its descending sound begin together.
+          // A soft falling rush starts with the movement; each column gets its own landing note.
           requestAnimationFrame(() => {
-            playDropSound();
+            playDropSound(0, chain + falling.length);
             const landingColumns = [...new Set(falling.map(([, c]) => c))].sort((a, b) => a - b);
             landingColumns.forEach((column, index) => {
-              playImpactSound(.22 + index * .045);
+              const distance = Math.max(1, ...falling.filter(([, c]) => c === column).map(([, , d]) => d || 1));
+              const landingDelay = Math.min(.58, (.27 + distance * .045) * .72);
+              playImpactSound(landingDelay, index + chain);
             });
           });
-          // Do not redraw the board until the fruit has landed.
-          await waitForFruitMotion(".tile.fruit-fall .fruit-face", 400);
+          // Wait for the individual fruit to travel its real number of cells and settle.
+          await waitForFruitMotion(".tile.fruit-fall .fruit-face", 760);
         }
 
         ensurePlayableBoard();
