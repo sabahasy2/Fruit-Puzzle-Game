@@ -3058,7 +3058,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         const ctx = canvas.getContext("2d"); ctx.scale(dpr, dpr);
         const w = boardRect.width, h = boardRect.height;
         const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const duration = reduced ? 360 : 680;
+        const duration = reduced ? 360 : 500;
         const colors = ["#fff7b0","#ffd34e","#ff8138","#ff4f68","#ffffff","#ffb2e1"];
         const particles = Array.from({length: reduced ? 22 : 110}, (_,i) => ({
           angle: Math.random()*Math.PI*2, speed: 65+Math.random()*(reduced?95:260),
