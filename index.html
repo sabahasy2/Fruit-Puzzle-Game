@@ -78,8 +78,27 @@
       font-size: 22px;
     }
 
+    .fruit-set-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      max-width: 100%;
+      margin: 10px auto 2px;
+      padding: 7px 12px;
+      border: 1px solid #ffe27a55;
+      border-radius: 999px;
+      background: linear-gradient(110deg, #ffffff12, #ffe27a18);
+      color: #fff0b5;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      box-shadow: 0 4px 14px #0002;
+    }
+
     .goal {
-      margin: 12px 0;
+      margin: 10px 0 12px;
       color: #ffe89a;
       font-size: 14px;
     }
@@ -2355,6 +2374,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       </div>
     </section>
 
+    <div class="fruit-set-label" id="fruitSetLabel" aria-live="polite"></div>
+
     <div class="goal">🎯 <strong id="objectiveText">Reach 500 points</strong></div>
 
     <section class="board" id="board" aria-label="Fruit puzzle board"></section>
@@ -2470,7 +2491,25 @@ button{border:2px solid white!important;border-radius:18px!important;background:
 
       const SIZE = 8;
       const MAX_LEVEL = 1200;
-      const FRUITS = ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"];
+      // Each 50-stage world is split into five 10-stage fruit regions.
+      // The starting fruit set rotates between worlds so a new world feels fresh.
+      const FRUIT_SETS = [
+        { nameAr: "بستان الفواكه الكلاسيكي", nameEn: "Classic Orchard", fruits: ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"] },
+        { nameAr: "مهرجان الفواكه الصيفية", nameEn: "Summer Fruit Splash", fruits: ["🍉", "🍑", "🫐", "🍐", "🍍", "🥥"] },
+        { nameAr: "الجزيرة الاستوائية", nameEn: "Tropical Island", fruits: ["🥝", "🥭", "🍌", "🍈", "🍎", "🍅"] },
+        { nameAr: "حديقة الحصاد الملونة", nameEn: "Rainbow Harvest", fruits: ["🥑", "🍆", "🌶️", "🫒", "🍇", "🍐"] },
+        { nameAr: "الواحة الملكية", nameEn: "Royal Fruit Oasis", fruits: ["🍍", "🍒", "🍓", "🍊", "🥭", "🍎"] }
+      ];
+
+      function fruitSetForLevel() {
+        const worldIndex = Math.floor((level - 1) / 50);
+        const regionIndex = Math.floor(((level - 1) % 50) / 10);
+        return FRUIT_SETS[(worldIndex + regionIndex) % FRUIT_SETS.length];
+      }
+
+      function fruitsForLevel() {
+        return fruitSetForLevel().fruits;
+      }
 
       // Original, lightweight Fruit Pop soundtrack generated with Web Audio.
       // Audio begins only after the player's first gesture (mobile autoplay policy).
@@ -2747,6 +2786,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       const movesElement = document.getElementById("moves");
       const levelElement = document.getElementById("level");
       const objectiveElement = document.getElementById("objectiveText");
+      const fruitSetElement = document.getElementById("fruitSetLabel");
       let objectiveProgress = 0;
       let iceGrid = [];
       let crateGrid = [];
@@ -2766,7 +2806,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           return { type: "score", target, label: ar ? "اجمع " + target + " نقطة" : "Reach " + target + " points" };
         }
         if (type === 1) {
-          const fruit = FRUITS[(level - 1) % FRUITS.length];
+          const fruitPool = fruitsForLevel();
+          const fruit = fruitPool[(level - 1) % fruitPool.length];
           const target = 8 + Math.min(14, Math.floor((level - 2) / 5) * 2);
           return { type: "collect", fruit, target, label: ar ? "اجمع " + target + " من " + fruit : "Collect " + target + " " + fruit };
         }
@@ -2799,7 +2840,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       const goal = () => Math.min(950, 220 + Math.floor((level - 1) / 10) * 35);
 
       function randomFruit() {
-        return FRUITS[Math.floor(Math.random() * FRUITS.length)];
+        const fruitPool = fruitsForLevel();
+        return fruitPool[Math.floor(Math.random() * fruitPool.length)];
       }
 
       function makeBoard() {
@@ -2908,6 +2950,14 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         totalScoreElement.textContent = totalScore.toLocaleString();
         movesElement.textContent = moves;
         levelElement.textContent = level;
+        const fruitSet = fruitSetForLevel();
+        const worldStart = Math.floor((level - 1) / 50) * 50 + 1;
+        const regionStart = worldStart + Math.floor(((level - 1) % 50) / 10) * 10;
+        const regionEnd = regionStart + 9;
+        const isArabic = localStorage.getItem("fruit-pop-language") !== "en";
+        fruitSetElement.textContent = (isArabic ? fruitSet.nameAr : fruitSet.nameEn)
+          + " · " + (isArabic ? "المراحل " : "LEVELS ")
+          + regionStart + "–" + regionEnd + "  " + fruitSet.fruits.join(" ");
         updateObjectiveUI();
       }
 
