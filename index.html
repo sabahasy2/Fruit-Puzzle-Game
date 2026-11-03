@@ -4532,5 +4532,48 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     }, true);
   })();
   </script>
+
+  <style id="fruit-pop-map-auth-recovery">
+    /* Recovery: keep the royal map's actual route and level buttons visible. */
+    #levelsModal{position:fixed!important;z-index:9998!important}
+    #levelsModal.open{display:flex!important}
+    #levelsModal .map-landscape{display:flex!important;position:relative!important;flex-direction:column!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important}
+    #levelsModal .map-path{display:block!important;position:relative!important;width:100%!important;min-height:3800px!important;height:3800px!important;padding:0 4px 70px!important;overflow:visible!important;isolation:isolate!important}
+    #levelsModal .map-scene{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:.14!important;pointer-events:none!important;z-index:0!important}
+    #levelsModal .map-landmark{display:none!important}
+    #levelsModal .map-route-svg{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;overflow:visible!important;pointer-events:none!important;z-index:2!important}
+    #levelsModal .map-node-wrap{display:block!important;position:absolute!important;width:59px!important;height:59px!important;min-width:59px!important;margin:0!important;z-index:4!important}
+    #levelsModal .map-node{display:grid!important;place-items:center!important;position:relative!important;pointer-events:auto!important}
+    #authModal{position:fixed!important;z-index:10000!important}
+    #authModal.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+    #authModal .modal-card{position:relative!important;z-index:10001!important;max-height:calc(100dvh - 36px)!important;overflow-y:auto!important}
+  </style>
+  <script id="fruit-pop-auth-map-recovery">
+    (() => {
+      const $ = id => document.getElementById(id);
+      document.addEventListener("click", event => {
+        const trigger = event.target.closest("#introAccountBtn, #accountBtn");
+        if (trigger) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          const modal = $("authModal");
+          if (!modal) return;
+          const note = $("authNote");
+          if (note) note.textContent = "";
+          const logout = $("logoutBtn");
+          if (logout) logout.hidden = !window.__fruitPopBootPlayer;
+          modal.classList.add("open");
+          return;
+        }
+        const close = event.target.closest("#closeAuth");
+        if (close) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          $("authModal")?.classList.remove("open");
+        }
+      }, true);
+    })();
+  </script>
+
 </body>
 </html>
