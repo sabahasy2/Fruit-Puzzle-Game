@@ -142,6 +142,8 @@ test("opening theme music is original, gesture-gated, controllable, and stops du
   assert.match(html, /function startIntroMusic\(\)/);
   assert.match(html, /function stopIntroMusic\(\)/);
   assert.match(html, /localStorage\.getItem\("fruit-pop-music"\) !== "off"/);
+  assert.match(html, /window\.__fruitPopMusicEnabled = musicEnabled/);
+  assert.match(html, /textContent=window\.__fruitPopMusicEnabled\?t\.musicOn:t\.musicOff/);
   assert.match(html, /id="menuMusicToggle"/);
   assert.match(html, /document\.addEventListener\("pointerdown"/);
   assert.match(html, /stopIntroMusic\(\);\s*intro\.classList\.add\("hide"\)/);
