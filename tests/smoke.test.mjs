@@ -89,9 +89,20 @@ test("Fruit Pop Adam branding and fruit-logo asset are wired into the app", () =
 test("install metadata and offline cache include the app icon", () => {
   assert.ok(manifest.icons.some(item => item.src === "./icon.svg" && item.type === "image/svg+xml"));
   assert.match(icon, /<svg[\s>]/);
-  assert.match(sw, /fruit-pop-v75/);
+  assert.match(sw, /const CACHE_NAME = "fruit-pop-v\\d+"/);
   assert.match(sw, /"\.\/icon\.svg"/);
   assert.match(sw, /pathname\.startsWith\("\/api\/"\)/);
+});
+
+test("fruit swaps, match bursts, and gravity falls use full animations and varied audio", () => {
+  assert.match(html, /function animateSwap/);
+  assert.match(html, /async function choose/);
+  assert.match(html, /fpaFruitBurst/);
+  assert.match(html, /fpaFruitSparks/);
+  assert.match(html, /fpaFruitDrop/);
+  assert.match(html, /Four distinct candy-like match voices/);
+  assert.match(html, /falling.push\\(\\[write, c, write - r\\]\\)/);
+  assert.match(html, /await waitForFruitMotion\\("\\.tile\\.fruit-fall \\.fruit-face"/);
 });
 
 test("Arabic and English objective and world descriptions are available", () => {
