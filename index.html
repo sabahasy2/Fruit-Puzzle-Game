@@ -4253,5 +4253,38 @@ button{border:2px solid white!important;border-radius:18px!important;background:
   })();
   </script>
 
+
+  <script>
+  // Independent mobile-safe launch fallback for the main "Play Now" button.
+  (() => {
+    const button = document.getElementById("enterGameBtn");
+    const intro = document.getElementById("introScreen");
+    const splash = document.getElementById("fruitSplash");
+    const game = document.querySelector("main.game");
+    if (!button || !intro || !game) return;
+
+    let launched = false;
+    const launchGame = () => {
+      if (launched) return;
+      launched = true;
+      try { window.__fruitPopMusicStop?.(); } catch (error) {}
+      if (splash) {
+        splash.classList.add("leaving");
+        window.__fruitSplashActive = false;
+      }
+      intro.classList.add("hide");
+      document.body.classList.add("fruit-pop-playing");
+      window.__fruitPopGameStarted = true;
+      try { window.scrollTo(0, 0); } catch (error) {}
+      try { game.scrollIntoView({ block: "start", behavior: "instant" }); } catch (error) {}
+    };
+
+    button.addEventListener("click", launchGame, true);
+    button.addEventListener("pointerup", launchGame, true);
+    button.addEventListener("touchend", launchGame, { capture: true, passive: true });
+    button.onclick = launchGame;
+  })();
+  </script>
+
 </body>
 </html>
