@@ -31,19 +31,51 @@ test("24 named worlds cover exactly 1,200 consecutive levels", () => {
   assert.match(html, /Math\.min\(950, 220 \+ Math\.floor\(\(level - 1\) \/ 10\) \* 35\)/);
 });
 
+test("each 50-stage world changes its six-fruit set every ten stages", () => {
+  const setsSource = html.match(/const FRUIT_SETS = (\\[[\\s\\S]*?\\n      \\]);/);
+  const selectorSource = html.match(/function fruitSetForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
+  assert.ok(setsSource, "fruit set definitions missing");
+  assert.ok(selectorSource, "fruit set selector missing");
+  const sets = new Function("return " + setsSource[1])();
+  const select = new Function("level", "FRUIT_SETS", "return (" + selectorSource[0] + ")()");
+  assert.equal(sets.length, 5);
+  for (const set of sets) {
+    assert.equal(set.fruits.length, 6);
+    assert.equal(new Set(set.fruits).size, 6);
+  }
+  for (let world = 0; world < 24; world++) {
+    const selected = [];
+    for (let region = 0; region < 5; region++) {
+      const start = world * 50 + region * 10 + 1;
+      const set = select(start, sets);
+      selected.push(set);
+      for (let offset = 0; offset < 10; offset++) assert.equal(select(start + offset, sets), set);
+      if (region > 0) assert.notEqual(set, selected[region - 1]);
+    }
+    assert.equal(select(world * 50 + 1, sets), sets[world % 5]);
+  }
+});
+
 test("all 1,200 level objectives have valid targets and a balanced distribution", () => {
-  const objectiveSource = html.match(/function objectiveForLevel\(\) \{[\s\S]*?\n      \}/);
+  const objectiveSource = html.match(/function objectiveForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
+  const selectorSource = html.match(/function fruitSetForLevel\\(\\) \\{[\\s\\S]*?\\n      \\}/);
   assert.ok(objectiveSource, "objective function missing");
-  const goalExpression = html.match(/const goal = \(\) => ([^;]+);/);
+  assert.ok(selectorSource, "fruit set selector missing");
+  const setsSource = html.match(/const FRUIT_SETS = (\\[[\\s\\S]*?\\n      \\]);/);
+  const sets = new Function("return " + setsSource[1])();
+  const select = new Function("level", "FRUIT_SETS", "return (" + selectorSource[0] + ")()");
+  const goalExpression = html.match(/const goal = \\(\\) => ([^;]+);/);
   assert.ok(goalExpression, "score goal formula missing");
   const goalForLevel = new Function("level", "return " + goalExpression[1]);
-  const objectiveForLevel = new Function("level", "FRUITS", "goal", "localStorage", "return (" + objectiveSource[0] + ")()");
+  const objectiveForLevel = new Function("level", "fruitsForLevel", "goal", "localStorage", "return (" + objectiveSource[0] + ")()");
   const counts = { score: 0, collect: 0, special: 0, ice: 0, crate: 0 };
   const maxima = { score: 0, collect: 0, special: 0, ice: 0, crate: 0 };
   for (let level = 1; level <= 1200; level++) {
-    const objective = objectiveForLevel(level, ["🍓", "🍋", "🍇", "🍊", "🍏", "🍒"], () => goalForLevel(level), { getItem: () => "en" });
+    const fruitsForLevel = () => select(level, sets).fruits;
+    const objective = objectiveForLevel(level, fruitsForLevel, () => goalForLevel(level), { getItem: () => "en" });
     assert.ok(Object.hasOwn(counts, objective.type), "unknown objective type at level " + level);
     assert.ok(Number.isInteger(objective.target) && objective.target > 0, "invalid target at level " + level);
+    if (objective.type === "collect") assert.ok(fruitsForLevel().includes(objective.fruit), "collect target must exist in current fruit set at level " + level);
     counts[objective.type]++;
     maxima[objective.type] = Math.max(maxima[objective.type], objective.target);
   }
