@@ -2524,6 +2524,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       let introMusicStarted = false;
       let introMusicGestureSeen = false;
       let musicEnabled = localStorage.getItem("fruit-pop-music") !== "off";
+      window.__fruitPopMusicEnabled = musicEnabled;
       const SOUND_SPEED = 0.5;
       const soundTime = seconds => seconds / SOUND_SPEED;
       let soundsEnabled = localStorage.getItem("fruit-pop-sounds") !== "off";
@@ -2629,6 +2630,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       }
       document.getElementById("menuMusicToggle").addEventListener("click", () => {
         musicEnabled = !musicEnabled;
+        window.__fruitPopMusicEnabled = musicEnabled;
         localStorage.setItem("fruit-pop-music", musicEnabled ? "on" : "off");
         if (musicEnabled) startIntroMusic();
         else stopIntroMusic();
@@ -3975,7 +3977,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       const soundsOn=localStorage.getItem("fruit-pop-sounds")!=="off";
       $("menuSoundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
       $("soundToggle").textContent=soundsOn?t.soundOn:t.soundOff;
-      $("menuMusicToggle").textContent=musicEnabled?t.musicOn:t.musicOff;
+      $("menuMusicToggle").textContent=window.__fruitPopMusicEnabled?t.musicOn:t.musicOff;
       $("menuMusicToggle").setAttribute("aria-pressed",String(musicEnabled));
       $("message").textContent=t.message;
       $("themeBtn").textContent=t.theme;
