@@ -2281,6 +2281,206 @@ button{border:2px solid white!important;border-radius:18px!important;background:
   .game .tile.match-pop:before,.game .tile.match-pop:after{animation-duration:.01ms!important}
 }
 </style>
+
+  <style id="fruit-pop-royal-purple-gold">
+    /* Unified royal purple + gold identity for the world map and main menu */
+    #levelsModal{background:#100b20!important}
+    #levelsModal .map-card{background:linear-gradient(180deg,#211333 0%,#130e24 100%)!important}
+    #levelsModal .map-topbar,
+    #levelsModal .map-heading,
+    #levelsModal .map-world-tabs{
+      background:linear-gradient(180deg,#342044 0%,#21152f 100%)!important;
+      border-color:#d9b45a66!important;
+      box-shadow:0 7px 22px #07040f99,inset 0 1px #fff2!important
+    }
+    #levelsModal .map-brand-mark{
+      border:1px solid #ffe7a1!important;
+      border-radius:13px!important;
+      background:radial-gradient(circle at 32% 22%,#fff2c7,#c18a3d 42%,#56315c 100%)!important;
+      box-shadow:0 0 18px #f5d17a55,inset 0 1px 5px #fff9!important
+    }
+    #levelsModal .map-brand strong,
+    #levelsModal .map-brand small,
+    #levelsModal .map-progress,
+    #levelsModal .map-heading h2{color:#ffedc3!important}
+    #levelsModal .map-progress{
+      border:1px solid #e8c66e99!important;
+      background:linear-gradient(135deg,#3b2850,#1a1229)!important;
+      box-shadow:inset 0 1px #fff3,0 0 12px #d6a94a22!important
+    }
+    #levelsModal .map-exit{
+      color:#fff0c8!important;
+      border:1px solid #e9ca7c!important;
+      background:linear-gradient(145deg,#69465f,#34203f)!important;
+      box-shadow:0 3px 0 #1b1028,0 0 12px #d8b45a22!important
+    }
+    #levelsModal .map-world-tab{
+      color:#f8e8c9!important;
+      border:1px solid #c9a65e99!important;
+      border-radius:13px!important;
+      background:linear-gradient(145deg,#4a315d,#241832)!important;
+      box-shadow:inset 0 1px #fff3,0 3px 0 #100b1b!important
+    }
+    #levelsModal .map-world-tab.active{
+      color:#35203d!important;
+      border-color:#fff0b8!important;
+      background:linear-gradient(145deg,#fff0b5 0%,#e5bd69 48%,#b77b3d 100%)!important;
+      box-shadow:inset 0 2px 4px #fff,0 4px 0 #67402e,0 0 20px #f4d17a77!important;
+      outline:1px solid #fff4ce!important
+    }
+    #levelsModal .map-world-tab:disabled{opacity:.38!important;filter:saturate(.55)!important}
+    #levelsModal .map-landscape,
+    #levelsModal .map-landscape.theme-forest,
+    #levelsModal .map-landscape.theme-ice,
+    #levelsModal .map-landscape.theme-island,
+    #levelsModal .map-landscape.theme-volcano,
+    #levelsModal .map-landscape.theme-crystal,
+    #levelsModal .map-landscape.theme-sky,
+    #levelsModal .map-landscape.theme-mythic{
+      position:relative!important;
+      isolation:isolate!important;
+      background:
+        radial-gradient(ellipse at 50% 8%,#79549a55 0%,transparent 42%),
+        radial-gradient(ellipse at 12% 45%,#5d367b33 0%,transparent 38%),
+        radial-gradient(ellipse at 88% 74%,#a77a3b22 0%,transparent 35%),
+        linear-gradient(180deg,#251638 0%,#19112c 48%,#100d20 100%)!important;
+      box-shadow:inset 0 18px 42px #08061188!important;
+    }
+    #levelsModal .map-landscape:before{
+      z-index:0!important;opacity:.42!important;
+      background:
+        radial-gradient(circle at 14% 12%,#ffe8ad 0 1px,transparent 2px),
+        radial-gradient(circle at 76% 23%,#fff1c7 0 1px,transparent 2px),
+        radial-gradient(circle at 35% 41%,#e8c66e 0 1px,transparent 2px),
+        radial-gradient(circle at 87% 61%,#fff1c7 0 1px,transparent 2px),
+        radial-gradient(ellipse at 50% 0%,#a67ac655,transparent 58%)!important;
+      background-size:137px 173px,181px 211px,223px 197px,157px 239px,100% 100%!important;
+    }
+    #levelsModal .map-landscape:after{
+      z-index:0!important;opacity:.13!important;
+      background-image:radial-gradient(#fff2d1 1px,transparent 1.8px)!important;
+      background-size:29px 29px!important
+    }
+    #levelsModal .map-scenery{
+      position:sticky!important;top:0!important;z-index:7!important;
+      padding:13px 17px!important;margin:0!important;
+      border:0!important;border-bottom:1px solid #d9b45a88!important;
+      border-radius:0 0 18px 18px!important;
+      color:#fff0ca!important;
+      background:linear-gradient(100deg,#21142feF,#3a2450f2 52%,#21142feF)!important;
+      box-shadow:0 8px 24px #08051099,inset 0 1px #fff3!important;
+      backdrop-filter:blur(14px)!important
+    }
+    #levelsModal .map-scenery strong{
+      color:#ffedc3!important;font-size:16px!important;
+      text-shadow:0 2px 8px #090511!important
+    }
+    #levelsModal .map-scenery small{color:#d9c8e9!important;font-size:10px!important}
+    #levelsModal .map-scenery-emoji{font-size:31px!important;filter:drop-shadow(0 0 9px #e9c66c88)!important}
+    /* Remove the previous illustrated/cartoon scenery; let the royal route and jewels lead */
+    #levelsModal .map-scene,
+    #levelsModal .map-landmark{display:none!important}
+    #levelsModal .map-path{position:relative!important;z-index:1!important;filter:none!important}
+    #levelsModal .map-route-svg{
+      z-index:2!important;overflow:visible!important;
+      filter:drop-shadow(0 0 7px #f2cf7b88)!important
+    }
+    #levelsModal .map-route-shadow{
+      stroke:#100b1c!important;stroke-width:43!important;opacity:.94!important
+    }
+    #levelsModal .map-route-line{
+      stroke:#e7bd68!important;stroke-width:27!important;
+      stroke-linecap:round!important;stroke-dasharray:none!important;
+      opacity:1!important;filter:drop-shadow(0 0 5px #ffe7a2)!important
+    }
+    #levelsModal .map-node-wrap{z-index:3!important;filter:drop-shadow(0 5px 7px #080511cc)!important}
+    #levelsModal .map-node{
+      width:49px!important;height:49px!important;min-width:49px!important;max-width:49px!important;
+      border:2px solid #ffe8a6!important;border-radius:50%!important;
+      color:#4a2c48!important;font-size:14px!important;font-weight:1000!important;
+      background:
+        radial-gradient(circle at 30% 20%,#fff 0 5%,#fff8 8%,transparent 28%),
+        linear-gradient(145deg,#fff0b8 0%,#e8c16e 46%,#b77b42 100%)!important;
+      box-shadow:0 4px 0 #6c443c,0 7px 15px #090611aa,inset 0 2px 5px #fff!important;
+      text-shadow:0 1px #fff9!important
+    }
+    #levelsModal .map-node.completed{
+      color:#fff0c4!important;border-color:#f5d98f!important;
+      background:radial-gradient(circle at 30% 20%,#fff8 0 7%,transparent 28%),linear-gradient(145deg,#8f68a7,#55366f 58%,#30203f)!important;
+      box-shadow:0 4px 0 #21132e,0 7px 14px #080510aa,inset 0 1px 5px #fff5,0 0 12px #d6b06b44!important
+    }
+    #levelsModal .map-node.current{
+      width:59px!important;height:59px!important;min-width:59px!important;max-width:59px!important;
+      border:3px solid #fff4ce!important;color:#482b43!important;
+      background:radial-gradient(circle at 30% 18%,#fff 0 8%,#fff9 11%,transparent 31%),linear-gradient(145deg,#fff4c8,#f1cc76 48%,#c68a43)!important;
+      box-shadow:0 0 0 4px #e9c46b55,0 5px 0 #70433b,0 9px 20px #080510bb,0 0 25px #ffe39a!important;
+      animation:royalLevelGlow 1.6s ease-in-out infinite alternate!important
+    }
+    #levelsModal .map-node.locked{
+      color:#b7a9c4!important;border-color:#7e6a91!important;
+      background:linear-gradient(145deg,#51435f,#2a2039 72%,#1d172b)!important;
+      box-shadow:0 4px 0 #171020,0 7px 12px #08051099,inset 0 1px 4px #fff2!important;
+      opacity:.82!important
+    }
+    #levelsModal .map-node-label{display:none!important}
+    @keyframes royalLevelGlow{from{filter:brightness(1);transform:translateY(0) scale(1)}to{filter:brightness(1.15);transform:translateY(-4px) scale(1.05)}}
+    /* Main menu: same royal palette, without the toy-like landscape props */
+    #introScreen{
+      background:
+        radial-gradient(ellipse at 50% 28%,#68447f 0%,#332044 35%,#171126 72%,#090b18 100%)!important
+    }
+    #introScreen .main-menu-content{
+      border:1px solid #e6c574!important;border-radius:28px!important;
+      background:
+        radial-gradient(ellipse at 50% 0%,#8b65a055,transparent 48%),
+        linear-gradient(160deg,#38234c 0%,#21152f 55%,#151326 100%)!important;
+      box-shadow:0 24px 70px #05040dbb,0 0 34px #e4bd6b33,inset 0 1px #fff5!important
+    }
+    #introScreen .main-menu-content:before{
+      background:radial-gradient(ellipse at 50% 0%,#ffe7a622,transparent 56%),linear-gradient(180deg,transparent 50%,#08071355)!important
+    }
+    #introScreen .menu-sky{height:105px;background:linear-gradient(180deg,#74518b66,transparent)!important}
+    #introScreen .menu-moon{font-size:24px;filter:drop-shadow(0 0 12px #ffe6a0)}
+    #introScreen .menu-cloud{display:none!important}
+    #introScreen .menu-castle{display:none!important}
+    #introScreen .intro-emblem{
+      border:2px solid #f2d58d!important;
+      background:linear-gradient(145deg,#6b477e,#24162f)!important;
+      box-shadow:0 0 0 6px #e8c66e18,0 0 28px #e8c66e66,inset 0 0 18px #fff2!important
+    }
+    #introScreen .intro-owner,
+    #introScreen .intro-title,
+    #introScreen .intro-ar,
+    #introScreen .intro-signature{color:#ffedbd!important;text-shadow:0 2px 5px #080510,0 0 14px #d9b45a55!important}
+    #introScreen .intro-caption{color:#d9c5e8!important;letter-spacing:2px!important}
+    #introScreen .menu-stars{color:#f4d78c!important;filter:drop-shadow(0 0 7px #e8c66e88)}
+    #introScreen .main-menu-actions button{
+      border:1px solid #f0d28a!important;border-radius:15px!important;
+      background:linear-gradient(145deg,#fff0b8 0%,#e2b965 48%,#a96f3e 100%)!important;
+      color:#38213d!important;box-shadow:0 4px 0 #684332,0 8px 16px #08051088,inset 0 1px #fff!important
+    }
+    #introScreen .main-menu-actions .menu-secondary{
+      color:#fff0cb!important;border:1px solid #c9a65e!important;
+      background:linear-gradient(145deg,#4c3260,#241832)!important;
+      box-shadow:0 3px 0 #120d1d,0 7px 14px #08051088,inset 0 1px #fff3!important
+    }
+    #introScreen .menu-settings{
+      border:1px solid #c9a65e77!important;border-radius:17px!important;
+      background:#160f25bb!important;box-shadow:inset 0 1px #fff2!important
+    }
+    #introScreen .menu-settings label,
+    #introScreen .menu-footer{color:#e9d7b5!important}
+    #introScreen .menu-settings select{
+      border:1px solid #d6b66b!important;background:#2a1c3c!important;color:#fff0cb!important
+    }
+    @media(max-width:390px){
+      #levelsModal .map-node{width:45px!important;height:45px!important;min-width:45px!important;max-width:45px!important}
+      #levelsModal .map-node.current{width:54px!important;height:54px!important;min-width:54px!important;max-width:54px!important}
+      #levelsModal .map-world-tab{padding:7px 9px!important;font-size:10px!important}
+    }
+    @media(prefers-reduced-motion:reduce){#levelsModal .map-node.current{animation:none!important}}
+  </style>
+
 </head>
 
 <body>
