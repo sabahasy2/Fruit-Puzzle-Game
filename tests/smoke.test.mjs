@@ -178,3 +178,8 @@ test("world map and main menu have independent mobile-safe navigation fallbacks"
   assert.match(html, /map\.classList\.add\("open"\)/);
   assert.match(html, /intro\.classList\.remove\("hide"\)/);
 });
+
+
+test("world map overlay appears above the main menu overlay", () => {
+  assert.match(html, /#levelsModal\{z-index:120;padding:0;background:#071711\}/);
+});
