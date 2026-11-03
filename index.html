@@ -4149,6 +4149,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         grid.appendChild(node);
       });
     }
+    window.__fruitPopOpenWorldMap = () => { drawLevels(); show(levelsModal); };
     $("accountBtn").addEventListener("click",()=>{note.textContent="";$("logoutBtn").hidden=!player;show(authModal);});
     $("closeAuth").addEventListener("click",()=>hide(authModal));
     async function switchToGuest(){
@@ -4218,6 +4219,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       intro.scrollTop=0;
       if (introMusicGestureSeen && musicEnabled) startIntroMusic();
     }
+    window.__fruitPopReturnToMenu = returnToMainMenu;
     $("returnMenuBtn").addEventListener("click",returnToMainMenu);
     $("menuExitBtn").addEventListener("click",()=>{
       $("menuExitNote").textContent=languageSelect.value==="ar"?"تم إيقاف اللعب مؤقتاً وحفظ تقدمك. يمكنك إغلاق التطبيق من جهازك.":"Game paused and progress is saved. You can close the app from your device.";
@@ -4286,5 +4288,49 @@ button{border:2px solid white!important;border-radius:18px!important;background:
   })();
   </script>
 
+
+  <script>
+  // Independent touch-safe navigation fallback for the world map and main menu.
+  (() => {
+    const byId = id => document.getElementById(id);
+    document.addEventListener("click", event => {
+      const button = event.target.closest("#introLevelsBtn, #levelsBtn, #returnMenuBtn, #closeLevels");
+      if (!button) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const map = byId("levelsModal");
+      const intro = byId("introScreen");
+      if (button.id === "introLevelsBtn" || button.id === "levelsBtn") {
+        try {
+          if (typeof window.__fruitPopOpenWorldMap === "function") window.__fruitPopOpenWorldMap();
+        } catch (error) {
+          console.error("World map render failed:", error);
+        }
+        if (map) map.classList.add("open");
+        if (intro && button.id === "introLevelsBtn") intro.classList.remove("hide");
+        return;
+      }
+      if (button.id === "closeLevels") {
+        if (map) map.classList.remove("open");
+        return;
+      }
+      try {
+        if (typeof window.__fruitPopReturnToMenu === "function") window.__fruitPopReturnToMenu();
+      } catch (error) {
+        console.error("Main menu navigation failed:", error);
+      }
+      document.querySelectorAll(".modal.open").forEach(modal => modal.classList.remove("open"));
+      const celebration = byId("levelCelebration");
+      if (celebration) celebration.classList.remove("open");
+      if (intro) {
+        intro.classList.remove("hide");
+        intro.scrollTop = 0;
+      }
+      document.body.classList.remove("fruit-pop-playing");
+      try { window.scrollTo(0, 0); } catch (error) {}
+    }, true);
+  })();
+  </script>
 </body>
 </html>
