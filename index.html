@@ -1497,7 +1497,7 @@
     .game .tile{position:relative!important;isolation:isolate!important;overflow:hidden!important;display:grid!important;place-items:center!important;min-width:0!important;aspect-ratio:1!important;border:1px solid #ffd1e8!important;border-radius:12px!important;background:radial-gradient(ellipse at 32% 15%,#fff9 0%,#fff3 18%,transparent 44%),linear-gradient(155deg,#ffb9dc 0%,#f46ab1 28%,#ce398c 62%,#8b155e 100%)!important;box-shadow:inset 0 2px 2px #fff9,inset 0 -5px 7px #65083f99,0 3px 0 #65083f,0 5px 7px #16000f99!important;transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important}
     .game .tile::before{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:8%!important;right:8%!important;top:5%!important;height:34%!important;border-radius:50% 50% 42% 42%!important;background:linear-gradient(180deg,#fff9 0%,#fff5 28%,#fff0 100%)!important;opacity:.88!important;filter:blur(.35px)!important}
     .game .tile::after{content:""!important;position:absolute!important;z-index:2!important;pointer-events:none!important;left:19%!important;right:19%!important;bottom:5%!important;height:8%!important;border-radius:50%!important;background:#fff8!important;filter:blur(3px)!important}
-    .game .tile .fruit-face{position:relative!important;z-index:4!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;font-size:clamp(25px,8.2vw,38px)!important;line-height:1!important;filter:drop-shadow(0 2px 0 #7b164e) drop-shadow(0 4px 4px #240016cc) drop-shadow(0 0 5px #fff9)!important;-webkit-text-stroke:.3px #fff7!important}
+    .game .tile .fruit-face{position:relative!important;z-index:4!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;font-size:clamp(25px,8.2vw,38px)!important;line-height:1!important;filter:drop-shadow(0 2px 0 #7b164e) drop-shadow(0 4px 4px #240016cc) drop-shadow(0 0 5px #fff9);-webkit-text-stroke:.3px #fff7!important}
     .game .tile:active{transform:scale(.91)!important;filter:brightness(1.2)!important}
     .game .tile.selected{border:2px solid #fff8b9!important;background:linear-gradient(145deg,#fff4b8 0%,#ff9dca 42%,#ce287d 100%)!important;box-shadow:0 0 0 3px #fff6,0 0 23px #fff0a9,inset 0 2px 5px #fff!important;transform:scale(1.07)!important;z-index:6!important}
     .game .tile.hint-partner{border:2px solid #baffef!important;background:linear-gradient(145deg,#c7fff2,#50e6cc 48%,#168c91)!important;box-shadow:0 0 0 3px #fff7,0 0 20px #68ffe6,inset 0 2px 5px #fff!important}
@@ -1919,7 +1919,7 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
     .game .tile .fruit-face{
       inset:1%!important;width:98%!important;height:98%!important;
       
-      filter:drop-shadow(0 4px 2px #321044aa) drop-shadow(0 0 7px #fff9)!important;
+      filter:drop-shadow(0 4px 2px #321044aa) drop-shadow(0 0 7px #fff9);
     }
     .game .tile.selected{transform:translateY(-2px) scale(1.09)!important}
     .game .tile:before{height:20%;width:48%;opacity:.92}
