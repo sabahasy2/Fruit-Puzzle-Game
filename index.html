@@ -2599,7 +2599,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         </div>
       </div>
     </div>
-    <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2>Welcome to Fruit Pop</h2><p>Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="logoutBtn" class="secondary" type="button">🚪 تسجيل الخروج</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
+    <div class="modal" id="authModal" role="dialog" aria-modal="true"><div class="modal-card"><button class="secondary modal-close" id="closeAuth">✕</button><div class="royal-brand"><span class="royal-brand-mark">♛</span><span class="royal-brand-copy"><span class="royal-brand-name">عابر السبيل</span><span class="royal-brand-caption" id="authBrandCaption">ROYAL GAME STUDIO</span><span class="royal-brand-signature">✦ Sabah Asy ✦</span></span></div><h2 id="authTitle">Welcome to Fruit Pop</h2><p id="authDescription">Save your journey and continue on another device.</p><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password (8+ characters)"><button id="emailAuthBtn">Sign in / Create account</button><button id="logoutBtn" class="secondary" type="button">🚪 تسجيل الخروج</button><button id="guestBtn" class="secondary">Play as guest</button><p class="auth-note" id="authNote"></p></div></div>
     <div class="modal" id="levelsModal" role="dialog" aria-modal="true"><div class="modal-card map-card"><div class="map-topbar"><div class="map-brand"><span class="map-brand-mark">🌲</span><span><strong>ENCHANTED REALMS</strong><small>FRUIT POP · ADVENTURE MAP</small></span></div><div class="map-top-actions"><span class="map-progress" id="mapProgress">LEVEL 1 / 1,200</span><button class="map-exit" id="closeLevels" type="button" aria-label="Close map">✕ <span>رجوع</span></button></div></div><div class="map-heading"><h2>🗺️ رحلة العوالم</h2></div><div class="map-world-tabs" id="mapWorldTabs" aria-label="World selection"></div><div class="levels-world" id="levelsWorld">🌿 Enchanted Forest · Levels 1–50</div><div class="map-landscape theme-forest" id="mapLandscape"><div class="map-scenery"><span><strong id="mapWorldName">Enchanted Forest</strong><small id="mapWorldDesc">Follow the magical fruit trail</small></span><span class="map-scenery-emoji" id="mapWorldEmoji">🌳</span></div><div class="map-path" id="levelsGrid"></div><div class="map-landmark" id="mapLandmark">🏰 ✨ 🌳</div></div></div></div>
  
     <div class="modal" id="dailyRewardModal" role="dialog" aria-modal="true" aria-labelledby="dailyRewardTitle">
@@ -2609,7 +2609,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         <h2 id="dailyRewardTitle">Daily Treasure</h2>
         <p id="dailyRewardMessage">Come back every day for a bigger reward!</p>
         <div class="daily-reward-amount" id="dailyRewardAmount">🪙 +25</div>
-        <button id="claimDailyRewardBtn" type="button">Open today's gift 🎁</button>
+        <button id="claimDailyRewardBtn" type="button">Open today's gift 🎁</button><button id="returnDailyReward" class="secondary" type="button">↩ العودة إلى اللعبة</button>
       </div>
     </div>
 
@@ -3949,20 +3949,23 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         return {today,last,streak,claimed:last===today,reward:dailyRewards[(streak-1)%dailyRewards.length]};
       }
       function refreshDailyReward() {
-        const state=dailyRewardState();
-        document.getElementById("dailyRewardAmount").textContent="🪙 +"+state.reward+" coins";
+        const state=dailyRewardState(), ar=localStorage.getItem("fruit-pop-language")!=="en";
+        document.getElementById("dailyRewardAmount").textContent="🪙 +"+state.reward+(ar?" قطعة نقدية":" coins");
         document.getElementById("dailyRewardMessage").textContent=state.claimed
-          ? "You already opened today's treasure. Come back tomorrow! 🎉"
-          : "Day "+state.streak+" of your streak — your treasure is ready!";
+          ? (ar?"لقد فتحت كنز اليوم بالفعل. عد غداً! 🎉":"You already opened today's treasure. Come back tomorrow! 🎉")
+          : (ar?"اليوم "+state.streak+" من سلسلة مكافآتك — هديتك جاهزة!":"Day "+state.streak+" of your streak — your treasure is ready!");
         document.getElementById("dailyChest").textContent=state.claimed?"🏆":"🎁";
         const claim=document.getElementById("claimDailyRewardBtn");
         claim.disabled=state.claimed;
-        claim.textContent=state.claimed?"Come back tomorrow 🌟":"Open today's gift 🎁";
+        claim.textContent=state.claimed?(ar?"عد غداً لتحصل على مكافأة جديدة 🌟":"Come back tomorrow 🌟"):(ar?"افتح هدية اليوم 🎁":"Open today's gift 🎁");
       }
       document.getElementById("dailyRewardBtn").addEventListener("click",()=>{
         refreshDailyReward(); dailyRewardModal.classList.add("open");
       });
       document.getElementById("closeDailyReward").addEventListener("click",()=>dailyRewardModal.classList.remove("open"));
+      document.getElementById("returnDailyReward").addEventListener("click",()=>dailyRewardModal.classList.remove("open"));
+      dailyRewardModal.addEventListener("click",event=>{if(event.target===dailyRewardModal)dailyRewardModal.classList.remove("open");});
+      document.addEventListener("keydown",event=>{if(event.key==="Escape"&&dailyRewardModal.classList.contains("open"))dailyRewardModal.classList.remove("open");});
       document.getElementById("claimDailyRewardBtn").addEventListener("click",()=>{
         const state=dailyRewardState();
         if(state.claimed)return;
@@ -3974,7 +3977,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         window.dispatchEvent(new Event("fruit-pop:progress"));
         playSound("win");
         refreshDailyReward();
-        document.getElementById("dailyRewardMessage").textContent="Treasure opened! You received "+state.reward+" coins. See you tomorrow! 💛";
+        document.getElementById("dailyRewardMessage").textContent=localStorage.getItem("fruit-pop-language")!=="en"?"تم فتح الكنز! حصلت على "+state.reward+" قطعة نقدية. نراك غداً! 💛":"Treasure opened! You received "+state.reward+" coins. See you tomorrow! 💛";
         document.getElementById("dailyChest").textContent="🎉";
       });
 
@@ -4139,7 +4142,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     const translations={
       ar:{
         enter:"🎮 العب الآن",map:"🗺️ خريطة العوالم والمراحل",account:"👤 التسجيل / الحساب",
-        theme:"🎨 المظهر والثيمات",return:"☰ القائمة الرئيسية",score:"نقاط المرحلة",total:"🌟 النقاط الكلية",
+        theme:"🎨 المظهر والثيمات",return:"☰ القائمة الرئيسية",daily:"🎁 المكافأة اليومية",score:"نقاط المرحلة",total:"🌟 النقاط الكلية",
         moves:"الحركات",level:"المرحلة",restart:"↻ إعادة المرحلة",hint:"💡 تلميح",
         objective:"🎯 أكمل الهدف",message:"اسحب فاكهة وبدّل مكانها مع فاكهة مجاورة!",
         footer:"صُنعت بحب ❤️ لعشاق ألعاب الفواكه",levelsTitle:"🗺️ رحلة العوالم",
@@ -4149,7 +4152,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       },
       en:{
         enter:"🎮 Play now",map:"🗺️ Worlds & level map",account:"👤 Sign in / Account",
-        theme:"🎨 Themes & appearance",return:"☰ Main menu",score:"STAGE POINTS",total:"🌟 TOTAL POINTS",
+        theme:"🎨 Themes & appearance",return:"☰ Main menu",daily:"🎁 Daily gift",score:"STAGE POINTS",total:"🌟 TOTAL POINTS",
         moves:"MOVES",level:"LEVEL",restart:"↻ Restart",hint:"💡 Hint",
         objective:"🎯 Complete the goal",message:"Swap a fruit with an adjacent fruit!",
         footer:"Made with ❤️ for fruit puzzle lovers",levelsTitle:"🗺️ World Journey",
@@ -4180,13 +4183,19 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       $("menuMusicToggle").textContent=window.__fruitPopMusicEnabled?t.musicOn:t.musicOff;
       $("menuMusicToggle").setAttribute("aria-pressed",String(musicEnabled));
       $("message").textContent=t.message;
-      $("themeBtn").textContent=t.theme;
+      $("themeBtn").textContent=t.theme;$("dailyRewardBtn").textContent=t.daily;
       window.__fruitPopRefreshLanguage?.();
       const languageWorld=worlds.find(w=>guestProgress().level>=w.start&&guestProgress().level<=w.end)||worlds[0];
       $("levelsWorld").textContent=lang==="ar"?languageWorld.emoji+" "+languageWorld.ar+" · المراحل "+languageWorld.start+"–"+languageWorld.end:languageWorld.emoji+" "+languageWorld.name+" · Levels "+languageWorld.start+"–"+languageWorld.end;
       applyWorld(guestProgress().level);
       if($("levelsModal").classList.contains("open"))drawLevels();
       $("themeTitle").textContent=lang==="ar"?"🎨 اختر أجواء مغامرتك":"🎨 Choose your adventure theme";
+      $("authTitle").textContent=lang==="ar"?"مرحباً بك في Fruit Pop":"Welcome to Fruit Pop";
+      $("authDescription").textContent=lang==="ar"?"احفظ تقدمك وتابع اللعب من جهاز آخر.":"Save your journey and continue on another device.";
+      $("authBrandCaption").textContent=lang==="ar"?"استوديو الألعاب الملكي":"ROYAL GAME STUDIO";
+      $("dailyRewardTitle").textContent=lang==="ar"?"الكنز اليومي":"Daily Treasure";
+      $("returnDailyReward").textContent=lang==="ar"?"↩ العودة إلى اللعبة":"↩ Return to game";
+      $("closeDailyReward").setAttribute("aria-label",lang==="ar"?"إغلاق المكافأة":"Close reward");
       $("authEmail").placeholder=lang==="ar"?"البريد الإلكتروني":"Email address";
       $("authPassword").placeholder=lang==="ar"?"كلمة المرور (8 أحرف على الأقل)":"Password (8+ characters)";
       $("emailAuthBtn").textContent=lang==="ar"?"تسجيل الدخول / إنشاء حساب":"Sign in / Create account";
@@ -4547,6 +4556,26 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     #authModal{position:fixed!important;z-index:10000!important}
     #authModal.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
     #authModal .modal-card{position:relative!important;z-index:10001!important;max-height:calc(100dvh - 36px)!important;overflow-y:auto!important}
+  </style>
+
+  <style id="fruit-pop-stable-map-daily-fix">
+    /* Stable full-height map layout: separate the map viewport from its scrollable path. */
+    #levelsModal{position:fixed!important;inset:0!important;z-index:9998!important;align-items:center!important;justify-content:center!important;padding:0!important;overflow:hidden!important}
+    #levelsModal.open{display:flex!important}
+    #levelsModal .modal-card.map-card{display:flex!important;flex-direction:column!important;width:min(100vw,760px)!important;height:96dvh!important;max-height:96dvh!important;min-height:0!important;margin:auto!important;padding:0!important;overflow:hidden!important;flex:0 1 auto!important}
+    #levelsModal .map-topbar,#levelsModal .map-heading,#levelsModal .map-world-tabs{flex:0 0 auto!important}
+    #levelsModal .map-landscape{display:block!important;position:relative!important;flex:1 1 0!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;isolation:isolate!important}
+    #levelsModal .map-path{display:block!important;position:relative!important;width:100%!important;height:3800px!important;min-height:3800px!important;max-height:none!important;padding:0 4px 70px!important;overflow:visible!important;isolation:isolate!important}
+    #levelsModal .map-scene{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:.32!important;pointer-events:none!important;z-index:0!important}
+    #levelsModal .map-route-svg{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;overflow:visible!important;pointer-events:none!important;z-index:2!important}
+    #levelsModal .map-node-wrap{display:block!important;position:absolute!important;width:59px!important;height:59px!important;min-width:59px!important;margin:0!important;z-index:4!important}
+    #levelsModal .map-node{display:grid!important;place-items:center!important;position:relative!important;pointer-events:auto!important}
+    #levelsModal .map-landmark{display:none!important}
+    @media(max-width:520px){#levelsModal{padding:0!important}#levelsModal .modal-card.map-card{width:100vw!important;height:96dvh!important;max-height:96dvh!important;border-radius:18px!important}}
+    #dailyRewardModal{z-index:10002!important}
+    #dailyRewardModal .daily-reward-card{position:relative!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;padding-bottom:22px!important}
+    #returnDailyReward{display:block!important;width:100%!important;margin-top:13px!important;background:linear-gradient(135deg,#3c2a4e,#21182f)!important;color:#ffe8b2!important;border:1px solid #d9b45a!important;box-shadow:0 4px 12px #0005!important}
+    #closeDailyReward{z-index:2!important}
   </style>
   <script id="fruit-pop-auth-map-recovery">
     (() => {
