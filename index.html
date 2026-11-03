@@ -1857,8 +1857,8 @@ button.secondary,.modal-card button.secondary{background:linear-gradient(145deg,
       background:radial-gradient(circle at 35% 22%,#fffbd9,#ffe16c 35%,#ff9a51 66%,#bd397f)!important;
       box-shadow:0 0 0 2px #fff8,0 0 25px #ffe27c,0 0 42px #ff9d5c88,inset 0 3px 8px #fff!important;
     }
-    .game .tile.match-pop .fruit-face{animation:fruitJewelPop .38s cubic-bezier(.16,.8,.25,1) both!important}
-    .game .tile.fruit-fall .fruit-face{animation:fruitJewelFall .44s cubic-bezier(.18,.78,.24,1) both!important}
+    .game .tile.match-pop .fruit-face{animation:fruitJewelPop .28s cubic-bezier(.16,.8,.25,1) both!important}
+    .game .tile.fruit-fall .fruit-face{animation:fruitJewelFall .34s cubic-bezier(.18,.78,.24,1) both!important}
     @keyframes fruitJewelPop{
       0%{opacity:1;transform:scale(1) rotate(0);filter:brightness(1)}
       22%{opacity:1;transform:scale(1.32) rotate(8deg);filter:brightness(1.8) drop-shadow(0 0 12px #fff5a8)}
@@ -2446,7 +2446,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         const ctx = audioEngine();
         if (!ctx) return;
         duration = soundTime(duration);
-        delay = soundTime(delay);
+        delay = Math.max(0, Number(delay) || 0);
         const start = ctx.currentTime + delay;
         const oscillator = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -2470,7 +2470,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         if (!ctx) return;
         const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
         const fastDuration = soundTime(duration);
-        delay = soundTime(delay);
+        delay = Math.max(0, Number(delay) || 0);
         const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < length; i++) {
@@ -2825,6 +2825,27 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         updateObjectiveUI();
       }
 
+      function waitForFruitMotion(selector, fallbackMs) {
+        const elements = [...boardElement.querySelectorAll(selector)];
+        if (!elements.length) return Promise.resolve();
+        return new Promise(resolve => {
+          let remaining = elements.length;
+          let finished = false;
+          const finish = () => {
+            if (finished) return;
+            finished = true;
+            resolve();
+          };
+          const onEnd = event => {
+            if (event.target !== event.currentTarget) return;
+            remaining--;
+            if (remaining <= 0) finish();
+          };
+          elements.forEach(element => element.addEventListener("animationend", onEnd, { once: true }));
+          window.setTimeout(finish, fallbackMs);
+        });
+      }
+
       function addPoints(points) {
         score += points;
         totalScore += points;
@@ -3141,8 +3162,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
           if (!matches.length) break;
 
           chain++;
-          playSound(chain > 1 ? "combo" : "match");
-            const multiplier = chain >= 4 ? 5 : chain;
+          const matchSound = chain > 1 ? "combo" : "match";
+          const multiplier = chain >= 4 ? 5 : chain;
           const earned = matches.length * 10 * multiplier;
           bonusPoints += earned;
           addPoints(earned);
@@ -3171,8 +3192,10 @@ button{border:2px solid white!important;border-radius:18px!important;background:
             !(crateGrid[r] && crateGrid[r][c])
           );
           render({ popping });
-          // Let the short fade finish, then clear matched fruit without a visible pause.
-          await new Promise(resolve => setTimeout(resolve, 30));
+          // Start the match cue on the same frame as the fruit-pop animation.
+          requestAnimationFrame(() => playSound(matchSound));
+          // Keep matched fruit on screen until its fade animation has actually finished.
+          await waitForFruitMotion(".tile.match-pop .fruit-face", 340);
 
           const crateHits = new Set();
           matches.forEach(([r, c]) => {
@@ -3199,13 +3222,16 @@ button{border:2px solid white!important;border-radius:18px!important;background:
 
           const falling = collapseBoard();
           render({ falling });
-          // A loud descending rush followed by staggered, punchy fruit landings.
-          playDropSound(.015);
-          const landingColumns = [...new Set(falling.map(([, c]) => c))].sort((a, b) => a - b);
-          landingColumns.forEach((column, index) => {
-            playImpactSound(.34 + index * .075);
+          // Falling motion and its descending sound begin together.
+          requestAnimationFrame(() => {
+            playDropSound();
+            const landingColumns = [...new Set(falling.map(([, c]) => c))].sort((a, b) => a - b);
+            landingColumns.forEach((column, index) => {
+              playImpactSound(.22 + index * .045);
+            });
           });
-          await new Promise(resolve => setTimeout(resolve, 65));
+          // Do not redraw the board until the fruit has landed.
+          await waitForFruitMotion(".tile.fruit-fall .fruit-face", 400);
         }
 
         ensurePlayableBoard();
