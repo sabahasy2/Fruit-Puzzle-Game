@@ -1,4 +1,4 @@
-const CACHE="fruit-pop-adam-v22";
+const CACHE="fruit-pop-adam-v23";
 const CORE=["./","./index.html","./assets/style.css","./assets/3d-world.css","./assets/game.js","./assets/fruit-renderer.js","./assets/life-recovery.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith("fruit-pop-adam-")&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
