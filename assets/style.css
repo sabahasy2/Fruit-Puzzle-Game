@@ -42,3 +42,8 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 .fruit-cell{min-width:0}
 @media(max-width:390px){.account-indicator span{display:none}.account-indicator{max-width:32px}.topbar{height:60px}.brand b{font-size:11px}.stat-pill{padding:4px}.stat-pill span{font-size:12px}.stat-pill b{font-size:11px}.total-top-pill{max-width:51px}.total-top-pill b{max-width:29px}}
 @media(max-width:340px){.app-shell{padding-left:7px;padding-right:7px}.brand-mark{width:28px;height:28px;flex-basis:28px}.brand b{font-size:10px}.top-stats{gap:2px}.stat-pill{padding:3px}.total-top-pill{max-width:45px}.mission-card{gap:3px;padding:8px 5px}.moves-box,.score-box,.total-score-box{min-width:38px;padding-right:4px}.mission-card b{font-size:11px}.mission-card small{font-size:7px}}
+
+/* Mobile pull-to-refresh indicator */
+#pullRefreshIndicator{position:fixed;z-index:40;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-150%);opacity:0;pointer-events:none;padding:9px 17px;border:1px solid #f4d68d99;border-radius:22px;background:linear-gradient(145deg,#ffe8a8,#e9b34d);color:#48205b;font:800 12px "Tajawal",sans-serif;box-shadow:0 7px 22px #12051e88;white-space:nowrap;transition:transform .12s ease,opacity .12s ease}
+#pullRefreshIndicator.visible{transform:translate(-50%,var(--pull-progress,0px));opacity:1}
+#pullRefreshIndicator.ready{background:linear-gradient(145deg,#fff0bd,#f2c25d);box-shadow:0 0 0 4px #ffe19a33,0 7px 22px #12051e88}
