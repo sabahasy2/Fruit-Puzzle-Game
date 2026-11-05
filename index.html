@@ -4370,7 +4370,50 @@ button{border:2px solid white!important;border-radius:18px!important;background:
         grid.appendChild(node);
       });
     }
-    window.__fruitPopOpenWorldMap = () => { drawLevels(); show(levelsModal); };
+    function renderWorldMapFallback(){
+      const grid=$("levelsGrid"),tabs=$("mapWorldTabs"),current=guestProgress().level;
+      if(!grid||!tabs||!worlds.length)return;
+      mapWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
+      const ar=true,w=worlds[mapWorldIndex]||worlds[0];
+      tabs.innerHTML="";
+      worlds.forEach((world,index)=>{
+        const tab=document.createElement("button");
+        tab.type="button";tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
+        tab.textContent=world.emoji+" "+world.ar+(world.start>current?" 🔒":"");
+        tab.disabled=world.start>current;
+        tab.addEventListener("click",()=>{mapWorldIndex=index;renderWorldMapFallback();});
+        tabs.appendChild(tab);
+      });
+      $("mapWorldName").textContent=w.ar;$("mapWorldDesc").textContent=w.descAr;$("mapWorldEmoji").textContent=w.emoji;
+      $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
+      $("mapProgress").textContent="المرحلة "+current+" / 1,200";
+      grid.innerHTML="";
+      const route=document.createElementNS("http://www.w3.org/2000/svg","svg");
+      route.setAttribute("class","map-route-svg");route.setAttribute("viewBox","0 0 1000 3800");route.setAttribute("preserveAspectRatio","none");
+      const pts=[];
+      for(let index=0;index<50;index++){const x=500+330*Math.sin(index*.57-1.05);pts.push({x,y:index*76+34});}
+      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d",pts.map((p,i)=>i?" L "+p.x+" "+p.y:"M "+p.x+" "+p.y).join(""));
+      path.setAttribute("fill","none");path.setAttribute("stroke","#e7bd68");path.setAttribute("stroke-width","30");path.setAttribute("stroke-linecap","round");route.appendChild(path);grid.appendChild(route);
+      for(let level=w.start;level<=w.end;level++){
+        const index=level-w.start,wrap=document.createElement("div"),button=document.createElement("button"),label=document.createElement("span");
+        wrap.className="map-node-wrap";button.type="button";button.className="map-node "+(level<current?"completed":level===current?"current":"locked");
+        button.textContent=String(level);button.disabled=level>current;
+        button.setAttribute("aria-label","المرحلة "+level);
+        label.className="map-node-label";label.textContent=String(level);wrap.append(button,label);
+        wrap.style.left=(pts[index].x/10)+"%";wrap.style.top=(index*76)+"px";grid.appendChild(wrap);
+        button.addEventListener("click",()=>{if(level>current)return;hide(levelsModal);if(window.__fruitPopSelectLevel?.(level)){applyWorld(level);$("message").textContent="✨ المرحلة "+level+" جاهزة! انطلق للمغامرة.";}});
+      }
+      grid.style.height="3800px";grid.style.minHeight="3800px";grid.dataset.renderedNodes="50";
+      $("mapLandscape").scrollTop=0;
+    }
+    window.__fruitPopOpenWorldMap = () => {
+      try{drawLevels();}catch(error){console.error("World map render failed:",error);}
+      const grid=$("levelsGrid");
+      if(!grid||grid.querySelectorAll(".map-node-wrap").length!==50)renderWorldMapFallback();
+      show(levelsModal);
+      $("mapLandscape").scrollTop=0;
+    };
     $("accountBtn").addEventListener("click",()=>{note.textContent="";$("logoutBtn").hidden=!player;show(authModal);});
     $("closeAuth").addEventListener("click",()=>hide(authModal));
     async function switchToGuest(){
