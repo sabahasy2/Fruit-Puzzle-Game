@@ -77,3 +77,9 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 #gameBoard.game-board .fruit-cell{width:100%;min-width:0;min-height:0;aspect-ratio:1;font-size:clamp(40px,11vw,54px);line-height:1;}
 #gameBoard.game-board .fruit-cell svg{width:112%;height:112%;max-width:none;max-height:none}
 @media(min-width:520px){#gameBoard.game-board .fruit-cell{font-size:50px}}
+
+
+/* Slightly larger fruit artwork; preserve the 7x7 tile dimensions */
+#gameBoard.game-board .fruit-cell{font-size:clamp(28px,7vw,36px)}
+#gameBoard.game-board .fruit-cell svg{width:82%;height:82%;max-width:82%;max-height:82%}
+@media(min-width:520px){#gameBoard.game-board .fruit-cell{font-size:36px}}
