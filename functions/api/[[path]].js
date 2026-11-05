@@ -76,6 +76,7 @@ export async function onRequest({ request, env }) {
     }
     if (path === "/api/global-progress" && request.method === "POST") {
       const body = await request.json();
+      if (body.epoch !== "fruit-pop-reset-20261105-v1") return json({ error: "This game version cannot update global progress." }, 409);
       const level = Math.max(1, Math.min(1200, Math.floor(Number(body.level) || 1)));
       await env.DB.prepare("UPDATE global_score SET level=MAX(level,?),updated_at=? WHERE id=1")
         .bind(level, Math.floor(Date.now()/1000)).run();
@@ -84,6 +85,7 @@ export async function onRequest({ request, env }) {
     }
     if (path === "/api/global-score" && request.method === "POST") {
       const body = await request.json();
+      if (body.epoch !== "fruit-pop-reset-20261105-v1") return json({ error: "This game version cannot update the global score." }, 409);
       const delta = Math.floor(Number(body.delta) || 0);
       if (delta < 1 || delta > 10000000) return json({ error: "Invalid score increment." }, 400);
       await env.DB.prepare("UPDATE global_score SET total_score=MIN(1000000000,total_score+?),updated_at=? WHERE id=1")
