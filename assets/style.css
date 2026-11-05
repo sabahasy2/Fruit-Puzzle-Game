@@ -47,3 +47,15 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 #pullRefreshIndicator{position:fixed;z-index:40;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-150%);opacity:0;pointer-events:none;padding:9px 17px;border:1px solid #f4d68d99;border-radius:22px;background:linear-gradient(145deg,#ffe8a8,#e9b34d);color:#48205b;font:800 12px "Tajawal",sans-serif;box-shadow:0 7px 22px #12051e88;white-space:nowrap;transition:transform .12s ease,opacity .12s ease}
 #pullRefreshIndicator.visible{transform:translate(-50%,var(--pull-progress,0px));opacity:1}
 #pullRefreshIndicator.ready{background:linear-gradient(145deg,#fff0bd,#f2c25d);box-shadow:0 0 0 4px #ffe19a33,0 7px 22px #12051e88}
+
+/* Compact arcade-style fireball bursts on fruit matches */
+.board-wrap{position:relative;overflow:visible}
+.match-burst{position:absolute;width:1px;height:1px;z-index:9;pointer-events:none}
+.burst-core{position:absolute;left:0;top:0;width:32px;height:32px;margin:-16px;border-radius:50%;background:radial-gradient(circle,#fff 0 9%,#fff7a8 18%,#ffb12e 38%,#ff5a28 57%,#f02d73 72%,transparent 74%);filter:drop-shadow(0 0 9px #ffb32d) drop-shadow(0 0 17px #ff4c74);animation:fireballFlash .48s ease-out forwards}
+.match-burst:after{content:"";position:absolute;left:0;top:0;width:48px;height:48px;margin:-24px;border:3px solid #ffe49a;border-radius:50%;box-shadow:0 0 13px #ff8c35, inset 0 0 10px #ffb12e;animation:fireballRing .48s ease-out forwards}
+.match-burst i{position:absolute;left:0;top:0;width:5px;height:13px;margin:-6px -2px;border-radius:80% 20% 70% 30%;background:linear-gradient(to top,#ff4d36,#ffe58b 72%,#fff);box-shadow:0 0 7px #ff9e38;transform:rotate(var(--angle)) translateY(0) scale(1);animation:sparkFly .48s cubic-bezier(.12,.65,.25,1) var(--delay) forwards}
+.match-burst.chain .burst-core{background:radial-gradient(circle,#fff 0 8%,#d8faff 18%,#9b7cff 39%,#ff64c7 60%,transparent 73%);filter:drop-shadow(0 0 10px #b78cff) drop-shadow(0 0 18px #ff64c7)}
+@keyframes fireballFlash{0%{transform:scale(.15);opacity:0}22%{transform:scale(1.45);opacity:1}100%{transform:scale(.2);opacity:0}}
+@keyframes fireballRing{0%{transform:scale(.2);opacity:0}25%{opacity:.95}100%{transform:scale(2.25);opacity:0}}
+@keyframes sparkFly{0%{transform:rotate(var(--angle)) translateY(0) scale(1);opacity:1}100%{transform:rotate(var(--angle)) translateY(calc(var(--distance) * -1)) scale(.12);opacity:0}}
+@media(prefers-reduced-motion:reduce){.match-burst,.match-burst *{animation-duration:.18s!important}}
