@@ -1,7 +1,7 @@
 
 <!-- Cloudflare Pages deployment trigger: static PWA entry point. -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4225,190 +4225,59 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=!player; }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
-      const current=guestProgress().level, allComplete=guestProgress().stars>=1200, ar=localStorage.getItem("fruit-pop-language")!=="en", grid=$("levelsGrid"), tabs=$("mapWorldTabs");
+      const progress=guestProgress(),current=progress.level,grid=$("levelsGrid"),tabs=$("mapWorldTabs");
+      if(!grid||!tabs)return;
       const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
-      if(!mapWorldChosen || mapWorldIndex>currentWorldIndex) mapWorldIndex=currentWorldIndex;
-      applyWorld(current);
+      if(!mapWorldChosen||mapWorldIndex>currentWorldIndex)mapWorldIndex=currentWorldIndex;
+      const w=worlds[mapWorldIndex]||worlds[0],ar=true;
       tabs.innerHTML="";
-      worlds.forEach((w,index)=>{
-        const unlocked=w.start<=current;
+      worlds.forEach((world,index)=>{
         const tab=document.createElement("button");
         tab.type="button";
-        tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
-        tab.textContent=w.emoji+" "+(ar?w.ar:w.name)+(unlocked?"":" 🔒");
-        tab.disabled=!unlocked;
-        tab.addEventListener("click",()=>{mapWorldIndex=index;mapWorldChosen=true;drawLevels();});
+        tab.className="map-world-tab"+(index===mapWorldIndex?" active":"");
+        tab.textContent=world.emoji+" "+world.ar;
+        tab.disabled=world.start>current;
+        tab.setAttribute("aria-label",world.ar+"، المراحل "+world.start+" إلى "+world.end);
+        tab.addEventListener("click",()=>{if(world.start>guestProgress().level)return;mapWorldIndex=index;mapWorldChosen=true;drawLevels();});
         tabs.appendChild(tab);
       });
-      const w=worlds[mapWorldIndex];
-      $("mapProgress").textContent=(ar?"المرحلة ":"LEVEL ")+current+" / 1,200"+(allComplete?(ar?" · مكتملة":" · COMPLETE"):"");
-      $("levelsWorld").textContent=w.emoji+" "+(ar?w.ar:w.name)+" · "+(ar?"المراحل ":"Levels ")+w.start+"–"+w.end;
-      $("mapWorldName").textContent=ar?w.ar:w.name;
-      $("mapWorldDesc").textContent=ar?w.descAr:w.desc;
+      $("mapWorldName").textContent=w.ar;
+      $("mapWorldDesc").textContent=w.descAr;
       $("mapWorldEmoji").textContent=w.emoji;
-      $("mapLandmark").textContent=w.landmark;
+      $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
+      $("mapProgress").textContent="المرحلة "+current+" / 1,200";
       const landscape=$("mapLandscape");
       landscape.className="map-landscape theme-"+w.theme;
       landscape.dataset.world=String(mapWorldIndex+1);
       grid.innerHTML="";
-      const nodes=[];
-      for(let i=w.start;i<=w.end;i++){
+      grid.className="map-path map-level-grid";
+      for(let level=w.start;level<=w.end;level++){
         const wrap=document.createElement("div");
         wrap.className="map-node-wrap";
-        const b=document.createElement("button");
-        const state=allComplete&&i<=current?"completed":i<current?"completed":i===current?"current":"locked";
-        b.type="button";
-        b.className="map-node "+state;
-        b.textContent=String(i);
-        b.setAttribute("aria-label",(ar?"المرحلة ":"Level ")+i+((allComplete||i<current)?(ar?"، مكتملة":", completed"):i===current?(ar?"، المرحلة الحالية":", current level"):(ar?"، مقفلة":", locked")));
-        b.disabled=i>current;
+        const button=document.createElement("button");
+        button.type="button";
+        button.className="map-node "+(level<current?"completed":level===current?"current":"locked");
+        button.textContent=String(level);
+        button.disabled=level>current;
+        button.setAttribute("aria-label","المرحلة "+level+(level<current?" مكتملة":level===current?" الحالية":" مقفلة"));
         const label=document.createElement("span");
         label.className="map-node-label";
-        label.textContent=i;
-        wrap.append(b,label);
-        b.addEventListener("click",()=>{
-          if(i>current)return;
+        label.textContent=level<current?"مكتملة":level===current?"العب الآن":"مقفلة";
+        wrap.append(button,label);
+        grid.appendChild(wrap);
+        button.addEventListener("click",()=>{
+          if(level>guestProgress().level)return;
           hide(levelsModal);
-          if(window.__fruitPopSelectLevel && window.__fruitPopSelectLevel(i)){
-            $("message").textContent=ar?"✨ المرحلة "+i+" جاهزة! انطلق للمغامرة.":"✨ Level "+i+" is ready. Let the adventure begin!";
-            applyWorld(i);
+          if(window.__fruitPopSelectLevel?.(level)){
+            applyWorld(level);
+            $("message").textContent="✨ المرحلة "+level+" جاهزة! انطلق للمغامرة.";
           }
         });
-        nodes.push(wrap);
       }
-      const scene=document.createElementNS("http://www.w3.org/2000/svg","svg");
-      scene.setAttribute("class","map-scene");
-      scene.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
-      scene.setAttribute("preserveAspectRatio","none");
-      const palettes={forest:["#b8edaa","#78c879","#438f62","#28664d","#8bd9e8"],ice:["#eafaff","#a8dcf3","#6eafd6","#477eae","#fff"],island:["#ffe6a0","#f6c66d","#63cbbd","#328da0","#68d8ee"],volcano:["#ffd2a0","#ed916f","#bd5559","#73334e","#ffdf75"],crystal:["#f5e4ff","#c7a7ed","#967bd4","#635aa8","#a8f4ff"],sky:["#e6faff","#b6e2ff","#86b9ee","#668ed0","#fff"],mythic:["#d9d1ff","#a89ae8","#786ac2","#494b91","#f8e6a0"]};
-      // Give every realm a distinct color identity instead of reusing eight palettes.
-      const hue=(mapWorldIndex*47+108)%360;
-      const p=["hsl("+hue+" 92% 95%)","hsl("+hue+" 70% 78%)","hsl("+hue+" 56% 59%)","hsl("+hue+" 48% 39%)","hsl("+((hue+42)%360)+" 88% 84%)"];
-      const H=nodes.length*76;
-      let terrain="";
-      if(w.theme==="forest") terrain='<path d="M0 250 Q160 115 330 250 T680 210 T1000 260 V'+H+' H0Z" fill="#9bc98a"/><path d="M0 480 Q170 330 350 455 T700 420 T1000 470 V'+H+' H0Z" fill="#6eaa70"/><path d="M0 760 Q160 610 350 735 T700 700 T1000 760 V'+H+' H0Z" fill="#4b8b5d"/><path d="M0 1180 Q190 1010 390 1150 T760 1110 T1000 1160 V'+H+' H0Z" fill="#326d4d"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#247d83" stroke-width="78" opacity=".9"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#8ed8c7" stroke-width="49" opacity=".9"/><path d="M0 430 Q180 525 340 455 T650 475 T1000 390" fill="none" stroke="#d2f0d7" stroke-width="4" opacity=".9"/><path d="M0 1550 Q180 1390 390 1510 T760 1460 T1000 1510 V'+H+' H0Z" fill="#285b42"/><path d="M0 1980 Q180 1840 370 1970 T730 1930 T1000 1980 V'+H+' H0Z" fill="#39794e"/><path d="M0 2700 Q190 2540 390 2690 T760 2650 T1000 2700 V'+H+' H0Z" fill="#285b42"/>';
-      else if(w.theme==="ice") terrain='<path d="M0 420 L180 180 320 390 500 100 720 410 870 190 1000 420 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 610 Q260 490 480 610 T1000 570 V'+H+' H0Z" fill="'+p[3]+'"/><path d="M0 760 Q300 650 520 760 T1000 730" stroke="'+p[4]+'" stroke-width="54" fill="none"/>';
-      else if(w.theme==="island") terrain='<path d="M0 480 Q180 350 350 470 T700 430 T1000 480 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 570 Q220 470 440 570 T1000 550 V'+H+' H0Z" fill="'+p[1]+'"/><path d="M0 780 Q250 690 500 780 T1000 760" stroke="'+p[4]+'" stroke-width="70" fill="none"/>';
-      else if(w.theme==="volcano") terrain='<path d="M0 520 L230 250 420 500 650 120 870 480 1000 350 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M610 175 Q650 300 710 430 L760 600" stroke="'+p[4]+'" stroke-width="48" fill="none"/><path d="M0 720 Q300 620 520 730 T1000 690 V'+H+' H0Z" fill="'+p[3]+'"/>';
-      else if(w.theme==="crystal") terrain='<path d="M0 520 L160 230 300 520 470 130 650 520 820 210 1000 520 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 700 Q220 570 440 700 T1000 680 V'+H+' H0Z" fill="'+p[3]+'"/>';
-      else if(w.theme==="sky") terrain='<path d="M0 520 Q180 390 340 510 T680 490 T1000 510 V'+H+' H0Z" fill="'+p[2]+'"/><g fill="#fff" opacity=".95"><ellipse cx="180" cy="650" rx="130" ry="34"/><ellipse cx="700" cy="900" rx="170" ry="42"/><ellipse cx="390" cy="1300" rx="125" ry="32"/></g>';
-      else terrain='<path d="M0 520 Q170 350 350 510 T700 470 T1000 520 V'+H+' H0Z" fill="'+p[2]+'"/><path d="M0 760 Q240 630 460 760 T1000 740 V'+H+' H0Z" fill="'+p[3]+'"/>';
-      const trees=w.theme==="forest"?Array.from({length:Math.ceil(H/92)},(_,i)=>{const y=70+i*92,x=(i%2?34:925)+(i%4)*12,s=.72+(i%3)*.16;return '<g transform="translate('+x+' '+y+') scale('+s+')" opacity=".96"><path d="M-5 92 Q0 60 -4 18 L5 18 Q2 62 8 92Z" fill="#694b35"/><path d="M0 -8 C-32 24 -42 47 -22 52 C-39 68 -24 77 0 69 C24 78 39 66 22 52 C43 42 28 17 0 -8Z" fill="#174b37"/><path d="M0 2 C-24 25 -27 40 -12 44 C-25 58 -13 63 1 58 C18 64 28 52 14 43 C31 29 20 12 0 2Z" fill="#286c48"/><path d="M-8 20 Q0 8 9 19 M-15 43 Q0 31 16 43" fill="none" stroke="#6aa66c" stroke-width="3" opacity=".65"/></g>'}).join(""):"";
-      const symbols={forest:"🌳 🍄 🏡 🌼 🌲",ice:"❄️ 🏔️ 🧊 💎",island:"🌴 🐚 🏝️ 🦜",volcano:"🌋 🔥 🐉 🪨",crystal:"💎 ✨ 🏰 🔮",sky:"☁️ 🕊️ 🏰 ⭐",mythic:"🌌 ⭐ 🔮 👑"};
-      const labels=w.theme==="forest"?"":(symbols[w.theme]||symbols.mythic).split(" ").map((e,i)=>'<text x="'+(90+(i%2)*690)+'" y="'+(210+i*510)+'" font-size="68">'+e+'</text>').join("");
-      scene.innerHTML='<defs><linearGradient id="sceneSky" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset=".52" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient><linearGradient id="forestMist" x2="0" y2="1"><stop stop-color="#e7f5c9" stop-opacity=".48"/><stop offset="1" stop-color="#d9edb0" stop-opacity="0"/></linearGradient><pattern id="forestGrain" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="5" cy="8" r="1.2" fill="#f1f5c8" opacity=".18"/><circle cx="24" cy="25" r="1" fill="#143f2e" opacity=".16"/></pattern></defs><rect width="1000" height="'+H+'" fill="url(#sceneSky)"/>'+terrain+trees+(w.theme==="forest"?'<rect width="1000" height="'+H+'" fill="url(#forestMist)"/><rect width="1000" height="'+H+'" fill="url(#forestGrain)"/><g fill="#d8e8a3" opacity=".72"><circle cx="120" cy="330" r="5"/><circle cx="835" cy="690" r="4"/><circle cx="180" cy="1120" r="4"/><circle cx="790" cy="1680" r="5"/><circle cx="160" cy="2260" r="4"/><circle cx="860" cy="2920" r="5"/></g><g fill="#f3e9b0" opacity=".8"><path d="M120 840l5 10 10 5-10 5-5 10-5-10-10-5 10-5Z"/><path d="M830 1320l4 8 8 4-8 4-4 8-4-8-8-4 8-4Z"/><path d="M190 2480l4 8 8 4-8 4-4 8-4-8-8-4 8-4Z"/></g>':'<g opacity=".8">'+labels+'</g>')+'<path d="M0 0H1000V'+H+'H0Z" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="8"/>';
-
-      if(w.theme==="forest"){
-        const forestTrees=Array.from({length:Math.ceil(H/105)*8},(_,i)=>{
-          const row=Math.floor(i/8),col=i%8,y=row*105+((col*37)%95),side=col<4?1:-1;
-          const x=side===1?18+col*35+(row%2)*12:982-(col-4)*35-(row%2)*12;
-          const scale=.42+((i*7)%9)/14;
-          return '<g transform="translate('+x+' '+y+') scale('+scale+')"><ellipse cx="0" cy="88" rx="34" ry="9" fill="#102c20" opacity=".48"/><path d="M-5 90 Q2 60 -3 14 L6 12 Q2 62 10 90Z" fill="url(#bark)"/><path d="M0 -12 C-28 3 -48 34 -29 42 C-48 57 -28 72 -4 62 C20 79 47 59 27 43 C47 23 24 1 0 -12Z" fill="url(#pine)"/><path d="M0 -2 C-22 12 -34 31 -18 37 C-32 51 -17 59 0 51 C18 62 34 49 18 36 C35 20 19 5 0 -2Z" fill="#34734a"/><path d="M-17 18 Q-4 7 10 15 M-24 38 Q-5 26 18 37 M-13 52 Q2 43 16 51" fill="none" stroke="#86a96a" stroke-width="3" opacity=".42"/><path d="M-31 39 Q-20 28 -10 31 M10 28 Q22 18 31 31" fill="none" stroke="#a9c17a" stroke-width="2" opacity=".25"/></g>';
-        }).join("");
-        const midTrees=Array.from({length:Math.ceil(H/170)*5},(_,i)=>{
-          const row=Math.floor(i/5),col=i%5,x=130+col*185+(row%2)*42,y=row*170+90;
-          return '<g transform="translate('+x+' '+y+') scale(.38)"><path d="M0 70V8" stroke="#614c35" stroke-width="9"/><path d="M0 -20C-44 0 -42 32 -14 35C-34 61 5 70 25 49C52 48 49 10 20 7C29 -11 10 -29 0 -20Z" fill="#2b6644"/><path d="M-19 15Q0 -4 21 12M-23 36Q0 17 26 34" fill="none" stroke="#7fa66a" stroke-width="5" opacity=".5"/></g>';
-        }).join("");
-        const fern=Array.from({length:Math.ceil(H/240)*6},(_,i)=>{
-          const y=80+Math.floor(i/6)*240,x=70+(i%6)*172;
-          return '<g transform="translate('+x+' '+y+') scale(.65)"><path d="M0 35Q-5 4 0 -25" fill="none" stroke="#a1b66b" stroke-width="3"/><path d="M0 22Q-23 3 -35 12Q-20 28 0 27M0 10Q21 -8 33 0Q21 16 0 16M0 -2Q-18 -22 -28 -14Q-17 1 0 4M0 -12Q16 -30 25 -23Q16 -9 0 -7" fill="#65945a" stroke="#9ab875" stroke-width="1"/></g>';
-        }).join("");
-        scene.innerHTML='<defs><linearGradient id="forestSky" x2="0" y2="1"><stop stop-color="#9ebc9b"/><stop offset=".25" stop-color="#789d78"/><stop offset=".58" stop-color="#3d7654"/><stop offset="1" stop-color="#183e2c"/></linearGradient><linearGradient id="pine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6f9860"/><stop offset=".35" stop-color="#315f3d"/><stop offset=".72" stop-color="#173f2d"/><stop offset="1" stop-color="#102e22"/></linearGradient><linearGradient id="bark" x2="1"><stop stop-color="#382d24"/><stop offset=".45" stop-color="#9a7550"/><stop offset="1" stop-color="#403326"/></linearGradient><linearGradient id="forestGround" x2="0" y2="1"><stop stop-color="#668d58"/><stop offset=".22" stop-color="#47764b"/><stop offset=".58" stop-color="#2e603f"/><stop offset="1" stop-color="#183d2c"/></linearGradient><linearGradient id="forestWater" x2="0" y2="1"><stop stop-color="#b2e0c7"/><stop offset=".5" stop-color="#4f9f9a"/><stop offset="1" stop-color="#286e70"/></linearGradient><linearGradient id="forestFog" x2="0" y2="1"><stop stop-color="#e0e8cf" stop-opacity=".38"/><stop offset="1" stop-color="#dce8d2" stop-opacity="0"/></linearGradient><filter id="forestNoise"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="8"/><feColorMatrix values=".45 0 0 0 .1 .45 0 0 0 .13 .45 0 0 0 .08 0 0 0 .22 0"/></filter><filter id="forestShadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter><pattern id="leafSpeckle" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M4 10q7 -9 13 0q-7 9 -13 0M28 30q7 -9 13 0q-7 9 -13 0" fill="#b5c98a" opacity=".18"/></pattern></defs><rect width="1000" height="'+H+'" fill="url(#forestSky)"/><path d="M0 370Q130 170 300 340T650 300T1000 350V'+H+'H0Z" fill="#9db58b" opacity=".45"/><path d="M0 610Q160 370 340 570T700 520T1000 600V'+H+'H0Z" fill="#658b60" opacity=".7"/><path d="M0 850Q180 610 390 810T770 760T1000 840V'+H+'H0Z" fill="#47764e"/><path d="M0 1120Q170 920 360 1090T720 1050T1000 1110V'+H+'H0Z" fill="#376b47"/><path d="M0 0H1000V'+H+'H0Z" fill="url(#leafSpeckle)" opacity=".8"/><g opacity=".7" filter="url(#forestShadow)"><ellipse cx="500" cy="450" rx="350" ry="110" fill="#d5e4b7"/></g><path d="M0 480Q180 575 330 485T660 505T1000 430" fill="none" stroke="#193d36" stroke-width="64" opacity=".65"/><path d="M0 480Q180 575 330 485T660 505T1000 430" fill="none" stroke="url(#forestWater)" stroke-width="42"/><path d="M0 480Q180 575 330 485T660 505T1000 430" fill="none" stroke="#d1e9cb" stroke-width="3" opacity=".55"/><path d="M0 0Q90 90 180 0Q300 90 410 0Q530 85 640 0Q780 90 900 0L1000 0V'+H+'H0Z" fill="#143a29" opacity=".2"/>'+midTrees+forestTrees+'<path d="M0 0H1000V'+H+'H0Z" filter="url(#forestNoise)" opacity=".42"/><path d="M0 0H1000V'+H+'H0Z" fill="url(#forestFog)" opacity=".55"/>'+fern+'<g fill="#d5dc9b" opacity=".8"><circle cx="140" cy="310" r="3"/><circle cx="820" cy="720" r="4"/><circle cx="240" cy="1320" r="3"/><circle cx="760" cy="1930" r="4"/><circle cx="160" cy="2680" r="3"/><circle cx="890" cy="3210" r="4"/></g>';
-      }
-      
-      // Rich, realm-specific landmarks: layered SVG scenery rather than emoji-only decoration.
-      const realmDioramas={
-        forest:'<g filter="url(#forestShadow)" opacity=".7"><ellipse cx="180" cy="1040" rx="125" ry="34" fill="#102c20"/><ellipse cx="820" cy="2050" rx="140" ry="38" fill="#102c20"/></g><g transform="translate(90 930)"><path d="M0 150Q75 80 155 150V250H0Z" fill="#75513c" stroke="#d3b27a" stroke-width="9"/><path d="M-24 150Q75 40 180 150Z" fill="#d88c62" stroke="#f5d6a0" stroke-width="9"/><circle cx="78" cy="177" r="20" fill="#ffe8a8"/><path d="M42 250V190M118 250V190" stroke="#d3b27a" stroke-width="8"/></g><g transform="translate(760 1780)"><path d="M0 180V70Q0 10 55 10Q110 10 110 70V180Z" fill="#9b6b4c" stroke="#e8c58d" stroke-width="8"/><path d="M-12 70Q55 -8 122 70Z" fill="#d7a15f" stroke="#f3dca8" stroke-width="8"/><rect x="43" y="110" width="25" height="70" rx="12" fill="#402e2b"/></g>',
-        ice:'<g transform="translate(60 900)"><path d="M0 300L145 25L280 300Z" fill="#5d93bc" stroke="#c9efff" stroke-width="10"/><path d="M145 25L110 120L150 96L182 140Z" fill="#f5fdff"/><path d="M210 300L340 75L470 300Z" fill="#80b9d8" stroke="#e4f8ff" stroke-width="9"/><path d="M340 75L309 145L344 128L370 164Z" fill="#fff"/></g><g transform="translate(700 1800)"><path d="M0 190V80L55 35L110 80V190Z" fill="#76b9df" stroke="#e9fbff" stroke-width="8"/><path d="M-12 82L55 15L122 82" fill="none" stroke="#fff" stroke-width="14"/><path d="M43 190V120Q55 92 67 120V190" fill="#294f83"/><path d="M55 15V-35" stroke="#fff" stroke-width="8"/></g>',
-        island:'<g transform="translate(65 920)"><path d="M0 230Q90 80 190 230Z" fill="#e7c276" stroke="#fff0bf" stroke-width="9"/><path d="M90 210Q100 120 70 55" fill="none" stroke="#795238" stroke-width="18"/><path d="M70 65Q-5 5 -45 45Q8 60 70 65Q80 -10 130 -25Q125 28 70 65Q150 5 195 45Q145 72 70 65" fill="#258b68" stroke="#9bdc91" stroke-width="7"/></g><g transform="translate(720 1840)"><path d="M0 220Q100 85 205 220Z" fill="#f4d18a" stroke="#fff0c4" stroke-width="9"/><path d="M95 205Q115 110 155 55" fill="none" stroke="#765039" stroke-width="18"/><path d="M154 60Q85 0 48 40Q95 67 154 60Q164 -12 216 -18Q205 32 154 60Q225 12 260 55Q205 78 154 60" fill="#2b986e" stroke="#a6e38c" stroke-width="7"/></g>',
-        volcano:'<g transform="translate(80 870)"><path d="M0 330L180 15L370 330Z" fill="#643c49" stroke="#a65a61" stroke-width="14"/><path d="M140 85L180 15L225 90L202 130L165 125Z" fill="#ffbd66"/><path d="M180 95Q140 190 210 270" fill="none" stroke="#ff8d48" stroke-width="22"/><path d="M180 95Q205 190 260 255" fill="none" stroke="#ffd36e" stroke-width="8"/></g><g transform="translate(720 1940)"><path d="M0 260L120 25L250 260Z" fill="#49354e" stroke="#b95a5a" stroke-width="12"/><path d="M85 92L120 25L160 100Z" fill="#ffbd6b"/><path d="M120 85Q95 165 145 235" fill="none" stroke="#ff7448" stroke-width="20"/></g>',
-        crystal:'<g transform="translate(70 900)"><path d="M0 250L75 35L145 250Z" fill="#8bd9ee" stroke="#e8fbff" stroke-width="8"/><path d="M75 35L80 250L0 250Z" fill="#d8faff" opacity=".8"/><path d="M145 250L230 0L310 250Z" fill="#a58ae8" stroke="#f2e8ff" stroke-width="8"/><path d="M230 0L240 250L145 250Z" fill="#e5d8ff" opacity=".75"/></g><g transform="translate(730 1900)"><path d="M0 220L70 20L140 220Z" fill="#72d6e6" stroke="#e8ffff" stroke-width="8"/><path d="M140 220L230 55L310 220Z" fill="#b18ae9" stroke="#f6eaff" stroke-width="8"/><path d="M70 20L80 220" stroke="#fff" stroke-width="7" opacity=".8"/></g>',
-        sky:'<g transform="translate(70 900)"><path d="M0 210Q85 150 170 210L145 275H25Z" fill="#789ed9" stroke="#e6f5ff" stroke-width="9"/><path d="M65 190V80L105 40L145 80V190Z" fill="#fff0c4" stroke="#fff" stroke-width="8"/><path d="M55 80L105 0L155 80" fill="#e6a7d3" stroke="#fff" stroke-width="8"/><path d="M88 190V130Q105 105 122 130V190" fill="#6686c9"/></g><g transform="translate(720 1900)"><path d="M0 210Q100 145 205 210L175 270H30Z" fill="#8ba8e5" stroke="#e8f7ff" stroke-width="9"/><path d="M65 185V90L105 50L145 90V185Z" fill="#fff0d0" stroke="#fff" stroke-width="8"/><path d="M55 90L105 12L155 90" fill="#e6b1d7" stroke="#fff" stroke-width="8"/></g>',
-        mythic:'<g transform="translate(70 920)"><path d="M0 250V95Q0 20 70 20Q140 20 140 95V250Z" fill="#6457a2" stroke="#e6d59a" stroke-width="10"/><path d="M-12 100L70 0L152 100" fill="#c6a76b" stroke="#fff0b8" stroke-width="9"/><path d="M48 250V145Q70 100 92 145V250" fill="#29244e"/><circle cx="70" cy="125" r="15" fill="#ffe88a"/></g><g transform="translate(740 1850)"><path d="M0 240V105Q0 40 65 40Q130 40 130 105V240Z" fill="#4f579d" stroke="#e6d59a" stroke-width="10"/><path d="M-12 110L65 15L142 110" fill="#d0b77a" stroke="#fff1c0" stroke-width="9"/><path d="M45 240V155Q65 118 85 155V240" fill="#211f4b"/><path d="M65 15V-35" stroke="#ffeaa0" stroke-width="8"/></g>'
-      };
-      scene.innerHTML+=realmDioramas[w.theme]||realmDioramas.mythic;
-
-      const grandLandmarks={
-        forest:'<g transform="translate(345 1640)" filter="url(#mapShadow)"><ellipse cx="155" cy="335" rx="235" ry="32" fill="#142d29" opacity=".4"/><path d="M0 325V125L52 70H102V325M210 325V70H260L312 125V325Z" fill="#9e664b" stroke="#f3d29a" stroke-width="12"/><path d="M76 325V112H238V325Z" fill="url(#mapStone)" stroke="#fff0c4" stroke-width="12"/><path d="M38 126L78 12 118 126M192 126L232 12 272 126" fill="#b75e59" stroke="#ffe5ac" stroke-width="10"/><path d="M124 325V236Q157 180 190 236V325" fill="#30263e" stroke="#f7d995" stroke-width="8"/><rect x="148" y="65" width="18" height="55" fill="#e9c47b"/><path d="M157 65V8" stroke="#f8e6b2" stroke-width="7"/></g>',
-        ice:'<g transform="translate(345 1640)" filter="url(#mapShadow)"><ellipse cx="165" cy="330" rx="235" ry="32" fill="#254969" opacity=".4"/><path d="M0 325L70 82 125 166 183 0 244 166 302 72 370 325Z" fill="#91cce7" stroke="#edffff" stroke-width="12"/><path d="M183 0L158 120 185 91 216 143Z" fill="#fff"/><path d="M113 325V228Q183 160 253 228V325" fill="#4c80ad" stroke="#eaffff" stroke-width="10"/></g>',
-        island:'<g transform="translate(330 1670)" filter="url(#mapShadow)"><ellipse cx="175" cy="295" rx="245" ry="35" fill="#1d6474" opacity=".4"/><path d="M-20 280Q175 88 370 280Z" fill="#efcf8d" stroke="#fff3cb" stroke-width="12"/><path d="M155 240Q182 115 130 35" fill="none" stroke="#79533a" stroke-width="24"/><path d="M130 52Q20 -18 -15 44Q60 88 130 52Q140 -45 230 -45Q210 22 130 52Q250 0 285 65Q200 92 130 52" fill="#248a63" stroke="#b5e7a1" stroke-width="9"/><path d="M85 278V205Q175 135 265 205V278" fill="#63b6c0" stroke="#fff1c4" stroke-width="9"/></g>',
-        volcano:'<g transform="translate(330 1630)" filter="url(#mapShadow)"><ellipse cx="185" cy="370" rx="250" ry="36" fill="#211d32" opacity=".45"/><path d="M0 350L185 0 370 350Z" fill="#553a50" stroke="#b85e60" stroke-width="15"/><path d="M145 82L185 0 228 84 205 133 166 126Z" fill="#ffdf9b"/><path d="M185 80Q120 210 200 350" fill="none" stroke="#ff754c" stroke-width="35"/><path d="M185 80Q235 215 290 350" fill="none" stroke="#ffd078" stroke-width="10"/></g>',
-        crystal:'<g transform="translate(315 1640)" filter="url(#mapShadow)"><ellipse cx="220" cy="350" rx="255" ry="34" fill="#292955" opacity=".4"/><path d="M0 350L80 30 155 350Z M115 350L220 -15 325 350Z M285 350L365 65 440 350Z" fill="#a99be9" stroke="#f5eaff" stroke-width="12"/><path d="M220 -15L238 350 115 350Z M80 30L88 350 0 350Z" fill="#e9fbff" opacity=".75"/><path d="M150 350V248Q220 175 290 248V350" fill="#514a91" stroke="#eee2ff" stroke-width="9"/></g>',
-        sky:'<g transform="translate(330 1650)" filter="url(#mapShadow)"><ellipse cx="165" cy="315" rx="245" ry="35" fill="#3c5386" opacity=".4"/><path d="M-20 270Q165 160 350 270L310 330H20Z" fill="#dbeaf7" stroke="#fff" stroke-width="10"/><path d="M65 260V105L165 5 265 105V260Z" fill="#fff0c7" stroke="#fff" stroke-width="10"/><path d="M45 105L165 -15 285 105" fill="#d9a7d8" stroke="#fff" stroke-width="10"/><path d="M135 260V175Q165 130 195 175V260" fill="#6686bd"/></g>',
-        mythic:'<g transform="translate(325 1640)" filter="url(#mapShadow)"><ellipse cx="190" cy="350" rx="260" ry="35" fill="#20244c" opacity=".4"/><path d="M0 340V120L70 55H310L380 120V340Z" fill="#58559d" stroke="#e8d29a" stroke-width="14"/><path d="M-15 120L70 0 190 100 310 0 395 120Z" fill="#c4a96f" stroke="#fff0bf" stroke-width="12"/><path d="M140 340V215Q190 140 240 215V340" fill="#25294d" stroke="#f5dda2" stroke-width="9"/><circle cx="190" cy="145" r="28" fill="#ffe9a2" stroke="#fff" stroke-width="8"/></g>'
-      };
-      const polishedScene='<defs><linearGradient id="mapSkyFinal" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset=".48" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[3]+'"/></linearGradient><linearGradient id="mapStone" x2="0" y2="1"><stop stop-color="#fff0c8"/><stop offset=".55" stop-color="#d5a66e"/><stop offset="1" stop-color="#91624c"/></linearGradient><filter id="mapShadow"><feGaussianBlur in="SourceAlpha" stdDeviation="13"/><feOffset dy="14"/><feComponentTransfer><feFuncA type="linear" slope=".36"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="mapGlow"><stop stop-color="'+p[4]+'" stop-opacity=".6"/><stop offset="1" stop-color="'+p[4]+'" stop-opacity="0"/></radialGradient><pattern id="mapTexture" width="42" height="42" patternUnits="userSpaceOnUse"><circle cx="8" cy="9" r="1.3" fill="#fff" opacity=".18"/><circle cx="29" cy="28" r="1" fill="#172c37" opacity=".15"/></pattern></defs><rect width="1000" height="'+H+'" fill="url(#mapSkyFinal)"/><ellipse cx="500" cy="440" rx="520" ry="320" fill="url(#mapGlow)"/>'+terrain+trees+'<g opacity=".42" fill="#fff"><ellipse cx="180" cy="220" rx="70" ry="18"/><circle cx="155" cy="210" r="23"/><circle cx="190" cy="196" r="29"/><circle cx="220" cy="212" r="19"/><ellipse cx="780" cy="510" rx="86" ry="20"/><circle cx="750" cy="500" r="24"/><circle cx="790" cy="485" r="31"/><circle cx="824" cy="502" r="20"/></g>'+grandLandmarks[w.theme]+'<rect width="1000" height="'+H+'" fill="url(#mapTexture)" opacity=".7"/><rect width="1000" height="'+H+'" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="12"/>';
-      scene.innerHTML=polishedScene;
-
-      
-      grid.appendChild(scene);
-      const route=document.createElementNS("http://www.w3.org/2000/svg","svg");
-      route.setAttribute("class","map-route-svg");
-      route.setAttribute("viewBox","0 0 1000 "+(nodes.length*76));
-      route.setAttribute("preserveAspectRatio","none");
-      const routePoints=nodes.map((_,index)=>{
-        const x=500+335*Math.sin(index*.57-1.05)+34*Math.sin(index*.21);
-        return {x:Math.max(145,Math.min(855,x)),y:index*76+34};
-      });
-      const routePath=document.createElementNS("http://www.w3.org/2000/svg","path");
-      const routeD=routePoints.map((p,index)=>index===0?"M "+p.x+" "+p.y:" Q "+((routePoints[index-1].x+p.x)/2)+" "+(p.y-34)+" "+p.x+" "+p.y).join("");
-      routePath.setAttribute("d",routeD);
-      routePath.setAttribute("class","map-route-shadow");
-      route.appendChild(routePath);
-      const routeDots=routePath.cloneNode();
-      routeDots.setAttribute("class","map-route-line");
-      route.appendChild(routeDots);
-      grid.appendChild(route);
-      grid.style.height=(nodes.length*76)+"px";
-      grid.style.minHeight=(nodes.length*76)+"px";
-      grid.dataset.renderedNodes=String(nodes.length);
+      grid.dataset.renderedNodes="50";
       landscape.scrollTop=0;
-      nodes.forEach((node,index)=>{
-        const point=routePoints[index];
-        node.style.left=(point.x/10)+"%";
-        node.style.top=(index*76)+"px";
-        node.style.transform="translateX(-50%)";
-        grid.appendChild(node);
-      });
     }
-    function renderWorldMapFallback(){
-      const grid=$("levelsGrid"),tabs=$("mapWorldTabs"),current=guestProgress().level;
-      if(!grid||!tabs||!worlds.length)return;
-      const currentWorldIndex=Math.max(0,worlds.findIndex(world=>current>=world.start&&current<=world.end));
-      if(!mapWorldChosen||mapWorldIndex>currentWorldIndex)mapWorldIndex=currentWorldIndex;
-      const ar=true,w=worlds[mapWorldIndex]||worlds[0];
-      tabs.innerHTML="";
-      worlds.forEach((world,index)=>{
-        const tab=document.createElement("button");
-        tab.type="button";tab.className="map-world-tab secondary"+(index===mapWorldIndex?" active":"");
-        tab.textContent=world.emoji+" "+world.ar+(world.start>current?" 🔒":"");
-        tab.disabled=world.start>current;
-        tab.addEventListener("click",()=>{mapWorldIndex=index;renderWorldMapFallback();});
-        tabs.appendChild(tab);
-      });
-      $("mapWorldName").textContent=w.ar;$("mapWorldDesc").textContent=w.descAr;$("mapWorldEmoji").textContent=w.emoji;
-      $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
-      $("mapProgress").textContent="المرحلة "+current+" / 1,200";
-      grid.innerHTML="";
-      const route=document.createElementNS("http://www.w3.org/2000/svg","svg");
-      route.setAttribute("class","map-route-svg");route.setAttribute("viewBox","0 0 1000 3800");route.setAttribute("preserveAspectRatio","none");
-      const pts=[];
-      for(let index=0;index<50;index++){const x=500+330*Math.sin(index*.57-1.05);pts.push({x,y:index*76+34});}
-      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
-      path.setAttribute("d",pts.map((p,i)=>i?" L "+p.x+" "+p.y:"M "+p.x+" "+p.y).join(""));
-      path.setAttribute("fill","none");path.setAttribute("stroke","#e7bd68");path.setAttribute("stroke-width","30");path.setAttribute("stroke-linecap","round");route.appendChild(path);grid.appendChild(route);
-      for(let level=w.start;level<=w.end;level++){
-        const index=level-w.start,wrap=document.createElement("div"),button=document.createElement("button"),label=document.createElement("span");
-        wrap.className="map-node-wrap";button.type="button";button.className="map-node "+(level<current?"completed":level===current?"current":"locked");
-        button.textContent=String(level);button.disabled=level>current;
-        button.setAttribute("aria-label","المرحلة "+level);
-        label.className="map-node-label";label.textContent=String(level);wrap.append(button,label);
-        wrap.style.left=(pts[index].x/10)+"%";wrap.style.top=(index*76)+"px";grid.appendChild(wrap);
-        button.addEventListener("click",()=>{if(level>current)return;hide(levelsModal);if(window.__fruitPopSelectLevel?.(level)){applyWorld(level);$("message").textContent="✨ المرحلة "+level+" جاهزة! انطلق للمغامرة.";}});
-      }
-      grid.style.height="3800px";grid.style.minHeight="3800px";grid.dataset.renderedNodes="50";
-      $("mapLandscape").scrollTop=0;
-    }
+    function renderWorldMapFallback(){drawLevels();}
     window.__fruitPopOpenWorldMap = () => {
       try{drawLevels();}catch(error){console.error("World map render failed:",error);}
       const grid=$("levelsGrid");
@@ -4669,6 +4538,42 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     #authModal input{direction:ltr!important;text-align:left!important}
     #authModal #authNote{direction:rtl!important;text-align:center!important}
     @media(max-width:520px){#levelsModal .modal-card.map-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;border:0!important}#levelsModal .map-world-tabs{max-height:82px!important;overflow-x:auto!important;overflow-y:hidden!important}}
+  </style>
+
+  <style id="fruit-pop-royal-redesign-v3">
+    :root{color-scheme:dark}
+    html[lang="ar"] body{direction:rtl}
+    /* Stable, scrollable map: level tiles stay in normal document flow. */
+    #levelsModal{z-index:9998!important;background:radial-gradient(ellipse at 50% 0%,#49305e,#100b1b 72%)!important}
+    #levelsModal .modal-card.map-card{display:flex!important;flex-direction:column!important;width:min(100vw,760px)!important;height:100dvh!important;max-height:100dvh!important;border:1px solid #d9b45a!important;border-radius:0!important;background:linear-gradient(180deg,#211331,#100b1d)!important}
+    #levelsModal .map-topbar{background:linear-gradient(110deg,#21112f,#49305e 55%,#21112f)!important;border-bottom:1px solid #e4c16b88!important;padding:12px 12px 10px!important}
+    #levelsModal .map-heading{background:#211331!important;padding:10px 14px!important;text-align:center!important}
+    #levelsModal .map-heading h2{color:#ffe7a3!important;font-size:19px!important;text-shadow:0 2px 12px #e4bd6555!important}
+    #levelsModal .map-world-tabs{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:9px 12px 12px!important;background:#160e23!important;scrollbar-width:thin!important}
+    #levelsModal .map-world-tab{flex:0 0 auto!important;min-height:36px!important;padding:7px 12px!important;border:1px solid #9d7b43!important;border-radius:999px!important;background:linear-gradient(180deg,#3c2851,#21142f)!important;color:#f8e8c2!important;font-size:11px!important}
+    #levelsModal .map-world-tab.active{background:linear-gradient(180deg,#f4d98b,#a97935)!important;color:#291633!important;border-color:#fff0b4!important;box-shadow:0 0 18px #e9c46c77!important}
+    #levelsModal .map-world-tab:disabled{opacity:.38!important}
+    #levelsModal .map-landscape{display:block!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overflow-x:hidden!important;background:radial-gradient(ellipse at 50% 12%,#56346d 0%,#291936 46%,#130d20 100%)!important}
+    #levelsModal .map-scenery{position:sticky!important;top:0!important;z-index:5!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:15px 18px!important;background:linear-gradient(100deg,#261331ee,#56346fee,#261331ee)!important;border-bottom:1px solid #d9b45a88!important}
+    #levelsModal .map-scenery strong{color:#ffe6a0!important;font-size:18px!important}
+    #levelsModal .map-scenery small{color:#e5d2f1!important}
+    #levelsModal .map-path.map-level-grid{display:grid!important;position:relative!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:88px!important;align-content:start!important;justify-items:center!important;gap:14px 8px!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:22px 14px 72px!important;overflow:visible!important;isolation:isolate!important;background-image:radial-gradient(#f5d98a20 1px,transparent 1px)!important;background-size:22px 22px!important}
+    #levelsModal .map-path.map-level-grid:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;background:linear-gradient(135deg,transparent 48%,#d7ad5a22 49%,#d7ad5a22 51%,transparent 52%)!important}
+    #levelsModal .map-node-wrap{display:flex!important;position:relative!important;inset:auto!important;left:auto!important;top:auto!important;transform:none!important;z-index:2!important;width:100%!important;height:82px!important;min-width:0!important;min-height:0!important;align-items:center!important;justify-content:flex-start!important;flex-direction:column!important;gap:4px!important;filter:none!important}
+    #levelsModal .map-node{display:grid!important;place-items:center!important;position:relative!important;width:56px!important;height:56px!important;min-width:56px!important;max-width:56px!important;min-height:56px!important;padding:0!important;border:2px solid #f2d58d!important;border-radius:18px!important;background:linear-gradient(145deg,#6a477c,#2c1b3e)!important;color:#fff2c7!important;font-size:17px!important;font-weight:1000!important;box-shadow:0 5px 0 #160d22,0 8px 18px #0008,inset 0 2px 8px #fff5!important}
+    #levelsModal .map-node.completed{background:linear-gradient(145deg,#f4d98b,#a87937)!important;color:#29172f!important}
+    #levelsModal .map-node.current{width:62px!important;height:62px!important;min-width:62px!important;max-width:62px!important;border:3px solid #fff1b6!important;background:linear-gradient(145deg,#ffe9a0,#c78b3d)!important;color:#32193b!important;box-shadow:0 0 0 5px #e6c26a33,0 0 24px #f4d17b99!important}
+    #levelsModal .map-node.locked{background:linear-gradient(145deg,#403047,#241a2d)!important;color:#b9a9bd!important;border-color:#806b85!important;opacity:.72!important}
+    #levelsModal .map-node-label{display:block!important;position:static!important;margin:0!important;color:#f4e4c8!important;font-size:10px!important;font-weight:800!important;text-shadow:0 2px 5px #000!important}
+    #levelsModal .map-landmark{display:none!important}
+    /* A cleaner, single-column main menu on narrow phones. */
+    .main-menu-content{background:linear-gradient(155deg,#382047 0%,#21142f 58%,#130d20 100%)!important;border:1px solid #e2c16d!important;box-shadow:0 18px 55px #0009,0 0 26px #d5ad5a22!important}
+    .main-menu-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+    .main-menu-actions button{width:100%!important;max-width:none!important;min-height:48px!important;border-radius:16px!important}
+    .main-menu-actions .menu-secondary{background:linear-gradient(135deg,#493057,#241632)!important;border:1px solid #d7b766!important;color:#ffedc7!important}
+    .main-menu-content .intro-title{font-size:clamp(25px,7vw,34px)!important;letter-spacing:.3px!important}
+    .main-menu-content .intro-caption{letter-spacing:1px!important}
+    @media(max-width:520px){#levelsModal .modal-card.map-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important}#levelsModal .map-topbar{padding-top:calc(10px + env(safe-area-inset-top))!important}#levelsModal .map-path.map-level-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px 5px!important;padding-left:8px!important;padding-right:8px!important}}
   </style>
 </body>
 </html>
