@@ -52,7 +52,7 @@ export async function onRequest({ request, env }) {
       const id = crypto.randomUUID(), displayName = email.split("@")[0].slice(0,40), pw = await hashPassword(password);
       await env.DB.prepare("INSERT INTO players(id,email,password_hash,display_name,created_at) VALUES(?,?,?,?,?)")
         .bind(id,email,`${pw.salt}:${pw.hash}`,displayName,Math.floor(Date.now()/1000)).run();
-      await saveProgress(env.DB,id,body.guestProgress || { level:1,stars:0,coins:0,lives:5 });
+      await saveProgress(env.DB,id,body.guestProgress || { level:1,stars:0,coins:250,lives:5 });
       const token = await createSession(env.DB,id);
       return json({ ok:true, player:{id,email,display_name:displayName} },200,{ "Set-Cookie":cookie("fp_session",token,60*60*24*30) });
     }
