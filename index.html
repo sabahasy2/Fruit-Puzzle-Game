@@ -4225,56 +4225,44 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=!player; }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
-      const progress=guestProgress(),current=progress.level,grid=$("levelsGrid"),tabs=$("mapWorldTabs");
-      if(!grid||!tabs)return;
+      const progress=guestProgress(),current=progress.level,grid=$("levelsGrid"),tabs=$("mapWorldTabs"),landscape=$("mapLandscape");
+      if(!grid||!tabs||!landscape)throw new Error("عناصر خريطة المراحل غير موجودة");
       const currentWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
       if(!mapWorldChosen||mapWorldIndex>currentWorldIndex)mapWorldIndex=currentWorldIndex;
-      const w=worlds[mapWorldIndex]||worlds[0],ar=true;
+      const w=worlds[mapWorldIndex]||worlds[0];
       tabs.innerHTML="";
+      Object.assign(tabs.style,{display:"flex",flexWrap:"nowrap",gap:"8px",overflowX:"auto",overflowY:"hidden",padding:"10px",minHeight:"54px",visibility:"visible",opacity:"1"});
       worlds.forEach((world,index)=>{
         const tab=document.createElement("button");
-        tab.type="button";
-        tab.className="map-world-tab"+(index===mapWorldIndex?" active":"");
-        tab.textContent=world.emoji+" "+world.ar;
-        tab.disabled=world.start>current;
-        tab.setAttribute("aria-label",world.ar+"، المراحل "+world.start+" إلى "+world.end);
+        tab.type="button";tab.className="map-world-tab"+(index===mapWorldIndex?" active":"");
+        tab.textContent=world.emoji+" "+world.ar;tab.disabled=world.start>current;
+        Object.assign(tab.style,{display:"inline-flex",flex:"0 0 auto",minHeight:"38px",padding:"7px 13px",borderRadius:"22px",fontSize:"12px",visibility:"visible"});
         tab.addEventListener("click",()=>{if(world.start>guestProgress().level)return;mapWorldIndex=index;mapWorldChosen=true;drawLevels();});
         tabs.appendChild(tab);
       });
-      $("mapWorldName").textContent=w.ar;
-      $("mapWorldDesc").textContent=w.descAr;
-      $("mapWorldEmoji").textContent=w.emoji;
+      $("mapWorldName").textContent=w.ar;$("mapWorldDesc").textContent=w.descAr;$("mapWorldEmoji").textContent=w.emoji;
       $("levelsWorld").textContent=w.emoji+" "+w.ar+" · المراحل "+w.start+"–"+w.end;
       $("mapProgress").textContent="المرحلة "+current+" / 1,200";
-      const landscape=$("mapLandscape");
       landscape.className="map-landscape theme-"+w.theme;
-      landscape.dataset.world=String(mapWorldIndex+1);
-      grid.innerHTML="";
-      grid.className="map-path map-level-grid";
+      Object.assign(landscape.style,{display:"flex",flexDirection:"column",position:"relative",width:"100%",height:"auto",minHeight:"0",maxHeight:"none",flex:"1 1 auto",overflowY:"auto",overflowX:"hidden",visibility:"visible",opacity:"1"});
+      grid.innerHTML="";grid.className="map-path map-level-grid";
+      Object.assign(grid.style,{display:"grid",position:"relative",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gridAutoRows:"88px",alignContent:"start",justifyItems:"center",gap:"12px 6px",width:"100%",height:"auto",minHeight:"0",maxHeight:"none",padding:"20px 10px 70px",margin:"0",overflow:"visible",visibility:"visible",opacity:"1"});
       for(let level=w.start;level<=w.end;level++){
-        const wrap=document.createElement("div");
-        wrap.className="map-node-wrap";
-        const button=document.createElement("button");
-        button.type="button";
+        const wrap=document.createElement("div");wrap.className="map-node-wrap";
+        Object.assign(wrap.style,{display:"flex",position:"relative",inset:"auto",transform:"none",width:"100%",height:"82px",minWidth:"0",alignItems:"center",justifyContent:"flex-start",flexDirection:"column",gap:"4px",visibility:"visible",opacity:"1"});
+        const button=document.createElement("button");button.type="button";
         button.className="map-node "+(level<current?"completed":level===current?"current":"locked");
-        button.textContent=String(level);
-        button.disabled=level>current;
+        button.textContent=String(level);button.disabled=level>current;
         button.setAttribute("aria-label","المرحلة "+level+(level<current?" مكتملة":level===current?" الحالية":" مقفلة"));
-        const label=document.createElement("span");
-        label.className="map-node-label";
+        Object.assign(button.style,{display:"grid",placeItems:"center",position:"relative",width:level===current?"60px":"54px",height:level===current?"60px":"54px",minWidth:level===current?"60px":"54px",maxWidth:level===current?"60px":"54px",minHeight:level===current?"60px":"54px",padding:"0",border:"2px solid #f3d88f",borderRadius:"17px",background:level<current?"linear-gradient(145deg,#f7df9b,#b9873d)":level===current?"linear-gradient(145deg,#fff0ad,#d29a49)":"linear-gradient(145deg,#493451,#251a30)",color:level<=current?"#29172f":"#c5b5c8",fontSize:"17px",fontWeight:"900",boxShadow:"0 5px 0 #130b1d,0 8px 18px #0008",visibility:"visible",opacity:"1"});
+        const label=document.createElement("span");label.className="map-node-label";
         label.textContent=level<current?"مكتملة":level===current?"العب الآن":"مقفلة";
-        wrap.append(button,label);
-        grid.appendChild(wrap);
-        button.addEventListener("click",()=>{
-          if(level>guestProgress().level)return;
-          hide(levelsModal);
-          if(window.__fruitPopSelectLevel?.(level)){
-            applyWorld(level);
-            $("message").textContent="✨ المرحلة "+level+" جاهزة! انطلق للمغامرة.";
-          }
-        });
+        Object.assign(label.style,{display:"block",position:"static",color:"#f5e8ce",fontSize:"10px",fontWeight:"800",visibility:"visible",opacity:"1"});
+        wrap.append(button,label);grid.appendChild(wrap);
+        button.addEventListener("click",()=>{if(level>guestProgress().level)return;hide(levelsModal);if(window.__fruitPopSelectLevel?.(level)){applyWorld(level);$("message").textContent="✨ المرحلة "+level+" جاهزة! انطلق للمغامرة.";}});
       }
-      grid.dataset.renderedNodes="50";
+      grid.dataset.renderedNodes=String(grid.querySelectorAll(".map-node-wrap").length);
+      $("mapLandmark").style.display="none";
       landscape.scrollTop=0;
     }
     function renderWorldMapFallback(){drawLevels();}
@@ -4575,5 +4563,32 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     .main-menu-content .intro-caption{letter-spacing:1px!important}
     @media(max-width:520px){#levelsModal .modal-card.map-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important}#levelsModal .map-topbar{padding-top:calc(10px + env(safe-area-inset-top))!important}#levelsModal .map-path.map-level-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px 5px!important;padding-left:8px!important;padding-right:8px!important}}
   </style>
+
+<style id="fruit-pop-complete-game-redesign-v4">
+/* Rebuild the world map from its actual DOM IDs, not legacy scenery selectors. */
+#levelsModal .map-topbar{background:linear-gradient(110deg,#21112f,#49305e 55%,#21112f)!important;border-bottom:1px solid #e4c16b!important}
+#levelsModal .map-heading{background:#211331!important;border-bottom:1px solid #9c794c55!important}
+#levelsModal .map-heading h2{color:#ffe6a5!important}
+#levelsModal #mapWorldTabs{display:flex!important;visibility:visible!important;opacity:1!important}
+#levelsModal #mapLandscape{background:radial-gradient(ellipse at 50% 0%,#59366f,#241630 60%,#110c1b)!important}
+#levelsModal #levelsGrid{display:grid!important;position:relative!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:88px!important;align-content:start!important;justify-items:center!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:20px 10px 70px!important}
+#levelsModal #levelsGrid>.map-node-wrap{display:flex!important;position:relative!important;inset:auto!important;transform:none!important;width:100%!important;height:82px!important;align-items:center!important;justify-content:flex-start!important;flex-direction:column!important}
+#levelsModal #levelsGrid .map-node{position:relative!important;display:grid!important;place-items:center!important;border-radius:17px!important}
+#levelsModal #levelsGrid .map-node-label{display:block!important;position:static!important;color:#f5e8ce!important}
+#levelsModal .map-landmark{display:none!important}
+/* Premium, consistent playfield treatment while preserving tile artwork and game mechanics. */
+.game{max-width:620px!important;margin:12px auto!important;padding:16px 13px 22px!important;border:1px solid #d9b45a!important;border-radius:28px!important;background:linear-gradient(160deg,#382047 0%,#241532 48%,#120d20 100%)!important;box-shadow:0 18px 55px #0009,inset 0 1px #fff3!important}
+.world-banner{border:1px solid #d9b45a!important;border-radius:20px!important;background:linear-gradient(110deg,#25152f,#49305c 55%,#25152f)!important}
+.stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+.stats .stat{min-width:0!important;min-height:78px!important;border:1px solid #d9b45a!important;border-radius:17px!important;background:linear-gradient(155deg,#4a315d,#21152f)!important;box-shadow:0 5px 0 #130b1c,inset 0 1px #fff5!important}
+.stats .stat small{font-size:clamp(8px,2.5vw,11px)!important;letter-spacing:0!important;color:#f0dcae!important}
+.stats .stat strong{font-size:clamp(18px,5vw,25px)!important;color:#fff0c4!important}
+.goal{border:1px solid #d9b45a!important;border-radius:15px!important;background:linear-gradient(100deg,#34203f,#24172f)!important;color:#ffe8b3!important}
+.board{display:grid!important;grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:4px!important;padding:7px!important;border:3px solid #e4c77c!important;border-radius:25px!important;background:linear-gradient(145deg,#573b68,#24162f)!important;box-shadow:0 7px 0 #120b1c,0 15px 35px #0008,inset 0 0 18px #ffe6a522!important}
+.tile{aspect-ratio:1!important;min-width:0!important;border:1px solid #f9e8ff99!important;border-radius:13px!important;background:linear-gradient(145deg,#ffffff2a,#ffffff08)!important;box-shadow:inset 0 2px 5px #fff5,0 3px 5px #0005!important;font-size:clamp(22px,7.2vw,37px)!important}
+.tile.selected{border:2px solid #ffe6a0!important;background:#f5d27c55!important;box-shadow:0 0 15px #ffe08c!important}
+.message{border:1px solid #d9b45a!important;border-radius:18px!important;background:linear-gradient(110deg,#34203f,#24172f)!important;padding:12px!important;color:#f7e5c3!important}
+@media(max-width:520px){.game{margin:0 auto!important;border-radius:0 0 24px 24px!important;padding:12px 9px 18px!important}.board{gap:3px!important;padding:5px!important;border-radius:20px!important}.tile{border-radius:10px!important}.stats .stat{min-height:70px!important}}
+</style>
 </body>
 </html>
