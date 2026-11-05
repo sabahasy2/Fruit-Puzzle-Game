@@ -52,7 +52,7 @@ export async function onRequest({ request, env }) {
       const id = crypto.randomUUID(), displayName = email.split("@")[0].slice(0,40), pw = await hashPassword(password);
       await env.DB.prepare("INSERT INTO players(id,email,password_hash,display_name,created_at) VALUES(?,?,?,?,?)")
         .bind(id,email,`${pw.salt}:${pw.hash}`,displayName,Math.floor(Date.now()/1000)).run();
-      await saveProgress(env.DB,id,body.guestProgress || { level:1,stars:0,coins:250,lives:5 });
+      await saveProgress(env.DB,id,{ level:1,stars:0,coins:250,lives:5,totalScore:0 });
       const token = await createSession(env.DB,id);
       return json({ ok:true, player:{id,email,display_name:displayName} },200,{ "Set-Cookie":cookie("fp_session",token,60*60*24*30) });
     }
@@ -96,7 +96,7 @@ export async function onRequest({ request, env }) {
     if (path === "/api/progress" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       if (!player) return json({error:"Sign in to sync progress."},401);
-      return json({progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,totalScore:player.total_score||0,lives:player.lives??5}});
+      return json({playerId:player.id,progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,totalScore:player.total_score||0,lives:player.lives??5}});
     }
     if (path === "/api/progress" && request.method === "PUT") {
       const player = await currentPlayer(request,env.DB);
