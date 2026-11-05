@@ -4,7 +4,7 @@ const WORLDS=[["حدائق الفراولة","🍓","حيث تبدأ الحكا�
 const GUEST_KEY="fruit-pop-adam-guest-v2"; let activeStorageKey=GUEST_KEY;
 let state=load(), board=[], selected=-1, moves=25, score=0, collected=0, target=18, targetFruit="🍓", level=1, busy=false, musicTimer=null, audio=null, dragStart=-1, activeBooster=null, currentTab="home", selectedWorld=0, currentPlayer=null;
 function defaultState(){return {level:1,stars:0,coins:250,lives:5,lastLife:Date.now(),lastDaily:"",dailyStreak:0,sound:true,music:true,boosters:{hammer:3,shuffle:2,rainbow:1},totalScore:0}}
-function load(){try{if(activeStorageKey===GUEST_KEY&&!localStorage.getItem(GUEST_KEY)){const legacy=localStorage.getItem("fruit-pop-adam-v1");if(legacy){const guestLegacy=JSON.parse(legacy);guestLegacy.totalScore=0;localStorage.setItem(GUEST_KEY,JSON.stringify(guestLegacy))}}return {...defaultState(),...JSON.parse(localStorage.getItem(activeStorageKey)||"{}")}}catch{return defaultState()}}
+function load(){try{return {...defaultState(),...JSON.parse(localStorage.getItem(activeStorageKey)||"{}")}}catch{return defaultState()}}
 function save(){localStorage.setItem(activeStorageKey,JSON.stringify(state));updateStats();syncProgress()}
 function updateStats(){ $("lives").textContent=state.lives;$("coins").textContent=state.coins;$("homeLevel").textContent=state.level;$("homeStars").textContent=state.stars;$("mapStars").textContent=state.stars;paintGlobalScore(); }
 function paintGlobalScore(){const value=(state.totalScore||0).toLocaleString("en-US");if($("totalScore"))$("totalScore").textContent=value;if($("totalScoreTop"))$("totalScoreTop").textContent=value}
