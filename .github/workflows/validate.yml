@@ -13,5 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Check game JavaScript syntax
-        run: node --check assets/game.js
+      - name: Check game and helper JavaScript syntax
+        run: |
+          node --check assets/game.js
+          node --check assets/world-catalog.js
+          node --check assets/account-sync.js
+          node --input-type=module --check < 'functions/api/[[path]].js'
