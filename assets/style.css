@@ -65,3 +65,8 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 .game-board[data-fruit-set] .fruit-cell{background:linear-gradient(145deg,#ffffff1c,#ffffff08);border-color:#f7d78d55}
 .game-board[data-fruit-set="1"] .fruit-cell,.game-board[data-fruit-set="4"] .fruit-cell,.game-board[data-fruit-set="7"] .fruit-cell{box-shadow:inset 0 1px 4px #ffffff25,0 3px 9px #17072555}
 @media(prefers-reduced-motion:reduce){.game-board .fruit-cell svg{transition:none}}
+
+
+/* Slightly larger fruit artwork without changing the board grid or tile dimensions */
+.game-board .fruit-cell svg{width:98%;height:98%}
+.game-board .fruit-cell{font-size:clamp(25px,6.9vw,36px)}
