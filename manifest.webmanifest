@@ -1,0 +1,23 @@
+{
+  "name": "Fruit Pop Adam",
+  "short_name": "Fruit Pop",
+  "description": "مغامرة مطابقة الفواكه والحلوى في مملكة سحرية",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#210b34",
+  "theme_color": "#321044",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
