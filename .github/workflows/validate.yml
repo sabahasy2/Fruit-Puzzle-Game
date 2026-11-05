@@ -15,6 +15,7 @@ jobs:
           node-version: 22
       - name: Check game and helper JavaScript syntax
         run: |
+          node --check sw.js
           node --check assets/game.js
           node --check assets/fruit-renderer.js
           node --check assets/world-catalog.js
