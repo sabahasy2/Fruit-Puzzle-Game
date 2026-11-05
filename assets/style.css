@@ -67,6 +67,6 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 @media(prefers-reduced-motion:reduce){.game-board .fruit-cell svg{transition:none}}
 
 
-/* Slightly larger fruit artwork without changing the board grid or tile dimensions */
-.game-board .fruit-cell svg{width:98%;height:98%}
-.game-board .fruit-cell{font-size:clamp(25px,6.9vw,36px)}
+/* Larger fruit artwork while preserving board grid and tile dimensions */
+.game-board .fruit-cell svg{width:108%;height:108%;max-width:none;max-height:none}
+.game-board .fruit-cell{font-size:clamp(28px,7.6vw,40px)}
