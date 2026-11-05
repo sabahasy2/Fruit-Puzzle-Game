@@ -41,6 +41,24 @@ async function saveProgress(db, playerId, p) {
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
   const url = new URL(request.url), path = url.pathname.replace(/\/$/, "");
+  if (path === "/api/analytics/view" && request.method === "POST") {
+    await env.DB.prepare("UPDATE game_analytics SET page_views=page_views+1 WHERE id=1").run();
+    return json({ ok: true });
+  }
+  if (path === "/api/analytics/guest" && request.method === "POST") {
+    const body = await request.json(), guestId = String(body.guestId || "");
+    if (!/^[a-zA-Z0-9-]{8,100}$/.test(guestId)) return json({ error: "Invalid guest identity." }, 400);
+    await env.DB.prepare("INSERT OR IGNORE INTO game_analytics_guests(guest_id,first_seen_at) VALUES(?,?)")
+      .bind(guestId, Math.floor(Date.now()/1000)).run();
+    return json({ ok: true });
+  }
+  if (path === "/api/admin/analytics" && request.method === "GET") {
+    const player = await currentPlayer(request, env.DB);
+    if ((player?.email || "").trim().toLowerCase() !== "dmaralhb309@gmail.com")
+      return json({ error: "غير مصرح لك بعرض هذه الإحصائيات." }, 403);
+    const stats = await env.DB.prepare("SELECT page_views AS pageViews, (SELECT COUNT(*) FROM game_analytics_guests) AS guestPlayers, (SELECT COUNT(*) FROM players) AS registeredPlayers FROM game_analytics WHERE id=1").first();
+    return json({ pageViews: stats?.pageViews || 0, guestPlayers: stats?.guestPlayers || 0, registeredPlayers: stats?.registeredPlayers || 0 });
+  }
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": url.origin, "Access-Control-Allow-Credentials": "true" } });
   try {
     if (path === "/api/register" && request.method === "POST") {
