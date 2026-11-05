@@ -116,3 +116,13 @@ body{background:radial-gradient(ellipse at 50% 5%,#8052a0 0,#3c1857 38%,#180827 
 .game-screen .game-hint{transform:translateZ(25px);color:#fff2c9}
 @media(max-width:390px){.map-screen .world-chip span{font-size:29px}.map-screen .level-dot{width:54px;height:54px}.game-screen .board-wrap{padding:9px}.game-screen .game-board{gap:3px;padding:5px}.game-screen .fruit-cell{border-radius:8px}}
 @media(prefers-reduced-motion:reduce){.map-screen .world-chip,.map-screen .level-dot,.game-screen .fruit-cell{transition:none}}
+
+
+/* In-game map shortcut: compact royal button aligned with the score strip */
+.mission-card{position:relative}
+.map-shortcut{flex:0 0 43px;min-width:43px;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:3px 2px;border:1px solid #ffe6a7;border-radius:12px;background:linear-gradient(150deg,#fff0b6 0%,#e5b34f 46%,#a9682d 100%);color:#4b205b;box-shadow:0 3px 0 #704126,0 5px 9px #16051f77,inset 0 2px 3px #fff;cursor:pointer;font-family:inherit;transition:transform .15s,filter .15s}
+.map-shortcut span{font-size:20px;line-height:1.1;filter:drop-shadow(0 2px 2px #54264d55)}
+.map-shortcut small{font-size:8px;line-height:1.1;font-weight:900;color:#4b205b}
+.map-shortcut:active{transform:translateY(3px) scale(.96);filter:brightness(1.08)}
+.map-shortcut:focus-visible{outline:3px solid #fff3b5;outline-offset:2px}
+@media(max-width:390px){.map-shortcut{flex-basis:38px;min-width:38px;min-height:43px}.map-shortcut span{font-size:18px}.map-shortcut small{font-size:7px}}
