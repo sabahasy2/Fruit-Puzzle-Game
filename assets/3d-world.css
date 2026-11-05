@@ -126,3 +126,15 @@ body{background:radial-gradient(ellipse at 50% 5%,#8052a0 0,#3c1857 38%,#180827 
 .map-shortcut:active{transform:translateY(3px) scale(.96);filter:brightness(1.08)}
 .map-shortcut:focus-visible{outline:3px solid #fff3b5;outline-offset:2px}
 @media(max-width:390px){.map-shortcut{flex-basis:38px;min-width:38px;min-height:43px}.map-shortcut span{font-size:18px}.map-shortcut small{font-size:7px}}
+
+
+/* The in-game shortcut opens a clean map-only view; the full worlds hub stays unchanged */
+.map-screen.map-shortcut-mode .world-grid,
+.map-screen.map-shortcut-mode .world-banner,
+.map-screen.map-shortcut-mode .map-footer,
+.map-screen.map-shortcut-mode #mapDaily{display:none!important}
+.map-screen.map-shortcut-mode .section-head{justify-content:flex-start;margin-bottom:12px}
+.map-screen.map-shortcut-mode .section-head .eyebrow{display:none}
+.map-screen.map-shortcut-mode .section-head h2{font-size:20px}
+.map-screen.map-shortcut-mode .map-scroll{height:clamp(390px,67svh,720px);min-height:390px;margin-top:4px}
+.map-screen.map-shortcut-mode .level-path{min-height:3650px}
