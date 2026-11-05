@@ -18,4 +18,5 @@ jobs:
           node --check assets/game.js
           node --check assets/world-catalog.js
           node --check assets/account-sync.js
+          node --check assets/life-recovery.js
           node --input-type=module --check < 'functions/api/[[path]].js'
