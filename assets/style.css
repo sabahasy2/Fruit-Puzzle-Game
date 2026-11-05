@@ -323,3 +323,30 @@ body{
   .primary-btn:after{animation:none}
   .world-chip{transition:none}
 }
+
+
+/* Corrected map styling: target the actual rendered map and world selectors */
+#mapScreen{display:flex;flex-direction:column;gap:0;padding:12px 0 8px;min-height:calc(100svh - 165px)}
+#mapScreen .section-head{flex:0 0 auto;padding:4px 2px 9px}
+#worldGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:184px;overflow-y:auto;overscroll-behavior:contain;padding:5px 4px 10px;margin:4px 0 10px;border-radius:18px;background:linear-gradient(145deg,#ffffff0a,#17062222);border:1px solid #f8d47e44;box-shadow:inset 0 1px #ffffff12,0 7px 18px #10051b33}
+#worldGrid .world-chip{display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;min-height:66px;padding:8px 9px;gap:2px 8px;border:1px solid #f8d47e8a;border-radius:15px;color:#fff8e8;text-align:right;background:radial-gradient(circle at 18% 12%,#fff2bd30,transparent 38%),linear-gradient(145deg,#925cac 0%,#66327f 48%,#3b1453 100%);box-shadow:0 4px 0 #260d3a,0 8px 14px #10051b55,inset 0 1px #ffffff66}
+#worldGrid .world-chip>span{grid-row:1/3;display:grid;place-items:center;width:38px;height:38px;border:1px solid #ffe6a077;border-radius:12px;background:linear-gradient(145deg,#ffffff24,#ffffff08);font-size:27px;filter:drop-shadow(0 3px 4px #17051f99)}
+#worldGrid .world-chip b{min-width:0;color:#fff5d9;font-size:11px;font-weight:900;white-space:normal;line-height:1.25}
+#worldGrid .world-chip small{color:#f1dff5;font-size:9px;font-weight:700}
+#worldGrid .world-chip.active{border:1px solid #fff0b3;background:radial-gradient(circle at 18% 12%,#fff9d966,transparent 42%),linear-gradient(145deg,#bd8a55 0%,#89549d 48%,#51216b 100%);box-shadow:0 0 0 2px #ffe08a55,0 5px 0 #321044,0 0 22px #f7d47e55,inset 0 1px #fff}
+#worldGrid .world-chip:disabled{opacity:.72;filter:saturate(.65) brightness(.83)}
+#mapScreen .world-banner{flex:0 0 auto;min-height:106px;margin:0 0 11px;padding:15px 17px;border:1px solid #ffe7a0;border-radius:20px;background:radial-gradient(circle at 83% 48%,#ffe7a044 0 13%,transparent 14%),linear-gradient(115deg,#a979b6 0%,#704087 43%,#351044 100%);box-shadow:0 7px 0 #260d3a,0 12px 24px #10051b66,inset 0 1px #fff9,inset 0 -20px 30px #210b3444}
+#mapScreen .world-banner h3{color:#fff1c6;font-size:20px;text-shadow:0 2px 9px #16051f88}
+#mapScreen .world-banner p{color:#f3e4f5}
+#mapScreen .world-emblem{display:grid;place-items:center;width:72px;height:72px;border:1px solid #ffe7a0aa;border-radius:22px;background:linear-gradient(145deg,#ffffff35,#ffffff08);box-shadow:inset 0 2px 6px #fff7,0 8px 17px #16051f66;font-size:48px}
+#mapScreen .map-scroll{flex:1 1 auto;min-height:245px;height:auto;max-height:none;border:1px solid #ffe29a;border-radius:20px;background:radial-gradient(ellipse at 50% 0%,#a46cba 0%,transparent 55%),radial-gradient(ellipse at 50% 100%,#291039 0%,transparent 60%),linear-gradient(145deg,#63347e,#3b1654 65%,#2a0e40);box-shadow:inset 0 0 40px #180724bb,0 8px 20px #10051b55}
+#mapScreen .level-path{min-height:1900px;padding:22px 0 35px;background-image:radial-gradient(#ffe7a066 1px,transparent 1px),radial-gradient(#ffffff18 1px,transparent 1px);background-size:25px 25px,50px 50px}
+#mapScreen .level-path:before{width:10px;background:repeating-linear-gradient(to bottom,#fff0b7 0 15px,#d6a24f 15px 21px,#8b542e 21px 26px);box-shadow:0 0 12px #ffe39a,0 0 24px #e9b84b77}
+#mapScreen .level-dot{width:55px;height:55px;border:3px solid #fff4ce;background:radial-gradient(circle at 30% 20%,#fff9d9,#f7d47e 48%,#b87932 100%);box-shadow:0 5px 0 #8d542c,0 8px 14px #18072299,inset 0 3px 5px #fff}
+#mapScreen .level-dot.done{background:radial-gradient(circle at 30% 20%,#ffd5e6,#f46b9d 50%,#a82b68 100%);border-color:#ffe2ef}
+#mapScreen .level-dot.locked{opacity:.75;filter:grayscale(.6)}
+#mapScreen .level-dot.current{box-shadow:0 0 0 5px #ffe39a55,0 0 25px #ffdc81,0 5px 0 #8d542c}
+#mapScreen .map-footer{flex:0 0 auto;padding:12px 3px 3px;border-top:1px solid #f8d47e44;margin-top:7px;color:#fff0c9}
+#mapScreen .tiny-gold{border:1px solid #ffe6a0;background:linear-gradient(180deg,#fff0b9,#d99a3e);color:#421953;box-shadow:0 3px 0 #8d542c,inset 0 1px #fff}
+@media(max-height:760px){#worldGrid{max-height:146px}#mapScreen .world-banner{min-height:88px;padding:10px 14px}#mapScreen .world-emblem{width:60px;height:60px;font-size:40px}#mapScreen .map-scroll{min-height:210px}}
+@media(max-width:390px){#worldGrid{gap:7px;padding:4px}#worldGrid .world-chip{min-height:62px;padding:7px}#worldGrid .world-chip>span{width:34px;height:34px;font-size:24px}#worldGrid .world-chip b{font-size:10px}}
