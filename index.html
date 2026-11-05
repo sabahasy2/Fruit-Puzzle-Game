@@ -3717,9 +3717,10 @@ button{border:2px solid white!important;border-radius:18px!important;background:
 
         ensurePlayableBoard();
         busy = false;
+        const ar=localStorage.getItem("fruit-pop-language")!=="en";
         const feedback = chain > 1
-          ? "👑 ROYAL COMBO x" + (chain >= 4 ? 5 : chain) + "! You earned " + bonusPoints + " bonus points!"
-          : "✨ Nice match! Keep the royal adventure going.";
+          ? (ar?"👑 سلسلة ملكية ×"+(chain>=4?5:chain)+"! ربحت "+bonusPoints+" نقطة إضافية!":"👑 ROYAL COMBO x"+(chain>=4?5:chain)+"! You earned "+bonusPoints+" bonus points!")
+          : (ar?"✨ تطابق رائع! واصل مغامرتك الملكية.":"✨ Nice match! Keep the royal adventure going.");
         checkGame(feedback);
       }
 
@@ -3745,13 +3746,13 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       function prepareNextLevel() {
         const overlay = document.getElementById("levelCelebration");
         document.getElementById("levelCelebrationCrown").textContent = "🚀";
-        document.getElementById("levelCelebrationKicker").textContent = "YOUR NEXT ADVENTURE";
-        document.getElementById("levelCelebrationTitle").textContent = "LEVEL " + level;
-        document.getElementById("levelCelebrationSubtitle").textContent = "A brand-new challenge is waiting for you!";
+        document.getElementById("levelCelebrationKicker").textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "مغامرتك القادمة" : "YOUR NEXT ADVENTURE";
+        document.getElementById("levelCelebrationTitle").textContent = (localStorage.getItem("fruit-pop-language") !== "en" ? "المرحلة " : "LEVEL ") + level;
+        document.getElementById("levelCelebrationSubtitle").textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "تحدٍ جديد بانتظارك!" : "A brand-new challenge is waiting for you!";
         document.getElementById("levelCelebrationStars").innerHTML = '<span class="earned">✨</span><span class="earned">🍓</span><span class="earned">✨</span>';
         document.getElementById("levelCelebrationStats").style.display = "none";
-        document.getElementById("levelTransitionButton").textContent = "Let's play! 🍬";
-        document.getElementById("levelCelebrationKicker").textContent = "GET READY";
+        document.getElementById("levelTransitionButton").textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "هيا نلعب! 🍬" : "Let's play! 🍬";
+        document.getElementById("levelCelebrationKicker").textContent = localStorage.getItem("fruit-pop-language") !== "en" ? "استعد!" : "GET READY";
         makeBoard();
         render();
         playSound("levelstart");
@@ -4085,7 +4086,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     let displayedWorld=-1, transitionTimer=null;
     function showKingdomReveal(w){
       const layer=$("worldTransition");
-      $("transitionWorldTitle").textContent=w.emoji+" "+w.name;
+      $("transitionWorldTitle").textContent=w.emoji+" "+(localStorage.getItem("fruit-pop-language")==="en"?w.name:w.ar);
       layer.classList.remove("hide");
       clearTimeout(transitionTimer);
       transitionTimer=setTimeout(()=>layer.classList.add("hide"),1900);
@@ -4210,7 +4211,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       $("levelTransitionButton").textContent=lang==="ar"?"انتقل إلى المرحلة التالية ✨":"Continue to next level ✨";
       $("guestBtn").textContent=lang==="ar"?"اللعب كزائر":"Play as guest";
       $("logoutBtn").textContent=lang==="ar"?"🚪 تسجيل الخروج":"🚪 Sign out";
-      $("logoutBtn").hidden=false;
+      $("logoutBtn").hidden=!player;
       $("mapProgress").setAttribute("aria-label",t.level);
     }
     languageSelect.addEventListener("change",()=>applyLanguage(languageSelect.value));
@@ -4221,7 +4222,7 @@ button{border:2px solid white!important;border-radius:18px!important;background:
       if(!r.ok) throw new Error(data.error||"Something went wrong.");
       return data;
     }
-    function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=false; }
+    function accountLabel(){ const ar=localStorage.getItem("fruit-pop-language")!=="en"; $("accountBtn").textContent=player ? "👤 "+(player.display_name||player.email) : (ar?"👤 زائر · تسجيل الدخول":"👤 Guest · Sign in"); $("logoutBtn").hidden=!player; }
     let mapWorldIndex=0, mapWorldChosen=false;
     function drawLevels(){
       const current=guestProgress().level, allComplete=guestProgress().stars>=1200, ar=localStorage.getItem("fruit-pop-language")!=="en", grid=$("levelsGrid"), tabs=$("mapWorldTabs");
@@ -4373,7 +4374,8 @@ button{border:2px solid white!important;border-radius:18px!important;background:
     function renderWorldMapFallback(){
       const grid=$("levelsGrid"),tabs=$("mapWorldTabs"),current=guestProgress().level;
       if(!grid||!tabs||!worlds.length)return;
-      mapWorldIndex=Math.max(0,worlds.findIndex(w=>current>=w.start&&current<=w.end));
+      const currentWorldIndex=Math.max(0,worlds.findIndex(world=>current>=world.start&&current<=world.end));
+      if(!mapWorldChosen||mapWorldIndex>currentWorldIndex)mapWorldIndex=currentWorldIndex;
       const ar=true,w=worlds[mapWorldIndex]||worlds[0];
       tabs.innerHTML="";
       worlds.forEach((world,index)=>{
