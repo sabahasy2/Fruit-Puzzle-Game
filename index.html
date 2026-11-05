@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#32104f"><meta name="description" content="مغامرة فواكه وحلوى ملكية — طابق، انفجر، واكتشف عوالم جديدة.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css">
+<title>Fruit Pop Adam — مغامرة الفواكه</title>
+</head>
+<body>
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+<div id="app" class="app-shell">
+<header class="topbar">
+ <button class="brand" id="brandHome" aria-label="الرئيسية"><span class="brand-mark">✦</span><span><b>FRUIT POP</b><small>ADAM'S KINGDOM</small></span></button>
+ <div class="top-stats"><div class="stat-pill"><span>❤️</span><b id="lives">5</b><small id="lifeTimer">كاملة</small></div><div class="stat-pill"><span>🪙</span><b id="coins">250</b></div><button class="avatar-btn" id="accountBtn" aria-label="الحساب">👑</button></div>
+</header>
+<main id="mainView">
+<section id="homeScreen" class="screen home-screen">
+ <div class="hero-copy"><div class="eyebrow">مملكة الحلوى والفواكه</div><h1>رحلتك إلى <em>مملكة السُكّر</em></h1><p>طابق الفواكه، أطلق الانفجارات، واجمع النجوم في عوالم ساحرة.</p></div>
+ <div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-candy candy-big">🍓</div><div class="hero-candy candy-left">🍊</div><div class="hero-candy candy-right">🍇</div><div class="hero-candy candy-bottom">🍬</div><div class="sparkle s1">✦</div><div class="sparkle s2">✧</div><div class="sparkle s3">✦</div></div>
+ <div class="home-actions"><button class="primary-btn" id="playBtn"><span>ابدأ المغامرة</span><b>←</b></button><button class="secondary-btn" id="dailyBtn">🎁 المكافأة اليومية</button></div>
+ <div class="home-bottom"><div><strong id="homeLevel">1</strong><span>المستوى الحالي</span></div><div><strong id="homeStars">0</strong><span>النجوم</span></div><div><strong>24</strong><span>عالماً سحرياً</span></div></div>
+</section>
+<section id="mapScreen" class="screen map-screen hidden">
+ <div class="section-head"><button class="round-btn" id="mapBack">⌂</button><div><div class="eyebrow">طريق الأبطال</div><h2>خريطة المملكة</h2></div><button class="round-btn" id="mapDaily">🎁</button></div>
+ <div class="world-banner"><div><small id="worldKicker">العالم الأول</small><h3 id="worldName">حدائق الفراولة</h3><p id="worldDesc">ابدأ رحلتك بين الثمار اللامعة</p></div><div class="world-emblem" id="worldEmblem">🍓</div></div>
+ <div class="map-scroll"><div id="levelPath" class="level-path"></div></div>
+ <div class="map-footer"><span>⭐ <b id="mapStars">0</b> نجمة</span><span>العالم <b id="worldIndex">1</b> / 24</span><button id="nextWorld" class="tiny-gold">العالم التالي ⟵</button></div>
+</section>
+<section id="gameScreen" class="screen game-screen hidden">
+ <div class="game-head"><button class="round-btn" id="gameExit">✕</button><div class="level-title"><small id="levelWorld">حدائق الفراولة</small><b id="levelLabel">المرحلة 1</b></div><button class="round-btn" id="gamePause">Ⅱ</button></div>
+ <div class="mission-card"><div class="mission-main"><span class="mission-icon" id="targetFruit">🍓</span><div><small>اجمع الثمار</small><b id="targetCount">0 / 18</b></div></div><div class="moves-box"><small>الحركات</small><b id="moves">25</b></div><div class="score-box"><small>النقاط</small><b id="score">0</b></div></div>
+ <div class="board-wrap"><div id="gameBoard" class="game-board" role="grid" aria-label="لوحة مطابقة الفواكه"></div><div class="board-shine"></div></div>
+ <div class="booster-row"><button class="booster" data-booster="hammer"><span>🔨</span><small>مطرقة</small><b>3</b></button><button class="booster" data-booster="shuffle"><span>🔀</span><small>خلط</small><b>2</b></button><button class="booster" data-booster="rainbow"><span>🌈</span><small>قوس قزح</small><b>1</b></button></div>
+ <div class="game-hint" id="gameHint">اسحب فاكهة نحو فاكهة مجاورة لتكوين تطابق من ثلاثة أو أكثر</div>
+</section>
+</main>
+<nav class="bottom-nav"><button class="nav-item active" data-nav="home"><span>🏰</span><small>الرئيسية</small></button><button class="nav-item" data-nav="map"><span>🗺️</span><small>المراحل</small></button><button class="nav-item" id="navRewards"><span>🎁</span><small>المكافآت</small></button><button class="nav-item" id="navSettings"><span>⚙️</span><small>الإعدادات</small></button></nav>
+</div>
+<div id="modalLayer" class="modal-layer hidden" role="dialog" aria-modal="true"><div class="modal-card"><button class="modal-close" id="modalClose">×</button><div id="modalContent"></div></div></div>
+<div id="toast" class="toast"></div>
+<script src="./assets/game.js" defer></script>
+</body></html>
