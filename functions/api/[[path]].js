@@ -41,8 +41,36 @@ async function saveProgress(db, playerId, p) {
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
   const url = new URL(request.url), path = url.pathname.replace(/\/$/, "");
-  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": url.origin, "Access-Control-Allow-Credentials": "true" } });
+  const requestOrigin = request.headers.get("Origin") || "";
+  const allowedStoreOrigin = requestOrigin === "https://adam-al-noor-books.pages.dev" || /^https:\/\/[a-z0-9-]+\.adam-al-noor-books\.pages\.dev$/.test(requestOrigin);
+  const storeCors = allowedStoreOrigin ? { "Access-Control-Allow-Origin": requestOrigin, "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Vary": "Origin" } : {};
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...storeCors } });
   try {
+    if (path === "/api/analytics/view" && request.method === "POST") {
+      await env.DB.prepare("UPDATE game_analytics SET page_views=page_views+1 WHERE id=1").run();
+      return json({ ok: true });
+    }
+    if (path === "/api/analytics/guest" && request.method === "POST") {
+      const body = await request.json(), guestId = String(body.guestId || "");
+      if (!/^[a-zA-Z0-9-]{8,100}$/.test(guestId)) return json({ error: "Invalid guest identity." }, 400);
+      await env.DB.prepare("INSERT OR IGNORE INTO game_analytics_guests(guest_id,first_seen_at) VALUES(?,?)")
+        .bind(guestId, Math.floor(Date.now()/1000)).run();
+      return json({ ok: true });
+    }
+    if (path === "/api/admin/analytics" && request.method === "GET") {
+      if (!allowedStoreOrigin) return json({ error: "Origin not allowed." }, 403);
+      const accessToken = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
+      if (!accessToken) return json({ error: "Manager authentication required." }, 401, storeCors);
+      const authResponse = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/auth/v1/user", {
+        headers: { "apikey": "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3", "Authorization": "Bearer " + accessToken }
+      });
+      if (!authResponse.ok) return json({ error: "Manager session is invalid or expired." }, 401, storeCors);
+      const authUser = await authResponse.json();
+      if (String(authUser.email || "").trim().toLowerCase() !== "dmaralhb309@gmail.com")
+        return json({ error: "غير مصرح لك بعرض هذه الإحصائيات." }, 403, storeCors);
+      const stats = await env.DB.prepare("SELECT page_views AS pageViews, (SELECT COUNT(*) FROM game_analytics_guests) AS guestPlayers, (SELECT COUNT(*) FROM players) AS registeredPlayers FROM game_analytics WHERE id=1").first();
+      return json({ pageViews: stats?.pageViews || 0, guestPlayers: stats?.guestPlayers || 0, registeredPlayers: stats?.registeredPlayers || 0 }, 200, storeCors);
+    }
     if (path === "/api/register" && request.method === "POST") {
       const body = await request.json(), email = String(body.email || "").trim().toLowerCase(), password = String(body.password || "");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 128)
