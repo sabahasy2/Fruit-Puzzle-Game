@@ -192,3 +192,96 @@ body{background-attachment:scroll}
 @media(prefers-reduced-motion:reduce){
  .map-screen *,.game-screen *{transition:none!important;animation:none!important}
 }
+
+
+/* Flat enchanted orchard map: a winding garden trail with softly glowing scenery */
+.map-screen .map-scroll{
+ background:
+  radial-gradient(ellipse at 14% 10%,#b9ef8c55 0 7%,transparent 18%),
+  radial-gradient(ellipse at 88% 18%,#f5d97844 0 6%,transparent 17%),
+  radial-gradient(ellipse at 9% 39%,#9ce7a055 0 8%,transparent 19%),
+  radial-gradient(ellipse at 92% 58%,#b8ed8c44 0 8%,transparent 19%),
+  radial-gradient(ellipse at 15% 83%,#f6d78344 0 7%,transparent 18%),
+  radial-gradient(ellipse at 84% 94%,#9be3a055 0 8%,transparent 19%),
+  linear-gradient(180deg,#285d54 0%,#39775b 32%,#28624f 68%,#204d4b 100%)!important;
+ border-color:#f7df9b!important;
+ box-shadow:inset 0 0 0 3px #ffffff12,inset 0 0 28px #102f3455,0 5px 12px #10051d66!important;
+}
+.map-screen .map-scroll:before{
+ background:
+  radial-gradient(ellipse at 8% 7%,#d8f7a8 0 2%,#7fc77b 2.5% 5%,#3c895e 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 91% 12%,#f2f5b4 0 2%,#82c77a 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 7% 29%,#e2f6ae 0 2%,#80c879 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 94% 39%,#dff4a8 0 2%,#72bd76 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 9% 61%,#f4f2ad 0 2%,#8acb78 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 91% 72%,#e4f7b4 0 2%,#7bc47a 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 13% 92%,#dff4a9 0 2%,#77bf75 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 86% 96%,#f2f2b1 0 2%,#7bc27a 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 50% 50%,#ffffff1c,transparent 65%)!important;
+}
+.map-screen .map-scroll:after{
+ background:
+  radial-gradient(circle at 18% 17%,#fff9 0 1px,transparent 2px),
+  radial-gradient(circle at 79% 25%,#fff9 0 1.5px,transparent 3px),
+  radial-gradient(circle at 25% 53%,#fff8 0 1px,transparent 2px),
+  radial-gradient(circle at 83% 79%,#fff9 0 1px,transparent 2px),
+  radial-gradient(circle at 52% 91%,#fff8 0 1px,transparent 2px)!important;
+ background-size:73px 91px,101px 117px,89px 107px,113px 97px,100% 100%!important;
+ opacity:.7;
+}
+.map-screen .level-path{
+ min-height:3650px!important;
+ padding:0 0 45px!important;
+ background:
+  radial-gradient(ellipse at 50% 50%,#eaffbd12,transparent 58%),
+  radial-gradient(circle,#fff4 1px,transparent 1.8px) 0 0/43px 47px!important;
+}
+.map-screen .level-path:before{
+ top:0!important;bottom:0!important;left:0!important;width:100%!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 576' preserveAspectRatio='none'%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%234b7545' stroke-width='34' stroke-linecap='round'/%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%23865a35' stroke-width='25' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+ background-repeat:repeat-y!important;background-size:100% 576px!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+.map-screen .level-path:after{
+ top:0!important;bottom:0!important;left:0!important;width:100%!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 576' preserveAspectRatio='none'%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%23ffe8a0' stroke-width='2.2' stroke-linecap='round' stroke-dasharray='5 8' opacity='.95'/%3E%3C/svg%3E")!important;
+ background-repeat:repeat-y!important;background-size:100% 576px!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+.map-screen .level-node{
+ height:72px!important;padding:0!important;display:block!important;
+ position:relative;filter:none!important;
+}
+.map-screen .level-dot{
+ position:absolute;top:6px!important;left:calc(var(--trail-x, 50%) - 29.5px)!important;
+ width:59px!important;height:59px!important;
+ border:3px solid #fff2c5!important;
+ background:radial-gradient(circle at 28% 17%,#fff 0 5%,#fff8 6% 12%,transparent 30%),linear-gradient(145deg,#fff2b8 0%,#f5c95c 34%,#c27a32 72%,#754124 100%)!important;
+ box-shadow:0 3px 0 #754526,inset 0 2px 3px #fff!important;
+ filter:none!important;opacity:1!important;
+}
+.map-screen .level-node:nth-child(8n+1) .level-dot{--trail-x:50%}
+.map-screen .level-node:nth-child(8n+2) .level-dot{--trail-x:30%}
+.map-screen .level-node:nth-child(8n+3) .level-dot{--trail-x:18%}
+.map-screen .level-node:nth-child(8n+4) .level-dot{--trail-x:30%}
+.map-screen .level-node:nth-child(8n+5) .level-dot{--trail-x:55%}
+.map-screen .level-node:nth-child(8n+6) .level-dot{--trail-x:75%}
+.map-screen .level-node:nth-child(8n+7) .level-dot{--trail-x:82%}
+.map-screen .level-node:nth-child(8n) .level-dot{--trail-x:68%}
+.map-screen .level-dot.done{
+ background:radial-gradient(circle at 28% 17%,#fff 0 5%,#fff8 6% 12%,transparent 30%),linear-gradient(145deg,#ffc5e0,#ed579e 48%,#a92d6d)!important;
+ box-shadow:0 3px 0 #72224d,inset 0 2px 3px #fff!important;
+}
+.map-screen .level-dot.current{
+ box-shadow:0 0 0 5px #fff3b477,0 0 17px #fff0a8,0 3px 0 #754526,inset 0 2px 3px #fff!important;
+ animation:pulse 1.8s ease-in-out infinite;
+}
+.map-screen .level-dot.locked{
+ background:linear-gradient(145deg,#c6d8c8,#728f84 55%,#405d59)!important;
+ box-shadow:0 3px 0 #304b47,inset 0 2px 3px #fff7!important;
+ opacity:.88!important;
+}
+.map-screen .map-footer{transform:none!important}
+@media(max-width:390px){
+ .map-screen .level-dot{width:54px!important;height:54px!important;left:calc(var(--trail-x,50%) - 27px)!important}
+}
