@@ -138,3 +138,57 @@ body{background:radial-gradient(ellipse at 50% 5%,#8052a0 0,#3c1857 38%,#180827 
 .map-screen.map-shortcut-mode .section-head h2{font-size:20px}
 .map-screen.map-shortcut-mode .map-scroll{height:clamp(390px,67svh,720px);min-height:390px;margin-top:4px}
 .map-screen.map-shortcut-mode .level-path{min-height:3650px}
+
+
+/* PERFORMANCE RESET: keep the royal finish, remove tilted 3D planes */
+body{background-attachment:scroll}
+.map-screen,.game-screen{perspective:none!important;perspective-origin:center;transform-style:flat!important}
+.map-screen *,
+.game-screen *{transform-style:flat!important}
+.map-screen .world-grid,
+.map-screen .world-chip,
+.map-screen .world-chip.active,
+.map-screen .world-banner,
+.map-screen .world-emblem,
+.map-screen .map-scroll,
+.map-screen .level-path,
+.map-screen .level-path:before,
+.map-screen .level-path:after,
+.map-screen .level-node,
+.map-screen .level-dot,
+.map-screen .level-dot.current,
+.map-screen .map-footer,
+.game-screen .game-head,
+.game-screen .mission-card,
+.game-screen .board-wrap,
+.game-screen .board-wrap:before,
+.game-screen .game-board,
+.game-screen .fruit-cell,
+.game-screen .fruit-cell svg,
+.game-screen .fruit-cell.selected,
+.game-screen .booster-row,
+.game-screen .game-hint{transform:none!important}
+.map-screen .world-grid{box-shadow:0 7px 14px #10051c55,inset 0 1px 0 #fff5}
+.map-screen .world-chip{box-shadow:0 3px 0 #28103f,inset 0 1px 3px #fff6;transition:filter .15s}
+.map-screen .world-chip span{filter:none}
+.map-screen .world-banner{box-shadow:0 5px 12px #10051d66,inset 0 1px 3px #fff6}
+.map-screen .world-emblem{filter:none;box-shadow:0 3px 7px #14051f66,inset 0 2px 3px #fff}
+.map-screen .map-scroll{box-shadow:0 5px 12px #10051d66,inset 0 0 20px #164a4b55;scrollbar-width:thin}
+.map-screen .level-path:before{box-shadow:0 3px 6px #183d3d55,inset 0 1px 2px #fff7}
+.map-screen .level-path:after{box-shadow:none}
+.map-screen .level-node{filter:none}
+.map-screen .level-dot{box-shadow:0 3px 0 #754526,inset 0 2px 3px #fff}
+.map-screen .level-dot.done{box-shadow:0 3px 0 #72224d,inset 0 2px 3px #fff}
+.map-screen .level-dot.current{box-shadow:0 0 0 4px #fff3b477,0 3px 0 #754526,inset 0 2px 3px #fff}
+.map-screen .level-dot.locked{box-shadow:0 3px 0 #304b47,inset 0 2px 3px #fff7}
+.game-screen .mission-card{box-shadow:0 4px 0 #210b34,0 7px 12px #10051e66,inset 0 1px 3px #fff6}
+.game-screen .board-wrap{box-shadow:0 5px 0 #59301e,0 9px 15px #10051e77,inset 0 2px 3px #fff}
+.game-screen .game-board{box-shadow:inset 0 3px 9px #16051f88,0 1px 0 #fff3}
+.game-screen .fruit-cell{box-shadow:0 2px 0 #1b0a2c,inset 0 1px 2px #fff7;transition:filter .1s,box-shadow .1s}
+.game-screen .fruit-cell svg{filter:drop-shadow(0 2px 1px #16051f66)}
+.game-screen .fruit-cell:after{filter:none;box-shadow:none}
+.game-screen .fruit-cell.selected{box-shadow:0 0 0 3px #fff1a2,0 0 9px #ffe99c,0 2px 0 #754323}
+.game-screen .booster{box-shadow:0 3px 0 #1b092b,0 5px 9px #10051e66,inset 0 1px 3px #fff6}
+@media(prefers-reduced-motion:reduce){
+ .map-screen *,.game-screen *{transition:none!important;animation:none!important}
+}
