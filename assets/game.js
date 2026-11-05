@@ -14,7 +14,7 @@ function recordGlobalScore(delta){const points=Math.max(0,Math.floor(Number(delt
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2100)}
 function dateKey(){return new Date().toLocaleDateString("en-CA")}
 function worldFor(n){return Math.min(23,Math.floor((n-1)/50))}
-function fruitGroupForLevel(n){return Math.min(FRUIT_SETS.length-1,Math.floor(((n-1)%50)/10))}function fruitsForLevel(n){return FRUIT_SETS.slice(0,fruitGroupForLevel(n)+1).flat()}
+function fruitGroupForLevel(n){return Math.floor((n-1)/10)%FRUIT_SETS.length}function fruitsForLevel(n){const unlockedGroups=Math.min(FRUIT_SETS.length,Math.floor((n-1)/10)+1);return FRUIT_SETS.slice(0,unlockedGroups).flat()}
 function worldData(n){let w=worldFor(n),d=WORLDS[w],group=fruitGroupForLevel(n),fruits=fruitsForLevel(n),newFruits=FRUIT_SETS[group];return {name:d[0],fruit:newFruits[w%newFruits.length],fruits,fruitSet:group+1,emblem:d[1],desc:d[2],number:w+1}}
 function showScreen(name){["home","map","game"].forEach(x=>$ (x+"Screen").classList.toggle("hidden",x!==name));currentTab=name;document.querySelectorAll(".nav-item[data-nav]").forEach(b=>b.classList.toggle("active",b.dataset.nav===name));}
 function updateAccountUI(player=currentPlayer){currentPlayer=player||null;const label=$("accountStatus");if(label)label.textContent=currentPlayer?.email||"زائر";$("accountBtn").textContent=currentPlayer?"👤":"👑";$("accountBtn").title=currentPlayer?.email||"الدخول كزائر أو تسجيل الدخول";}
