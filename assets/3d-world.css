@@ -1,0 +1,287 @@
+/* Fruit Pop Adam — immersive 3D world + tactile 3D gameplay */
+:root{--royal-3d:#28103f;--gold-3d:#ffd879;--gold-edge:#a96828;--mint-3d:#79d9ae}
+body{background:radial-gradient(ellipse at 50% 5%,#8052a0 0,#3c1857 38%,#180827 100%);background-attachment:fixed}
+.app-shell{isolation:isolate}
+.topbar{background:linear-gradient(180deg,#2b103fc9,#2b103f55);border-bottom-color:#ffe4a344;backdrop-filter:blur(12px)}
+/* A miniature fantasy kingdom built from layered perspective planes */
+.map-screen{position:relative;perspective:1100px;perspective-origin:50% 38%;padding-bottom:8px}
+.map-screen:before{content:"";position:absolute;z-index:-1;inset:88px -15px 34px;border-radius:32px;background:
+ radial-gradient(ellipse at 50% 42%,#a7d58a 0 8%,transparent 8.5%),
+ radial-gradient(ellipse at 18% 26%,#65b97e 0 12%,transparent 12.5%),
+ radial-gradient(ellipse at 82% 24%,#7cc98c 0 13%,transparent 13.5%),
+ radial-gradient(ellipse at 20% 78%,#6ab47a 0 15%,transparent 15.5%),
+ radial-gradient(ellipse at 82% 75%,#78c68b 0 16%,transparent 16.5%),
+ linear-gradient(155deg,#a4d98d 0%,#5aa879 26%,#337a66 52%,#28635d 76%,#1c3e4d 100%);
+ box-shadow:inset 0 0 65px #11253e99,0 16px 35px #10051d88;opacity:.94}
+.map-screen:after{content:"";position:absolute;z-index:-1;pointer-events:none;inset:105px -5px 75px;border-radius:28px;background:
+ radial-gradient(ellipse at 10% 16%,#fff8 0 1px,transparent 2px),
+ radial-gradient(ellipse at 80% 13%,#fff8 0 2px,transparent 3px),
+ radial-gradient(ellipse at 55% 70%,#fff7 0 1px,transparent 2px),
+ linear-gradient(120deg,transparent 35%,#d7f8c522 50%,transparent 67%);background-size:70px 80px,110px 120px,90px 100px,100% 100%}
+.map-screen .section-head{position:relative;z-index:4}
+.map-screen .section-head h2{color:#fff1c8;text-shadow:0 3px 0 #54276a,0 6px 12px #170723}
+.map-screen .round-btn{background:linear-gradient(145deg,#ffe9a8,#bd7c2f 48%,#5b2c66);border:2px solid #fff0bc;box-shadow:0 5px 0 #6e3c2c,0 9px 16px #14051f99,inset 0 2px 3px #fff}
+.world-grid{position:relative;z-index:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0 14px;padding:11px;border:1px solid #ffe6a877;border-radius:22px;background:linear-gradient(145deg,#321044e8,#6c3887e8 55%,#28103fe8);box-shadow:0 9px 0 #1b0a2b,0 15px 26px #10051c88,inset 0 1px 0 #fff7;transform:translateZ(25px)}
+.world-chip{min-width:0;min-height:90px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;border:1px solid #fff5c8aa;border-radius:17px;color:#fff4d4;font-family:inherit;background:linear-gradient(150deg,#a96ac2 0%,#71358d 42%,#3a1756 100%);box-shadow:0 5px 0 #28103f,0 8px 12px #12051e88,inset 0 2px 4px #fff8,inset 0 -8px 12px #210a3788;transform:translateY(0) rotateX(3deg);transition:transform .2s,filter .2s;overflow:hidden}
+.world-chip:before{content:"";position:absolute;inset:2px 5px auto;height:35%;border-radius:14px;background:linear-gradient(#fff5,transparent);pointer-events:none}
+.world-chip:after{content:"";position:absolute;width:70%;height:8px;bottom:5px;border-radius:50%;background:#12051e66;filter:blur(5px)}
+.world-chip span{font-size:29px;line-height:1.1;filter:drop-shadow(0 4px 3px #1b082b99);z-index:1}
+.world-chip b{font-size:10px;line-height:1.2;text-align:center;z-index:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.world-chip small{font-size:8px;color:#ffe6a4;z-index:1}
+.world-chip.unlocked{border-color:#ffe6a0}
+.world-chip.active{background:linear-gradient(150deg,#fff0b5 0%,#eab958 38%,#9b572b 100%);color:#4b205b;box-shadow:0 5px 0 #74421f,0 0 0 2px #fff2be,0 0 20px #ffdf83aa,inset 0 2px 5px #fff}
+.world-chip.active small{color:#5b2b45}
+.world-chip.locked{filter:saturate(.5) brightness(.7)}
+.world-chip:active{transform:translateY(4px) scale(.98)}
+.world-banner{position:relative;z-index:2;margin:0 0 12px;padding:13px 16px;border:2px solid #ffe9a1;border-radius:22px;background:linear-gradient(125deg,#f9d98c 0%,#b87839 16%,#6a347f 17%,#3b1658 72%,#251039 100%);box-shadow:0 7px 0 #241039,0 14px 24px #10051d99,inset 0 2px 4px #fff9;transform:translateZ(20px)}
+.world-banner:before{content:"";position:absolute;inset:4px;border:1px solid #ffe5a355;border-radius:16px;pointer-events:none}
+.world-banner h3{color:#fff0c2;text-shadow:0 2px 0 #4b205c,0 4px 10px #16051f}
+.world-banner p{color:#f0d9ef}
+.world-emblem{width:67px;height:67px;display:grid;place-items:center;border-radius:22px;font-size:48px;background:radial-gradient(circle at 30% 20%,#fff8,#fff0 55%),linear-gradient(145deg,#ffe9a4,#b86c31);border:2px solid #fff0b8;box-shadow:0 5px 0 #754323,0 9px 15px #14051f99,inset 0 3px 5px #fff}
+.map-scroll{height:clamp(310px,48svh,540px);max-height:none;min-height:310px;overflow:auto;overscroll-behavior:contain;border:2px solid #ffe7a0;border-radius:26px;background:
+ radial-gradient(ellipse at 50% 10%,#d1efa0 0,#8bca87 22%,transparent 47%),
+ radial-gradient(ellipse at 20% 80%,#5bb58a 0,#3d947a 32%,transparent 60%),
+ radial-gradient(ellipse at 90% 62%,#72bd80 0,#398d75 34%,transparent 60%),
+ linear-gradient(160deg,#9bd18c,#4b9d79 45%,#235d65 100%);
+ box-shadow:0 8px 0 #70442e,0 16px 26px #10051d99,inset 0 0 32px #164a4b88;transform:translateZ(10px);scrollbar-width:thin;scrollbar-color:#f7d783 #285c59}
+.map-scroll:before{content:"";position:sticky;z-index:2;display:block;top:0;height:100%;margin-bottom:-100%;pointer-events:none;background:radial-gradient(ellipse at 50% 0,#fff8,transparent 36%),linear-gradient(90deg,#fff1,transparent 12% 88%,#102c3855)}
+.level-path{min-height:3650px;padding:28px 0 45px;background-image:radial-gradient(#fff9 1px,transparent 1.8px),radial-gradient(#f8df9b66 1px,transparent 2px);background-size:37px 43px,71px 79px;background-position:4px 8px,20px 28px}
+.level-path:before{left:50%;width:18px;transform:translateX(-50%);border:3px solid #fff0ad;background:repeating-linear-gradient(to bottom,#ffe7a0 0 14px,#d3943c 14px 22px,#9b572f 22px 27px);box-shadow:0 0 0 4px #75442f88,0 0 18px #fff0a5, inset 0 0 4px #fff}
+.level-path:after{content:"";position:absolute;left:calc(50% - 44px);top:0;width:88px;height:100%;pointer-events:none;background:radial-gradient(ellipse at center,transparent 25%,#174a4a11 75%,#143d4a44 100%)}
+.level-node{height:71px;padding:0 12%;filter:drop-shadow(0 5px 4px #123c3c77)}
+.level-node:nth-child(4n+1){padding-left:13%}
+.level-node:nth-child(4n+2){padding-right:13%}
+.level-node:nth-child(4n+3){padding-right:22%}
+.level-node:nth-child(4n){padding-left:22%}
+.level-dot{position:relative;width:57px;height:57px;border:3px solid #fff3bf;background:radial-gradient(circle at 30% 20%,#fffbd9 0 9%,transparent 31%),linear-gradient(145deg,#fff0b4 0%,#eab94f 40%,#a85e2b 100%);color:#53244f;font-size:17px;box-shadow:0 5px 0 #704126,0 9px 13px #173b3e99,inset 0 3px 5px #fff;transform:translateY(-1px)}
+.level-dot:after{content:"";position:absolute;inset:5px;border:1px solid #fff8;border-radius:50%;pointer-events:none}
+.level-dot.done{background:radial-gradient(circle at 30% 20%,#fff 0 8%,transparent 30%),linear-gradient(145deg,#ffb9d8,#ec5797 48%,#a72b68);border-color:#ffe6f0;color:white;box-shadow:0 5px 0 #75234d,0 9px 14px #173b3e99,inset 0 3px 5px #fff}
+.level-dot.current{transform:scale(1.17) translateY(-2px);box-shadow:0 0 0 5px #fff4c966,0 0 0 9px #e9b65366,0 0 25px #fff2a8,0 6px 0 #754323,inset 0 3px 5px #fff}
+.level-dot.locked{background:linear-gradient(145deg,#c6d0c0,#788d83 48%,#425d5a);border-color:#d7e4d2;color:#edf5e7;box-shadow:0 5px 0 #304a49,0 8px 12px #143b3d88,inset 0 2px 4px #fff8}
+.map-footer{color:#fff0c4;text-shadow:0 2px 5px #16051f}
+.map-footer .tiny-gold{background:linear-gradient(180deg,#ffe9a6,#c98a38);color:#51234e;border:1px solid #fff0b7;box-shadow:0 3px 0 #754323}
+/* 3D jewel-like match board */
+.game-screen{perspective:1000px}
+.game-head{transform:translateZ(18px)}
+.level-title b{text-shadow:0 2px 0 #3a1752,0 4px 10px #14051f}
+.mission-card{position:relative;border:2px solid #fbe3a0;background:linear-gradient(145deg,#8c51a9 0%,#552574 42%,#321044 100%);box-shadow:0 6px 0 #210b34,0 12px 20px #11051b99,inset 0 2px 5px #fff7;transform:translateZ(20px)}
+.mission-card:after{content:"";position:absolute;inset:3px;border:1px solid #ffe5a344;border-radius:14px;pointer-events:none}
+.board-wrap{padding:10px;border:2px solid #fff0b4;border-radius:23px;background:linear-gradient(145deg,#fff0b5 0%,#d49a43 19%,#794128 43%,#f5d17b 66%,#8d552b 100%);box-shadow:0 8px 0 #59301e,0 18px 28px #10051eaa,inset 0 3px 4px #fff;transform:rotateX(3deg) translateZ(18px);transform-style:preserve-3d}
+.board-wrap:before{content:"";position:absolute;inset:4px;border:1px solid #fff8;border-radius:17px;pointer-events:none;z-index:2}
+.game-board{gap:5px;padding:7px;border:1px solid #fbe6a4;border-radius:15px;background:linear-gradient(145deg,#6b3985,#35134d 70%,#240c38);box-shadow:inset 0 5px 15px #16051f99,0 2px 0 #fff4;transform:translateZ(5px)}
+.fruit-cell{overflow:visible;border:1px solid #fff9;border-radius:11px;background:linear-gradient(145deg,#ffffff55 0%,#ffffff0c 35%,#16051e77 100%);box-shadow:0 4px 0 #1b0a2c,0 6px 8px #12051e88,inset 0 2px 4px #fff9,inset 0 -5px 8px #17052188;transform:translateY(-1px) translateZ(2px);transition:transform .12s,filter .12s,box-shadow .12s}
+.fruit-cell svg{width:94%;height:94%;filter:drop-shadow(0 5px 3px #16051f99) drop-shadow(0 0 3px #fff7);transform:translateY(-1px)}
+.fruit-cell:after{top:5px;left:7px;width:34%;height:16%;background:linear-gradient(90deg,#fff9,#fff2);filter:blur(2px)}
+.fruit-cell:active,.fruit-cell.pressed{transform:translateY(3px) scale(.96);box-shadow:0 1px 0 #1b0a2c,inset 0 3px 7px #12051e99}
+.fruit-cell.selected{outline:3px solid #fff0a3;box-shadow:0 0 0 4px #f4c65d77,0 0 18px #ffe6a0,0 4px 0 #754323}
+.booster{border:1px solid #fff0b2;background:linear-gradient(145deg,#8b53a5,#492064 60%,#2b103e);box-shadow:0 5px 0 #1b092b,0 9px 14px #10051e88,inset 0 2px 4px #fff7}
+.booster:active{transform:translateY(4px)}
+.game-hint{color:#fff0c4;text-shadow:0 2px 5px #14051e}
+@media(max-width:380px){.world-grid{gap:7px;padding:8px}.world-chip{min-height:82px}.world-chip span{font-size:25px}.world-chip b{font-size:9px}.level-dot{width:52px;height:52px}.level-node{height:67px}.game-board{gap:3px;padding:5px}.fruit-cell{border-radius:8px}}
+@media(prefers-reduced-motion:reduce){.world-chip,.level-dot,.fruit-cell{transition:none;animation:none}}
+
+
+/* TRUE OBLIQUE 3D DIORAMA + RAISED MATCH BOARD */
+.map-screen{perspective:1250px;perspective-origin:50% 38%;transform-style:preserve-3d}
+.map-screen .world-grid{transform:translateZ(55px) rotateX(5deg);transform-style:preserve-3d;box-shadow:0 14px 0 #170923,0 24px 35px #090411aa,inset 0 2px 0 #fff9}
+.map-screen .world-chip{border-width:2px;border-color:#ffe8ae;box-shadow:0 8px 0 #28103f,0 13px 16px #10051e99,inset 0 3px 5px #fff9,inset 0 -9px 12px #210a38;transform:translateZ(12px) rotateX(7deg)}
+.map-screen .world-chip span{font-size:34px;filter:drop-shadow(0 7px 3px #16051e99)}
+.map-screen .world-chip.active{transform:translateZ(23px) rotateX(4deg) scale(1.035)}
+.map-screen .world-banner{transform:translateZ(48px) rotateX(4deg);box-shadow:0 11px 0 #210b34,0 20px 26px #10051d99,inset 0 3px 5px #fff9}
+.map-screen .world-emblem{font-size:64px;filter:drop-shadow(0 12px 7px #16051e99)}
+.map-screen .map-scroll{position:relative;isolation:isolate;perspective:1000px;perspective-origin:50% 48%;transform-style:preserve-3d;overflow:auto;overflow-x:hidden;border:3px solid #ffe8a2;border-radius:26px;background:radial-gradient(ellipse at 50% 12%,#e5f6a8 0 4%,transparent 22%),radial-gradient(ellipse at 12% 31%,#b7e78b 0 8%,transparent 23%),radial-gradient(ellipse at 88% 25%,#c7ee96 0 10%,transparent 25%),radial-gradient(ellipse at 10% 75%,#91d57d 0 12%,transparent 29%),radial-gradient(ellipse at 88% 78%,#a5df83 0 14%,transparent 30%),linear-gradient(165deg,#b3e49a 0%,#73c58b 28%,#3d9979 62%,#235b62 100%);box-shadow:0 12px 0 #704128,0 23px 36px #10051eaa,inset 0 0 55px #174b4c99}
+.map-screen .map-scroll:before{content:"";position:absolute;z-index:0;inset:0;display:block;height:auto;margin:0;pointer-events:none;background:radial-gradient(ellipse at 4% 16%,#e5f5bd 0 2%,#7cbf7b 2.5% 7%,transparent 7.5%),radial-gradient(ellipse at 96% 19%,#eff7bb 0 2%,#76b878 2.5% 8%,transparent 8.5%),radial-gradient(ellipse at 8% 49%,#d9f0a7 0 2%,#5da879 2.5% 9%,transparent 9.5%),radial-gradient(ellipse at 94% 52%,#e3f2ad 0 2%,#4e9a78 2.5% 10%,transparent 10.5%),radial-gradient(ellipse at 18% 91%,#bce58e 0 2%,#438f72 2.5% 11%,transparent 11.5%),radial-gradient(ellipse at 83% 89%,#d7eea2 0 2%,#448e70 2.5% 12%,transparent 12.5%),radial-gradient(ellipse at 50% 50%,#ffffff25,transparent 65%)}
+.map-screen .map-scroll:after{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;background:radial-gradient(ellipse at 15% 20%,#fff9 0 1px,transparent 2px),radial-gradient(ellipse at 79% 34%,#fff9 0 2px,transparent 3px),radial-gradient(ellipse at 28% 68%,#fff9 0 1px,transparent 2px),linear-gradient(180deg,#e8f6c022,transparent 22% 78%,#163c4b44);background-size:63px 73px,91px 103px,77px 89px,100% 100%}
+.map-screen .level-path{position:relative;z-index:1;min-height:3650px;padding:45px 0 70px;transform:rotateX(9deg) scale(1.015);transform-origin:50% 0;transform-style:preserve-3d;background:radial-gradient(ellipse at 50% 2%,#fff5 0 1px,transparent 2px) 0 0/49px 57px}
+.map-screen .level-path:before{content:"";position:absolute;z-index:0;top:35px;bottom:35px;left:50%;width:23px;transform:translateX(-50%) translateZ(5px);border-radius:20px;background:linear-gradient(90deg,#8a512c,#fff0ae 18%,#ffd979 42%,#fff3bd 58%,#a7612d 88%,#5b3829);box-shadow:0 9px 0 #4e4b36,0 13px 18px #183d3d88,inset 0 3px 4px #fff9}
+.map-screen .level-path:after{content:"";position:absolute;z-index:0;top:35px;bottom:35px;left:50%;width:8px;transform:translateX(-50%) translateZ(9px);border-radius:10px;background:repeating-linear-gradient(to bottom,#fff4bd 0 20px,#d89437 20px 31px);box-shadow:0 0 15px #fff0a5}
+.map-screen .level-node{z-index:2;height:72px;filter:drop-shadow(0 8px 4px #184c4a99);transform-style:preserve-3d}
+.map-screen .level-dot{width:59px;height:59px;border:3px solid #fff3c5;background:radial-gradient(circle at 28% 17%,#fff 0 5%,#fff8 6% 12%,transparent 30%),linear-gradient(145deg,#fff2b8 0%,#f5c95c 34%,#c27a32 72%,#754124 100%);box-shadow:0 8px 0 #754526,0 13px 18px #16413d99,inset 0 4px 5px #fff,inset 0 -5px 7px #8e4b25;transform:translateZ(20px) rotateX(-8deg)}
+.map-screen .level-dot.done{background:linear-gradient(145deg,#ffc5e0,#ed579e 48%,#a92d6d);box-shadow:0 8px 0 #72224d,0 13px 18px #16413d99,inset 0 4px 5px #fff}
+.map-screen .level-dot.current{transform:translateZ(34px) scale(1.19) rotateX(-8deg);box-shadow:0 0 0 6px #fff3b477,0 10px 0 #754526,0 0 30px #fff4a8,inset 0 4px 5px #fff}
+.map-screen .level-dot.locked{background:linear-gradient(145deg,#c6d8c8,#728f84 55%,#405d59);box-shadow:0 7px 0 #304b47,0 12px 16px #16413d99,inset 0 3px 4px #fff8}
+.map-screen .map-footer{transform:translateZ(32px);color:#fff6d9;text-shadow:0 3px 7px #123d3b}
+.game-screen{perspective:1300px;perspective-origin:50% 42%;transform-style:preserve-3d}
+.game-screen .game-head{transform:translateZ(45px)}
+.game-screen .mission-card{transform:translateZ(55px) rotateX(5deg);box-shadow:0 10px 0 #210b34,0 17px 25px #10051e99,inset 0 3px 5px #fff9}
+.game-screen .board-wrap{position:relative;transform:rotateX(13deg) translateY(2px) translateZ(35px);transform-origin:50% 50%;transform-style:preserve-3d;border:3px solid #fff0b7;border-radius:24px;padding:12px;background:linear-gradient(145deg,#fff3bd 0%,#d89a43 15%,#8a4d2b 32%,#f8d789 54%,#8d512c 78%,#f6d38b 100%);box-shadow:0 15px 0 #56301f,0 25px 38px #0c0415bb,inset 0 4px 5px #fff}
+.game-screen .board-wrap:before{content:"";position:absolute;inset:4px;border:2px solid #fff9;border-radius:17px;pointer-events:none;transform:translateZ(4px)}
+.game-screen .game-board{position:relative;transform:translateZ(12px);padding:8px;gap:5px;border:2px solid #fce8a8;border-radius:16px;background:linear-gradient(145deg,#8d55a7,#4a1c68 45%,#261039);box-shadow:0 8px 0 #1c092c,0 12px 18px #12051e99,inset 0 5px 15px #16051fbb}
+.game-screen .fruit-cell{position:relative;overflow:visible;border:1px solid #fff9;border-radius:11px;background:linear-gradient(145deg,#ffffff65 0%,#ffffff12 30%,#321044aa 100%);box-shadow:0 6px 0 #1b0a2c,0 9px 12px #10051e99,inset 0 3px 5px #fff9,inset 0 -5px 8px #170521aa;transform:translateZ(8px);transform-style:preserve-3d}
+.game-screen .fruit-cell svg{width:96%;height:96%;overflow:visible;filter:drop-shadow(0 7px 3px #16051f99) drop-shadow(0 0 4px #fff9);transform:translateY(-3px) translateZ(10px)}
+.game-screen .fruit-cell:after{top:5px;left:7px;width:39%;height:18%;background:linear-gradient(110deg,#fff,#fff8 50%,transparent);filter:blur(2px);box-shadow:0 0 7px #fff9}
+.game-screen .fruit-cell.selected{transform:translateZ(18px) scale(1.09);box-shadow:0 0 0 3px #fff1a2,0 0 22px #ffe99c,0 8px 0 #754323}
+.game-screen .booster-row{transform:translateZ(30px)}
+.game-screen .booster{border:2px solid #ffeab0;box-shadow:0 7px 0 #1b092b,0 13px 18px #10051e99,inset 0 3px 5px #fff8}
+.game-screen .game-hint{transform:translateZ(25px);color:#fff2c9}
+@media(max-width:390px){.map-screen .world-chip span{font-size:29px}.map-screen .level-dot{width:54px;height:54px}.game-screen .board-wrap{padding:9px}.game-screen .game-board{gap:3px;padding:5px}.game-screen .fruit-cell{border-radius:8px}}
+@media(prefers-reduced-motion:reduce){.map-screen .world-chip,.map-screen .level-dot,.game-screen .fruit-cell{transition:none}}
+
+
+/* In-game map shortcut: compact royal button aligned with the score strip */
+.mission-card{position:relative}
+.map-shortcut{flex:0 0 43px;min-width:43px;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:3px 2px;border:1px solid #ffe6a7;border-radius:12px;background:linear-gradient(150deg,#fff0b6 0%,#e5b34f 46%,#a9682d 100%);color:#4b205b;box-shadow:0 3px 0 #704126,0 5px 9px #16051f77,inset 0 2px 3px #fff;cursor:pointer;font-family:inherit;transition:transform .15s,filter .15s}
+.map-shortcut span{font-size:20px;line-height:1.1;filter:drop-shadow(0 2px 2px #54264d55)}
+.map-shortcut small{font-size:8px;line-height:1.1;font-weight:900;color:#4b205b}
+.map-shortcut:active{transform:translateY(3px) scale(.96);filter:brightness(1.08)}
+.map-shortcut:focus-visible{outline:3px solid #fff3b5;outline-offset:2px}
+@media(max-width:390px){.map-shortcut{flex-basis:38px;min-width:38px;min-height:43px}.map-shortcut span{font-size:18px}.map-shortcut small{font-size:7px}}
+
+
+/* The in-game shortcut opens a clean map-only view; the full worlds hub stays unchanged */
+.map-screen.map-shortcut-mode .world-grid,
+.map-screen.map-shortcut-mode .world-banner,
+.map-screen.map-shortcut-mode .map-footer,
+.map-screen.map-shortcut-mode #mapDaily{display:none!important}
+.map-screen.map-shortcut-mode .section-head{justify-content:flex-start;margin-bottom:12px}
+.map-screen.map-shortcut-mode .section-head .eyebrow{display:none}
+.map-screen.map-shortcut-mode .section-head h2{font-size:20px}
+.map-screen.map-shortcut-mode .map-scroll{height:clamp(390px,67svh,720px);min-height:390px;margin-top:4px}
+.map-screen.map-shortcut-mode .level-path{min-height:3650px}
+
+
+/* PERFORMANCE RESET: keep the royal finish, remove tilted 3D planes */
+body{background-attachment:scroll}
+.map-screen,.game-screen{perspective:none!important;perspective-origin:center;transform-style:flat!important}
+.map-screen *,
+.game-screen *{transform-style:flat!important}
+.map-screen .world-grid,
+.map-screen .world-chip,
+.map-screen .world-chip.active,
+.map-screen .world-banner,
+.map-screen .world-emblem,
+.map-screen .map-scroll,
+.map-screen .level-path,
+.map-screen .level-path:before,
+.map-screen .level-path:after,
+.map-screen .level-node,
+.map-screen .level-dot,
+.map-screen .level-dot.current,
+.map-screen .map-footer,
+.game-screen .game-head,
+.game-screen .mission-card,
+.game-screen .board-wrap,
+.game-screen .board-wrap:before,
+.game-screen .game-board,
+.game-screen .fruit-cell,
+.game-screen .fruit-cell svg,
+.game-screen .fruit-cell.selected,
+.game-screen .booster-row,
+.game-screen .game-hint{transform:none!important}
+.map-screen .world-grid{box-shadow:0 7px 14px #10051c55,inset 0 1px 0 #fff5}
+.map-screen .world-chip{box-shadow:0 3px 0 #28103f,inset 0 1px 3px #fff6;transition:filter .15s}
+.map-screen .world-chip span{filter:none}
+.map-screen .world-banner{box-shadow:0 5px 12px #10051d66,inset 0 1px 3px #fff6}
+.map-screen .world-emblem{filter:none;box-shadow:0 3px 7px #14051f66,inset 0 2px 3px #fff}
+.map-screen .map-scroll{box-shadow:0 5px 12px #10051d66,inset 0 0 20px #164a4b55;scrollbar-width:thin}
+.map-screen .level-path:before{box-shadow:0 3px 6px #183d3d55,inset 0 1px 2px #fff7}
+.map-screen .level-path:after{box-shadow:none}
+.map-screen .level-node{filter:none}
+.map-screen .level-dot{box-shadow:0 3px 0 #754526,inset 0 2px 3px #fff}
+.map-screen .level-dot.done{box-shadow:0 3px 0 #72224d,inset 0 2px 3px #fff}
+.map-screen .level-dot.current{box-shadow:0 0 0 4px #fff3b477,0 3px 0 #754526,inset 0 2px 3px #fff}
+.map-screen .level-dot.locked{box-shadow:0 3px 0 #304b47,inset 0 2px 3px #fff7}
+.game-screen .mission-card{box-shadow:0 4px 0 #210b34,0 7px 12px #10051e66,inset 0 1px 3px #fff6}
+.game-screen .board-wrap{box-shadow:0 5px 0 #59301e,0 9px 15px #10051e77,inset 0 2px 3px #fff}
+.game-screen .game-board{box-shadow:inset 0 3px 9px #16051f88,0 1px 0 #fff3}
+.game-screen .fruit-cell{box-shadow:0 2px 0 #1b0a2c,inset 0 1px 2px #fff7;transition:filter .1s,box-shadow .1s}
+.game-screen .fruit-cell svg{filter:drop-shadow(0 2px 1px #16051f66)}
+.game-screen .fruit-cell:after{filter:none;box-shadow:none}
+.game-screen .fruit-cell.selected{box-shadow:0 0 0 3px #fff1a2,0 0 9px #ffe99c,0 2px 0 #754323}
+.game-screen .booster{box-shadow:0 3px 0 #1b092b,0 5px 9px #10051e66,inset 0 1px 3px #fff6}
+@media(prefers-reduced-motion:reduce){
+ .map-screen *,.game-screen *{transition:none!important;animation:none!important}
+}
+
+
+/* Flat enchanted orchard map: a winding garden trail with softly glowing scenery */
+.map-screen .map-scroll{
+ background:
+  radial-gradient(ellipse at 14% 10%,#b9ef8c55 0 7%,transparent 18%),
+  radial-gradient(ellipse at 88% 18%,#f5d97844 0 6%,transparent 17%),
+  radial-gradient(ellipse at 9% 39%,#9ce7a055 0 8%,transparent 19%),
+  radial-gradient(ellipse at 92% 58%,#b8ed8c44 0 8%,transparent 19%),
+  radial-gradient(ellipse at 15% 83%,#f6d78344 0 7%,transparent 18%),
+  radial-gradient(ellipse at 84% 94%,#9be3a055 0 8%,transparent 19%),
+  linear-gradient(180deg,#285d54 0%,#39775b 32%,#28624f 68%,#204d4b 100%)!important;
+ border-color:#f7df9b!important;
+ box-shadow:inset 0 0 0 3px #ffffff12,inset 0 0 28px #102f3455,0 5px 12px #10051d66!important;
+}
+.map-screen .map-scroll:before{
+ background:
+  radial-gradient(ellipse at 8% 7%,#d8f7a8 0 2%,#7fc77b 2.5% 5%,#3c895e 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 91% 12%,#f2f5b4 0 2%,#82c77a 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 7% 29%,#e2f6ae 0 2%,#80c879 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 94% 39%,#dff4a8 0 2%,#72bd76 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 9% 61%,#f4f2ad 0 2%,#8acb78 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 91% 72%,#e4f7b4 0 2%,#7bc47a 2.5% 5%,#39865b 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 13% 92%,#dff4a9 0 2%,#77bf75 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 86% 96%,#f2f2b1 0 2%,#7bc27a 2.5% 5%,#347c59 5.5% 7%,transparent 7.5%),
+  radial-gradient(ellipse at 50% 50%,#ffffff1c,transparent 65%)!important;
+}
+.map-screen .map-scroll:after{
+ background:
+  radial-gradient(circle at 18% 17%,#fff9 0 1px,transparent 2px),
+  radial-gradient(circle at 79% 25%,#fff9 0 1.5px,transparent 3px),
+  radial-gradient(circle at 25% 53%,#fff8 0 1px,transparent 2px),
+  radial-gradient(circle at 83% 79%,#fff9 0 1px,transparent 2px),
+  radial-gradient(circle at 52% 91%,#fff8 0 1px,transparent 2px)!important;
+ background-size:73px 91px,101px 117px,89px 107px,113px 97px,100% 100%!important;
+ opacity:.7;
+}
+.map-screen .level-path{
+ min-height:3650px!important;
+ padding:0 0 45px!important;
+ background:
+  radial-gradient(ellipse at 50% 50%,#eaffbd12,transparent 58%),
+  radial-gradient(circle,#fff4 1px,transparent 1.8px) 0 0/43px 47px!important;
+}
+.map-screen .level-path:before{
+ top:0!important;bottom:0!important;left:0!important;width:100%!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 576' preserveAspectRatio='none'%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%234b7545' stroke-width='34' stroke-linecap='round'/%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%23865a35' stroke-width='25' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+ background-repeat:repeat-y!important;background-size:100% 576px!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+.map-screen .level-path:after{
+ top:0!important;bottom:0!important;left:0!important;width:100%!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 576' preserveAspectRatio='none'%3E%3Cpath d='M50 0 C32 34 20 52 30 72 C42 98 13 120 18 144 C22 174 42 192 30 216 C18 246 38 264 55 288 C75 316 88 337 75 360 C63 390 91 408 82 432 C73 460 50 480 68 504 C82 530 67 552 50 576' fill='none' stroke='%23ffe8a0' stroke-width='2.2' stroke-linecap='round' stroke-dasharray='5 8' opacity='.95'/%3E%3C/svg%3E")!important;
+ background-repeat:repeat-y!important;background-size:100% 576px!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+.map-screen .level-node{
+ height:72px!important;padding:0!important;display:block!important;
+ position:relative;filter:none!important;
+}
+.map-screen .level-dot{
+ position:absolute;top:6px!important;left:calc(var(--trail-x, 50%) - 29.5px)!important;
+ width:59px!important;height:59px!important;
+ border:3px solid #fff2c5!important;
+ background:radial-gradient(circle at 28% 17%,#fff 0 5%,#fff8 6% 12%,transparent 30%),linear-gradient(145deg,#fff2b8 0%,#f5c95c 34%,#c27a32 72%,#754124 100%)!important;
+ box-shadow:0 3px 0 #754526,inset 0 2px 3px #fff!important;
+ filter:none!important;opacity:1!important;
+}
+.map-screen .level-node:nth-child(8n+1) .level-dot{--trail-x:50%}
+.map-screen .level-node:nth-child(8n+2) .level-dot{--trail-x:30%}
+.map-screen .level-node:nth-child(8n+3) .level-dot{--trail-x:18%}
+.map-screen .level-node:nth-child(8n+4) .level-dot{--trail-x:30%}
+.map-screen .level-node:nth-child(8n+5) .level-dot{--trail-x:55%}
+.map-screen .level-node:nth-child(8n+6) .level-dot{--trail-x:75%}
+.map-screen .level-node:nth-child(8n+7) .level-dot{--trail-x:82%}
+.map-screen .level-node:nth-child(8n) .level-dot{--trail-x:68%}
+.map-screen .level-dot.done{
+ background:radial-gradient(circle at 28% 17%,#fff 0 5%,#fff8 6% 12%,transparent 30%),linear-gradient(145deg,#ffc5e0,#ed579e 48%,#a92d6d)!important;
+ box-shadow:0 3px 0 #72224d,inset 0 2px 3px #fff!important;
+}
+.map-screen .level-dot.current{
+ box-shadow:0 0 0 5px #fff3b477,0 0 17px #fff0a8,0 3px 0 #754526,inset 0 2px 3px #fff!important;
+ animation:pulse 1.8s ease-in-out infinite;
+}
+.map-screen .level-dot.locked{
+ background:linear-gradient(145deg,#c6d8c8,#728f84 55%,#405d59)!important;
+ box-shadow:0 3px 0 #304b47,inset 0 2px 3px #fff7!important;
+ opacity:.88!important;
+}
+.map-screen .map-footer{transform:none!important}
+@media(max-width:390px){
+ .map-screen .level-dot{width:54px!important;height:54px!important;left:calc(var(--trail-x,50%) - 27px)!important}
+}
