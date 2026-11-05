@@ -70,6 +70,19 @@ export async function onRequest({ request, env }) {
       const player = await currentPlayer(request,env.DB);
       return player ? json({player}) : json({player:null},200,{"Set-Cookie":clearCookie("fp_session")});
     }
+    if (path === "/api/global-score" && request.method === "GET") {
+      const row = await env.DB.prepare("SELECT total_score FROM global_score WHERE id=1").first();
+      return json({ totalScore: row?.total_score || 0 });
+    }
+    if (path === "/api/global-score" && request.method === "POST") {
+      const body = await request.json();
+      const delta = Math.floor(Number(body.delta) || 0);
+      if (delta < 1 || delta > 10000000) return json({ error: "Invalid score increment." }, 400);
+      await env.DB.prepare("UPDATE global_score SET total_score=MIN(1000000000,total_score+?),updated_at=? WHERE id=1")
+        .bind(delta, Math.floor(Date.now()/1000)).run();
+      const row = await env.DB.prepare("SELECT total_score FROM global_score WHERE id=1").first();
+      return json({ ok: true, totalScore: row?.total_score || 0 });
+    }
     if (path === "/api/progress" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       if (!player) return json({error:"Sign in to sync progress."},401);
