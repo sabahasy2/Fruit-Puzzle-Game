@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#32104f"><meta name="description" content="مغامرة فواكه وحلوى ملكية — طابق، انفجر، واكتشف عوالم جديدة.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/style.css">
 <title>Fruit Pop Adam — مغامرة الفواكه</title>
 </head>
@@ -20,8 +20,8 @@
 <section id="homeScreen" class="screen home-screen">
  <div class="hero-copy"><div class="eyebrow">مملكة الحلوى والفواكه</div><h1>رحلتك إلى <em>مملكة السُكّر</em></h1><p>طابق الفواكه، أطلق الانفجارات، واجمع النجوم في عوالم ساحرة.</p></div>
  <div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-candy candy-big">🍓</div><div class="hero-candy candy-left">🍊</div><div class="hero-candy candy-right">🍇</div><div class="hero-candy candy-bottom">🍬</div><div class="sparkle s1">✦</div><div class="sparkle s2">✧</div><div class="sparkle s3">✦</div></div>
- <div class="home-actions"><button class="primary-btn" id="playBtn"><span>ابدأ المغامرة</span><b>←</b></button><button class="secondary-btn" id="dailyBtn">🎁 المكافأة اليومية</button></div>
- <div class="home-bottom"><div><strong id="homeLevel">1</strong><span>المستوى الحالي</span></div><div><strong id="homeStars">0</strong><span>النجوم</span></div><div><strong>24</strong><span>عالماً سحرياً</span></div></div>
+ <div class="home-actions"><button class="primary-btn" id="playBtn"><span>ابدأ المغامرة</span><b>←</b></button><button class="secondary-btn" id="dailyBtn">🎁 المكافأة اليومية</button><button class="secondary-btn" id="registerBtn">👤 إنشاء حساب / تسجيل الدخول</button></div><div class="royal-signatures" aria-label="إهداء"><span>عابر🖤السبيل</span><span>amaar&quot;aliraqi</span></div>
+ <div class="home-bottom"><div><strong id="homeLevel">1</strong><span>المستوى الحالي</span></div><div><strong id="homeStars">0</strong><span>النجوم</span></div><div><strong>24</strong><span>عالماً سحرياً</span></div><div><strong>1200</strong><span>مرحلة ومغامرة</span></div></div>
 </section>
 <section id="mapScreen" class="screen map-screen hidden">
  <div class="section-head"><button class="round-btn" id="mapBack">⌂</button><div><div class="eyebrow">طريق الأبطال</div><h2>خريطة المملكة</h2></div><button class="round-btn" id="mapDaily">🎁</button></div>
@@ -31,7 +31,7 @@
 </section>
 <section id="gameScreen" class="screen game-screen hidden">
  <div class="game-head"><button class="round-btn" id="gameExit">✕</button><div class="level-title"><small id="levelWorld">حدائق الفراولة</small><b id="levelLabel">المرحلة 1</b></div><button class="round-btn" id="gamePause">Ⅱ</button></div>
- <div class="mission-card"><div class="mission-main"><span class="mission-icon" id="targetFruit">🍓</span><div><small>اجمع الثمار</small><b id="targetCount">0 / 18</b></div></div><div class="moves-box"><small>الحركات</small><b id="moves">25</b></div><div class="score-box"><small>النقاط</small><b id="score">0</b></div></div>
+ <div class="mission-card"><div class="mission-main"><span class="mission-icon" id="targetFruit">🍓</span><div><small>اجمع الثمار</small><b id="targetCount">0 / 18</b></div></div><div class="moves-box"><small>الحركات</small><b id="moves">25</b></div><div class="score-box"><small>نقاط المرحلة</small><b id="score">0</b></div><div class="score-box total-score-box"><small>النقاط الكلية</small><b id="totalScore">0</b></div></div>
  <div class="board-wrap"><div id="gameBoard" class="game-board" role="grid" aria-label="لوحة مطابقة الفواكه"></div><div class="board-shine"></div></div>
  <div class="booster-row"><button class="booster" data-booster="hammer"><span>🔨</span><small>مطرقة</small><b>3</b></button><button class="booster" data-booster="shuffle"><span>🔀</span><small>خلط</small><b>2</b></button><button class="booster" data-booster="rainbow"><span>🌈</span><small>قوس قزح</small><b>1</b></button></div>
  <div class="game-hint" id="gameHint">اسحب فاكهة نحو فاكهة مجاورة لتكوين تطابق من ثلاثة أو أكثر</div>
