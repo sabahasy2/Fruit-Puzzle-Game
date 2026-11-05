@@ -85,35 +85,6 @@ export async function onRequest({ request, env }) {
     if (path === "/api/google/start" && request.method === "GET") return json({error:"Google sign-in is disabled."},404);
     /* legacy callback disabled */
     if (path === "/api/google/callback" && request.method === "GET") return Response.redirect(new URL("/",url.origin),302);
-    if (false) {
-      if (!env.GOOGLE_CLIENT_ID) return json({error:"Google sign-in setup is pending the app's OAuth client ID."},503);
-      const state=random(24), redirect=new URL("/api/google/callback",url.origin).toString();
-      const target=new URL("https://accounts.google.com/o/oauth2/v2/auth");
-      target.search=new URLSearchParams({client_id:env.GOOGLE_CLIENT_ID,redirect_uri:redirect,response_type:"code",scope:"openid email profile",state,prompt:"select_account"}).toString();
-      return new Response(null,{status:302,headers:{"Location":target.toString(),"Set-Cookie":cookie("fp_oauth_state",state,600)}});
-    }
-    if (path === "/api/google/callback" && request.method === "GET") {
-      const stateCookie=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("fp_oauth_state="))?.slice(15);
-      if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !stateCookie || stateCookie!==url.searchParams.get("state") || !url.searchParams.get("code"))
-        return Response.redirect(new URL("/?auth=google-error",url.origin),302);
-      const redirect=new URL("/api/google/callback",url.origin).toString();
-      const tokenResponse=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code:url.searchParams.get("code"),client_id:env.GOOGLE_CLIENT_ID,client_secret:env.GOOGLE_CLIENT_SECRET,redirect_uri:redirect,grant_type:"authorization_code"})});
-      if (!tokenResponse.ok) return Response.redirect(new URL("/?auth=google-error",url.origin),302);
-      const tokens=await tokenResponse.json(), infoResponse=await fetch("https://openidconnect.googleapis.com/v1/userinfo",{headers:{Authorization:`Bearer ${tokens.access_token}`}});
-      if (!infoResponse.ok) return Response.redirect(new URL("/?auth=google-error",url.origin),302);
-      const info=await infoResponse.json();
-      if (!info.sub || !info.email || !info.email_verified) return Response.redirect(new URL("/?auth=google-error",url.origin),302);
-      let player=await env.DB.prepare("SELECT id FROM players WHERE google_sub=? OR email=?").bind(info.sub,String(info.email).toLowerCase()).first();
-      if (!player) {
-        const id=crypto.randomUUID();
-        await env.DB.prepare("INSERT INTO players(id,email,google_sub,display_name,created_at) VALUES(?,?,?,?,?)").bind(id,String(info.email).toLowerCase(),info.sub,String(info.name||"Fruit Pop Player").slice(0,60),Math.floor(Date.now()/1000)).run();
-        await saveProgress(env.DB,id,{level:1,stars:0,coins:0,lives:5}); player={id};
-      } else {
-        await env.DB.prepare("UPDATE players SET google_sub=COALESCE(google_sub,?) WHERE id=?").bind(info.sub,player.id).run();
-      }
-      const session=await createSession(env.DB,player.id);
-      const headers=new Headers({Location:new URL("/",url.origin).toString()}); headers.append("Set-Cookie",cookie("fp_session",session,60*60*24*30)); headers.append("Set-Cookie",clearCookie("fp_oauth_state")); return new Response(null,{status:302,headers});
-    }
     if (path === "/api/logout" && request.method === "POST") {
       const token=(request.headers.get("Cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("fp_session="))?.slice(11);
       if (token) await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await tokenHash(token)).run();
