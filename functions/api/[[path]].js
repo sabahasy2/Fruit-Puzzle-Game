@@ -81,7 +81,11 @@ export async function onRequest({ request, env }) {
       await saveProgress(env.DB,player.id,await request.json());
       return json({ok:true});
     }
-    if (path === "/api/google/start" && request.method === "GET") {
+    /* Google sign-in has been intentionally removed; email/password is the only account method. */
+    if (path === "/api/google/start" && request.method === "GET") return json({error:"Google sign-in is disabled."},404);
+    /* legacy callback disabled */
+    if (path === "/api/google/callback" && request.method === "GET") return Response.redirect(new URL("/",url.origin),302);
+    if (false) {
       if (!env.GOOGLE_CLIENT_ID) return json({error:"Google sign-in setup is pending the app's OAuth client ID."},503);
       const state=random(24), redirect=new URL("/api/google/callback",url.origin).toString();
       const target=new URL("https://accounts.google.com/o/oauth2/v2/auth");
