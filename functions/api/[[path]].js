@@ -71,8 +71,16 @@ export async function onRequest({ request, env }) {
       return player ? json({player}) : json({player:null},200,{"Set-Cookie":clearCookie("fp_session")});
     }
     if (path === "/api/global-score" && request.method === "GET") {
-      const row = await env.DB.prepare("SELECT total_score FROM global_score WHERE id=1").first();
-      return json({ totalScore: row?.total_score || 0 });
+      const row = await env.DB.prepare("SELECT total_score,level FROM global_score WHERE id=1").first();
+      return json({ totalScore: row?.total_score || 0, level: row?.level || 1 });
+    }
+    if (path === "/api/global-progress" && request.method === "POST") {
+      const body = await request.json();
+      const level = Math.max(1, Math.min(1200, Math.floor(Number(body.level) || 1)));
+      await env.DB.prepare("UPDATE global_score SET level=MAX(level,?),updated_at=? WHERE id=1")
+        .bind(level, Math.floor(Date.now()/1000)).run();
+      const row = await env.DB.prepare("SELECT level FROM global_score WHERE id=1").first();
+      return json({ ok:true, level:row?.level || 1 });
     }
     if (path === "/api/global-score" && request.method === "POST") {
       const body = await request.json();
