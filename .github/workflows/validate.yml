@@ -16,6 +16,7 @@ jobs:
       - name: Check game and helper JavaScript syntax
         run: |
           node --check assets/game.js
+          node --check assets/fruit-renderer.js
           node --check assets/world-catalog.js
           node --check assets/account-sync.js
           node --check assets/life-recovery.js
