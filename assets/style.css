@@ -79,7 +79,7 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 @media(min-width:520px){#gameBoard.game-board .fruit-cell{font-size:50px}}
 
 
-/* Further reduce fruit artwork only; keep the 7x7 tile boxes unchanged */
-#gameBoard.game-board .fruit-cell{font-size:clamp(22px,5.6vw,29px)}
-#gameBoard.game-board .fruit-cell svg{width:68%;height:68%;max-width:68%;max-height:68%}
-@media(min-width:520px){#gameBoard.game-board .fruit-cell{font-size:27px}}
+/* Medium fruit artwork size: between the previous and smaller versions; keep 7x7 tile boxes unchanged */
+#gameBoard.game-board .fruit-cell{font-size:clamp(25px,6.4vw,33px)}
+#gameBoard.game-board .fruit-cell svg{width:76%;height:76%;max-width:76%;max-height:76%}
+@media(min-width:520px){#gameBoard.game-board .fruit-cell{font-size:32px}}
