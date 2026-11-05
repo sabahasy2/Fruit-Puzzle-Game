@@ -18,3 +18,27 @@
 @media(max-width:390px){.top-stats{gap:4px}.total-top-pill{min-width:54px}.stat-pill{padding:5px 7px}}
 
 .account-indicator{display:flex;align-items:center;gap:5px;max-width:126px;min-width:0}.account-indicator span{font-size:9px;color:#ffe6a8;max-width:82px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.account-email{direction:ltr;unicode-bidi:plaintext;font-weight:800;color:#ffe2a0!important;overflow-wrap:anywhere}.account-indicator .avatar-btn{flex-shrink:0}
+
+/* Compact responsive phone layout: prevent the header and game panels from widening the viewport */
+html,body{width:100%;max-width:100%;overflow-x:clip}
+#app,.app-shell,main,.screen{width:100%;max-width:100%;min-width:0}
+.app-shell{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+.topbar{width:100%;min-width:0;gap:5px}
+.brand{min-width:0;flex:0 1 auto;gap:6px}
+.brand b{font-size:12px;letter-spacing:1px}
+.brand small{font-size:7px;letter-spacing:1px}
+.brand-mark{width:32px;height:32px;flex:0 0 32px}
+.top-stats{min-width:0;flex:0 1 auto;gap:3px}
+.stat-pill{min-width:0;padding:4px 5px;gap:3px}
+.stat-pill span{font-size:13px}
+.stat-pill b{font-size:12px}
+.total-top-pill{min-width:0;max-width:60px;padding:4px 5px}
+.total-top-pill b{font-size:10px;max-width:34px}
+.account-indicator{min-width:0;max-width:84px;gap:3px}
+.account-indicator span{max-width:45px;font-size:8px}
+.avatar-btn{width:32px;height:32px;flex:0 0 32px;font-size:15px}
+.mission-card,.board-wrap,.game-board,.world-banner,.map-scroll{max-width:100%;min-width:0}
+.game-board{grid-template-columns:repeat(8,minmax(0,1fr))}
+.fruit-cell{min-width:0}
+@media(max-width:390px){.account-indicator span{display:none}.account-indicator{max-width:32px}.topbar{height:60px}.brand b{font-size:11px}.stat-pill{padding:4px}.stat-pill span{font-size:12px}.stat-pill b{font-size:11px}.total-top-pill{max-width:51px}.total-top-pill b{max-width:29px}}
+@media(max-width:340px){.app-shell{padding-left:7px;padding-right:7px}.brand-mark{width:28px;height:28px;flex-basis:28px}.brand b{font-size:10px}.top-stats{gap:2px}.stat-pill{padding:3px}.total-top-pill{max-width:45px}.mission-card{gap:3px;padding:8px 5px}.moves-box,.score-box,.total-score-box{min-width:38px;padding-right:4px}.mission-card b{font-size:11px}.mission-card small{font-size:7px}}
