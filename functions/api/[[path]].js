@@ -121,7 +121,7 @@ export async function onRequest({ request, env }) {
       const body = await request.json();
       const result = await callGameRewards(env, {
         action: "link-exchange", gamePlayerId: player.id,
-        baselineLevel: Math.max(1, Number(player.level) || 1), code: String(body.code || ""),
+        code: String(body.code || ""),
       });
       return json(result);
     }
