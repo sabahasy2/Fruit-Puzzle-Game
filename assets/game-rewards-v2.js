@@ -2,16 +2,16 @@
 const $=id=>document.getElementById(id);
 let lastProfile=null;
 async function refreshGameRewards(){
-  const badge=$("redPointsBalance");
+  const badge=$("redPointsBalance"),stageBadge=$("redPointsBalanceGame");
   try{
     const response=await fetch("/api/rewards/profile",{credentials:"same-origin",cache:"no-store"});
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||"تعذر تحميل الرصيد");
     lastProfile=data;
-    if(badge)badge.textContent=Number(data.points||0).toLocaleString("ar-IQ");
+    if(badge)badge.textContent=Number(data.points||0).toLocaleString("ar-IQ");if(stageBadge)stageBadge.textContent=Number(data.points||0).toLocaleString("ar-IQ");
     return data;
   }catch{
-    if(badge)badge.textContent="—";
+    if(badge)badge.textContent="—";if(stageBadge)stageBadge.textContent="—";
     return null;
   }
 }
