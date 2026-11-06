@@ -1,0 +1,43 @@
+name: Fruit Pop rewards client checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "assets/game.js"
+      - "assets/game-rewards-v2.js"
+      - "functions/api/**"
+      - "sw.js"
+      - ".github/workflows/game-rewards-check.yml"
+  push:
+    branches: [feat/store-linked-stage-rewards]
+    paths:
+      - "assets/game.js"
+      - "assets/game-rewards-v2.js"
+      - "functions/api/**"
+      - "sw.js"
+      - ".github/workflows/game-rewards-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check browser scripts
+        run: |
+          node --check assets/game.js
+          node --check assets/game-rewards-v2.js
+      - name: Check Cloudflare Pages function
+        run: |
+          cp 'functions/api/[[path]].js' /tmp/fruit-pop-api.mjs
+          node --check /tmp/fruit-pop-api.mjs
+      - name: Confirm wallet links to store rewards panel
+        run: |
+          grep -q '?open=points' assets/game-rewards-v2.js
+          ! grep -q '?gameLink=1' assets/game-rewards-v2.js
