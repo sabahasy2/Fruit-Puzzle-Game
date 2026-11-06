@@ -15,7 +15,7 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show")
 function dateKey(){return new Date().toLocaleDateString("en-CA")}
 function worldFor(n){return Math.min(23,Math.floor((n-1)/50))}
 function fruitGroupForLevel(n){return Math.floor((n-1)/10)%FRUIT_SETS.length}function fruitsForLevel(n){return FRUIT_SETS[fruitGroupForLevel(n)]}
-function worldData(n){let w=worldFor(n),d=WORLDS[w],group=fruitGroupForLevel(n),fruits=fruitsForLevel(n),newFruits=FRUIT_SETS[group];return {name:d[0],fruit:newFruits[w%newFruits.length],fruits,fruitSet:group+1,emblem:d[1],desc:d[2],number:w+1}}
+function worldData(n){let w=worldFor(n),d=WORLDS[w],group=fruitGroupForLevel(n),fruits=fruitsForLevel(n),newFruits=FRUIT_SETS[group],missionIndex=(Math.floor((n-1)/10)+w)%newFruits.length;return {name:d[0],fruit:newFruits[missionIndex],fruits,fruitSet:group+1,emblem:d[1],desc:d[2],number:w+1}}
 function showScreen(name){["home","map","game"].forEach(x=>$ (x+"Screen").classList.toggle("hidden",x!==name));currentTab=name;document.querySelectorAll(".nav-item[data-nav]").forEach(b=>b.classList.toggle("active",b.dataset.nav===name));}
 function updateAccountUI(player=currentPlayer){currentPlayer=player||null;const label=$("accountStatus");if(label)label.textContent=currentPlayer?.email||"زائر";$("accountBtn").textContent=currentPlayer?"👤":"👑";$("accountBtn").title=currentPlayer?.email||"الدخول كزائر أو تسجيل الدخول";}
 function modal(html){$("modalContent").innerHTML=html;$("modalLayer").classList.remove("hidden")}
