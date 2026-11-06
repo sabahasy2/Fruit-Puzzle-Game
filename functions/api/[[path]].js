@@ -46,8 +46,7 @@ async function callGameRewards(env, payload) {
     body: JSON.stringify(payload),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || "Game rewards service rejected the request.");
-  return data;
+  return { data, status: response.status };
 }
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
@@ -113,7 +112,7 @@ export async function onRequest({ request, env }) {
       const player = await currentPlayer(request, env.DB);
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
       const profile = await callGameRewards(env, { action: "profile", gamePlayerId: player.id });
-      return json(profile);
+      return json(profile.data, profile.status);
     }
     if (path === "/api/rewards/link" && request.method === "POST") {
       const player = await currentPlayer(request, env.DB);
@@ -123,14 +122,14 @@ export async function onRequest({ request, env }) {
         action: "link-exchange", gamePlayerId: player.id,
         code: String(body.code || ""),
       });
-      return json(result);
+      return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/start" && request.method === "POST") {
       const player = await currentPlayer(request, env.DB);
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
       const body = await request.json();
       const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
-      return json(result);
+      return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
       const player = await currentPlayer(request, env.DB);
