@@ -38,6 +38,16 @@ async function saveProgress(db, playerId, p) {
   await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,total_score,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,total_score=MAX(total_score,excluded.total_score),updated_at=excluded.updated_at")
     .bind(playerId, level, stars, coins, lives, totalScore, Math.floor(Date.now()/1000)).run();
 }
+async function callGameRewards(env, payload) {
+  if (!env.SUPABASE_SECRET_KEY) throw new Error("Game rewards backend key is not configured.");
+  const response = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/functions/v1/game-rewards", {
+    method: "POST",
+    headers: { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  return { data, status: response.status };
+}
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
   const url = new URL(request.url), path = url.pathname.replace(/\/$/, "");
@@ -97,6 +107,39 @@ export async function onRequest({ request, env }) {
     if (path === "/api/me" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       return player ? json({player}) : json({player:null},200,{"Set-Cookie":clearCookie("fp_session")});
+    }
+    if (path === "/api/rewards/profile" && request.method === "GET") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const profile = await callGameRewards(env, { action: "profile", gamePlayerId: player.id });
+      return json(profile.data, profile.status);
+    }
+    if (path === "/api/rewards/link" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "link-exchange", gamePlayerId: player.id,
+        code: String(body.code || ""),
+      });
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/start" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "attempt-complete", gamePlayerId: player.id,
+        attemptId: body.attemptId, events: body.events,
+      });
+      return json(result.data, result.status);
     }
     if (path === "/api/global-score" && request.method === "GET") {
       const row = await env.DB.prepare("SELECT total_score,level FROM global_score WHERE id=1").first();
