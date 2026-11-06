@@ -28,7 +28,7 @@ async function openWallet(){
   const linked=profile.linked===true;
   show('<div class="modal-hero">❤️</div><div class="eyebrow">نقاط متجر آدم النور</div><h2>رصيدك الأحمر</h2><div style="font-size:34px;font-weight:900;color:#bd173c;margin:12px 0">❤️ '+Number(profile.points||0).toLocaleString("ar-IQ")+'</div>'+
     (linked?'<p>حساب اللعبة مرتبط بحساب المتجر. أكمل كل 10 مراحل لتحصل على 200 نقطة حمراء.</p>':
-    '<p>أنشئ رمز الربط من لوحة «نقاطي ومكافآتي» في المتجر، ثم ألصقه هنا. الرمز صالح لخمس دقائق ويُستخدم مرة واحدة.</p><input class="field" id="storeGameLinkCode" inputmode="text" autocomplete="one-time-code" maxlength="48" placeholder="رمز الربط المكوّن من 48 خانة" style="direction:ltr;text-align:center"><button class="modal-action" id="connectStoreGameBtn">ربط حساب المتجر</button><p id="storeGameLinkStatus" role="status"></p>')+
+    '<p>أنشئ رمز الربط من لوحة «نقاطي ومكافآتي» في المتجر، ثم ألصقه هنا. الرمز صالح لخمس دقائق ويُستخدم مرة واحدة.</p><a href="https://adam-al-noor-books.pages.dev/?gameLink=1" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin:10px 0;color:#9d1d3a;font-weight:800">افتح المتجر لإنشاء رمز الربط ↗</a><input class="field" id="storeGameLinkCode" inputmode="text" autocomplete="one-time-code" maxlength="48" placeholder="رمز الربط المكوّن من 48 خانة" style="direction:ltr;text-align:center"><button class="modal-action" id="connectStoreGameBtn">ربط حساب المتجر</button><p id="storeGameLinkStatus" role="status"></p>')+
     '<button class="ghost-action" id="closeGameRewardsBtn">إغلاق</button>');
   $("closeGameRewardsBtn").onclick=()=>$("modalLayer").classList.add("hidden");
   if(!linked){
