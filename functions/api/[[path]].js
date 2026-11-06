@@ -139,7 +139,7 @@ export async function onRequest({ request, env }) {
         action: "attempt-complete", gamePlayerId: player.id,
         attemptId: body.attemptId, events: body.events,
       });
-      return json(result);
+      return json(result.data, result.status);
     }
     if (path === "/api/global-score" && request.method === "GET") {
       const row = await env.DB.prepare("SELECT total_score,level FROM global_score WHERE id=1").first();
