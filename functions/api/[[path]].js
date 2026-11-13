@@ -38,6 +38,17 @@ async function saveProgress(db, playerId, p) {
   await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,total_score,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,total_score=MAX(total_score,excluded.total_score),updated_at=excluded.updated_at")
     .bind(playerId, level, stars, coins, lives, totalScore, Math.floor(Date.now()/1000)).run();
 }
+async function callGameRewards(env, payload) {
+  if (!env.SUPABASE_SECRET_KEY) throw new Error("Game rewards backend key is not configured.");
+  const response = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/functions/v1/game-rewards", {
+    method: "POST",
+    headers: { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  return { data, status: response.status };
+}
+function redirectStoreLogin(url, reason = "failed") { return new Response(null, { status: 303, headers: { "Location": new URL("/?storeLogin=" + encodeURIComponent(reason), url.origin).toString() } }); }
 export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
   const url = new URL(request.url), path = url.pathname.replace(/\/$/, "");
@@ -71,6 +82,57 @@ export async function onRequest({ request, env }) {
       const stats = await env.DB.prepare("SELECT page_views AS pageViews, (SELECT COUNT(*) FROM game_analytics_guests) AS guestPlayers, (SELECT COUNT(*) FROM players) AS registeredPlayers FROM game_analytics WHERE id=1").first();
       return json({ pageViews: stats?.pageViews || 0, guestPlayers: stats?.guestPlayers || 0, registeredPlayers: stats?.registeredPlayers || 0 }, 200, storeCors);
     }
+    if (path === "/api/auth/store" && request.method === "POST") {
+      const form = await request.formData();
+      const accessToken = String(form.get("access_token") || "").trim();
+      const linkCode = String(form.get("link_code") || "").trim();
+      if (accessToken.length < 40 || accessToken.length > 8192 || !/^[0-9a-f]{48}$/i.test(linkCode))
+        return redirectStoreLogin(url, "failed");
+
+      const authResponse = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/auth/v1/user", {
+        method: "GET",
+        headers: {
+          "apikey": "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3",
+          "Authorization": "Bearer " + accessToken,
+        },
+        cache: "no-store",
+      });
+      if (!authResponse.ok) return redirectStoreLogin(url, "expired");
+      const authUser = await authResponse.json();
+      const userId = String(authUser.id || "");
+      const email = String(authUser.email || "").trim().toLowerCase();
+      if (!/^[0-9a-f-]{36}$/i.test(userId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return redirectStoreLogin(url, "failed");
+
+      const existing = await env.DB.prepare(
+        "SELECT id FROM players WHERE id=? OR email=? ORDER BY CASE WHEN id=? THEN 0 ELSE 1 END LIMIT 1"
+      ).bind(userId, email, userId).first();
+      const playerId = existing?.id || userId;
+      if (!existing) {
+        const password = await hashPassword(random(32));
+        const displayName = email.split("@")[0].slice(0, 40) || "لاعب";
+        await env.DB.prepare("INSERT INTO players(id,email,password_hash,display_name,created_at) VALUES(?,?,?,?,?)")
+          .bind(playerId, email, `${password.salt}:${password.hash}`, displayName, Math.floor(Date.now() / 1000)).run();
+        await saveProgress(env.DB, playerId, { level: 1, stars: 0, coins: 250, lives: 5, totalScore: 0 });
+      }
+
+      const linked = await callGameRewards(env, {
+        action: "link-exchange",
+        gamePlayerId: playerId,
+        code: linkCode,
+      });
+      if (linked.status !== 200 || linked.data?.ok !== true) {
+        console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
+        return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+      }
+
+      const sessionToken = await createSession(env.DB, playerId);
+      const headers = new Headers({
+        "Location": new URL("/", url.origin).toString(),
+        "Set-Cookie": cookie("fp_session", sessionToken, 60 * 60 * 24 * 30),
+      });
+      return new Response(null, { status: 303, headers });
+    }
     if (path === "/api/register" && request.method === "POST") {
       const body = await request.json(), email = String(body.email || "").trim().toLowerCase(), password = String(body.password || "");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 128)
@@ -97,6 +159,39 @@ export async function onRequest({ request, env }) {
     if (path === "/api/me" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       return player ? json({player}) : json({player:null},200,{"Set-Cookie":clearCookie("fp_session")});
+    }
+    if (path === "/api/rewards/profile" && request.method === "GET") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const profile = await callGameRewards(env, { action: "profile", gamePlayerId: player.id });
+      return json(profile.data, profile.status);
+    }
+    if (path === "/api/rewards/link" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "link-exchange", gamePlayerId: player.id,
+        code: String(body.code || ""),
+      });
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/start" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "attempt-complete", gamePlayerId: player.id,
+        attemptId: body.attemptId, events: body.events,
+      });
+      return json(result.data, result.status);
     }
     if (path === "/api/global-score" && request.method === "GET") {
       const row = await env.DB.prepare("SELECT total_score,level FROM global_score WHERE id=1").first();
