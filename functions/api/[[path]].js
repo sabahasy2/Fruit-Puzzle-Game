@@ -101,7 +101,7 @@ export async function onRequest({ request, env }) {
       const authUser = await authResponse.json();
       const userId = String(authUser.id || "");
       const email = String(authUser.email || "").trim().toLowerCase();
-      if (!/^[0-9a-f-]{36}$/i.test(userId) || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))
+      if (!/^[0-9a-f-]{36}$/i.test(userId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
         return redirectStoreLogin(url, "failed");
 
       const existing = await env.DB.prepare(
