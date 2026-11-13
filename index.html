@@ -42,4 +42,11 @@
 <div id="modalLayer" class="modal-layer hidden" role="dialog" aria-modal="true"><div class="modal-card"><button class="modal-close" id="modalClose">×</button><div id="modalContent"></div></div></div>
 <div id="toast" class="toast"></div>
 <script src="./assets/game.js" defer></script><script src="./assets/game-rewards-v2.js" defer></script><script src="./assets/fruit-renderer.js" defer></script><script src="./assets/life-recovery.js" defer></script>
+<script>
+window.addEventListener("load", () => {
+  if (window.opener && !window.opener.closed) {
+    window.opener.postMessage({ type: "fruit-pop-store-ready" }, "https://feat-game-stage-rewards.adam-al-noor-books.pages.dev");
+  }
+});
+</script>
 </body></html>
