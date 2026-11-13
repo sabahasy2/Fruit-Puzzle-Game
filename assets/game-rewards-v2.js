@@ -31,7 +31,7 @@ async function openWallet(){
   const remaining=10-(verified%10);
   show('<div class="modal-hero">❤️</div><div class="eyebrow">نقاط متجر آدم النور</div><h2>رصيدك الأحمر</h2><div style="font-size:34px;font-weight:900;color:#bd173c;margin:12px 0">❤️ '+points+'</div>'+
     (linked?'<p>حسابك مرتبط تلقائياً بحساب المتجر. أكملت '+verified+' مرحلة موثّقة.</p><p>أكمل '+remaining+' '+(remaining===1?'مرحلة':'مراحل')+' أخرى لتحصل على 200 نقطة حمراء تُضاف مباشرة إلى رصيدك في المتجر.</p>':
-    '<p>لم يكتمل الدخول بحساب المتجر. ارجع إلى متجر آدم النور وسجّل الدخول، ثم اضغط «العب الآن» للدخول تلقائياً.</p><a href="https://feat-game-stage-rewards.adam-al-noor-books.pages.dev/" class="modal-action" style="display:block;text-align:center;text-decoration:none">العودة إلى المتجر</a>')+
+    '<p>لم يكتمل الدخول بحساب المتجر. ارجع إلى متجر آدم النور وسجّل الدخول، ثم اضغط «العب الآن» للدخول تلقائياً.</p><a href="https://feat-game-stage-rewards.adam-al-noor-books.pages.dev/?open=points" class="modal-action" style="display:block;text-align:center;text-decoration:none">العودة إلى المتجر</a>')+
     '<button class="ghost-action" id="closeGameRewardsBtn">إغلاق</button>');
   $("closeGameRewardsBtn").onclick=()=>$("modalLayer").classList.add("hidden");
 }
