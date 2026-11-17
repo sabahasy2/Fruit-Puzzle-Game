@@ -40,7 +40,8 @@ async function saveProgress(db, playerId, p) {
 }
 async function callGameRewards(env, payload) {
   if (!env.SUPABASE_SECRET_KEY) throw new Error("Game rewards backend key is not configured.");
-  const response = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/functions/v1/game-rewards", {
+  const supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\/+$/, "");
+  const response = await fetch(`${supabaseUrl}/functions/v1/game-rewards`, {
     method: "POST",
     headers: { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" },
     body: JSON.stringify(payload),
