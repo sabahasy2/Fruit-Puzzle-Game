@@ -47,7 +47,7 @@ async function ensureOfflineAttempts(){
  await flushPendingStageResults();
  const existing=readOfflineAttempts(playerId);
  try{
-  const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:5})});
+  const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:6})});
   const data=await response.json();
   if(!response.ok)throw Error(data.error||"تعذّر تجهيز المراحل دون اتصال");
   const merged=new Map(existing.map(x=>[x.attemptId,x]));
