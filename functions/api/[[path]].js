@@ -90,7 +90,7 @@ export async function onRequest({ request, env }) {
       if (accessToken.length < 40 || accessToken.length > 8192 || !/^[0-9a-f]{48}$/i.test(linkCode))
         return redirectStoreLogin(url, "failed");
 
-      const supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\\/+$/, "");
+      const supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\/+$/, "");
       const supabasePublishableKey = String(env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3");
       const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         method: "GET",
