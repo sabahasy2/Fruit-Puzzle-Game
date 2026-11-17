@@ -42,11 +42,31 @@ function readOfflineAttempts(playerId){try{const rows=JSON.parse(localStorage.ge
 function writeOfflineAttempts(playerId,rows){localStorage.setItem(offlineAttemptStoreKey(playerId),JSON.stringify(rows.slice(0,8)))}
 function readPendingStageResults(playerId){try{const rows=JSON.parse(localStorage.getItem(pendingStageStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
 function writePendingStageResults(playerId,rows){localStorage.setItem(pendingStageStoreKey(playerId),JSON.stringify(rows.slice(0,20)))}
+function schedulePendingStageRetry(delay=10000){
+ if(schedulePendingStageRetry.timer)return;
+ schedulePendingStageRetry.timer=setTimeout(async()=>{
+  schedulePendingStageRetry.timer=null;
+  if(!navigator.onLine)return;
+  try{
+   await checkSession();
+   if(!currentPlayer){schedulePendingStageRetry(15000);return}
+   const synced=await flushPendingStageResults();
+   if(synced)await ensureOfflineAttempts();
+  }catch(error){
+   console.warn("Offline reward retry failed",error);
+   schedulePendingStageRetry(15000);
+  }
+ },delay);
+}
 async function ensureOfflineAttempts(){
  if(OFFLINE_PROGRESS_PREVIEW)return false;
  const playerId=currentPlayer?.id||offlineAccountId;
  if(!playerId||!navigator.onLine||!currentPlayer)return false;
- await flushPendingStageResults();
+ // Never replace expired tickets while their offline results are still waiting to sync.
+ if(readPendingStageResults(playerId).length){
+  const synced=await flushPendingStageResults();
+  if(!synced)return false;
+ }
  const existing=readOfflineAttempts(playerId);
  try{
   const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:6})});
@@ -70,14 +90,35 @@ async function flushPendingStageResults(){
   try{
    const response=await fetch("/api/rewards/attempt/complete",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({attemptId:item.attemptId,events:item.events})});
    const data=await response.json();
-   if(response.ok){pending=pending.filter(x=>x.attemptId!==item.attemptId);writePendingStageResults(playerId,pending);await window.refreshGameRewards?.();continue}
+   if(response.ok){
+    pending=pending.filter(x=>x.attemptId!==item.attemptId);
+    writePendingStageResults(playerId,pending);
+    await window.refreshGameRewards?.();
+    continue;
+   }
    if(response.status===409||response.status===400){
     const profileResponse=await fetch("/api/rewards/profile",{credentials:"same-origin",cache:"no-store"});
-    const profile=await profileResponse.json();
-    if(profileResponse.ok&&Number(profile.verifiedLevel)>=Number(item.level)){pending=pending.filter(x=>x.attemptId!==item.attemptId);writePendingStageResults(playerId,pending);await window.refreshGameRewards?.();continue}
+    if(profileResponse.ok){
+     const profile=await profileResponse.json();
+     if(Number(profile.verifiedLevel)>=Number(item.level)){
+      pending=pending.filter(x=>x.attemptId!==item.attemptId);
+      writePendingStageResults(playerId,pending);
+      await window.refreshGameRewards?.();
+      continue;
+     }
+    }else if(profileResponse.status>=500||profileResponse.status===401){
+     schedulePendingStageRetry(10000);
+    }
    }
-   console.warn("Offline stage sync is waiting",data.error||response.status);return false;
-  }catch(error){console.warn("Offline stage sync failed",error);return false}
+   if(response.status===401||response.status===408||response.status===429||response.status>=500)
+    schedulePendingStageRetry(response.status===429?8000:12000);
+   console.warn("Offline stage sync is waiting",data.error||response.status);
+   return false;
+  }catch(error){
+   console.warn("Offline stage sync failed",error);
+   schedulePendingStageRetry(12000);
+   return false;
+  }
  }
  return true;
 }
