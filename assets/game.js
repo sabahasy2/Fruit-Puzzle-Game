@@ -49,9 +49,10 @@ async function ensureOfflineAttempts(){
  try{
   const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:6})});
   const data=await response.json();
+  if(response.status===403){stageRewardRequired=false;return false}
   if(!response.ok)throw Error(data.error||"تعذّر تجهيز المراحل دون اتصال");
-  const merged=new Map(existing.map(x=>[x.attemptId,x]));
-  for(const row of (data.attempts||[]))if(row?.attemptId&&Number(row.seed)>0)merged.set(row.attemptId,row);
+  const merged=new Map(existing.filter(x=>new Date(x.expiresAt).getTime()>Date.now()).map(x=>[Number(x.level),x]));
+  for(const row of (data.attempts||[]))if(row?.attemptId&&Number(row.seed)>0)merged.set(Number(row.level),row);
   writeOfflineAttempts(playerId,[...merged.values()].sort((a,b)=>a.level-b.level));
   return true;
  }catch(error){console.warn("Offline stage preparation failed",error);return existing.length>0}
