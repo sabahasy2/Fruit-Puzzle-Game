@@ -183,6 +183,15 @@ export async function onRequest({ request, env }) {
       const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
       return json(result.data, result.status);
     }
+    if (path === "/api/rewards/attempt/batch" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "attempt-batch", gamePlayerId: player.id, count: body.count,
+      });
+      return json(result.data, result.status);
+    }
     if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
       const player = await currentPlayer(request, env.DB);
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
