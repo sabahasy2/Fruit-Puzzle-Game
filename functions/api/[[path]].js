@@ -90,8 +90,9 @@ export async function onRequest({ request, env }) {
       if (accessToken.length < 40 || accessToken.length > 8192 || !/^[0-9a-f]{48}$/i.test(linkCode))
         return redirectStoreLogin(url, "failed");
 
-      const supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\/+$/, "");
-      const supabasePublishableKey = String(env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3");
+      const previewStoreAuth = url.hostname !== "fruit-pop-puzzle.pages.dev";
+      const supabaseUrl = previewStoreAuth ? "https://szfcnihddyhyuqhyfeyj.supabase.co" : (env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co");
+      const supabasePublishableKey = previewStoreAuth ? "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3" : (env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3");
       const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         method: "GET",
         headers: {
@@ -119,14 +120,18 @@ export async function onRequest({ request, env }) {
         await saveProgress(env.DB, playerId, { level: 1, stars: 0, coins: 250, lives: 5, totalScore: 0 });
       }
 
-      const linked = await callGameRewards(env, {
-        action: "link-exchange",
-        gamePlayerId: playerId,
-        code: linkCode,
-      });
-      if (linked.status !== 200 || linked.data?.ok !== true) {
-        console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
-        return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+      // Preview deployments authenticate with the main store but skip reward linking.
+      // Their game progress is isolated in the preview D1 database.
+      if (!previewStoreAuth) {
+        const linked = await callGameRewards(env, {
+          action: "link-exchange",
+          gamePlayerId: playerId,
+          code: linkCode,
+        });
+        if (linked.status !== 200 || linked.data?.ok !== true) {
+          console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
+          return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+        }
       }
 
       const sessionToken = await createSession(env.DB, playerId);
