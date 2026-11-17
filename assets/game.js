@@ -1,5 +1,6 @@
 (()=>{"use strict";
-const STORE_URL=location.hostname==="fruit-pop-puzzle.pages.dev"?"https://adam-al-noor-books.pages.dev":"https://feature-offline-game-rewards.adam-al-noor-books.pages.dev";
+const OFFLINE_PROGRESS_PREVIEW=location.hostname!=="fruit-pop-puzzle.pages.dev";
+const STORE_URL="https://adam-al-noor-books.pages.dev";
 const $=id=>document.getElementById(id), FRUIT_SETS=[["🍎","🍊","🥝","🍇","🍌","🍐","🍆"],["🍎","🍊","🥝","🍇","🍉","🥒","🍒"],["🍎","🍊","🥝","🍉","🥒","🥭","🍐"],["🍎","🍊","🍉","🥒","🥭","🍍","🍆"],["🍎","🍉","🥒","🥭","🍍","🍆","🫑"]],BOARD_SIZE=7;
 const WORLDS=[["حدائق الفراولة","🍓","حيث تبدأ الحكاية بين أزهار الفراولة"],["وادي البرتقال","🍊","أشعة ذهبية وعصائر منعشة"],["قمم الليمون","🍋","تسلق القمم واجمع الحلوى"],["غابة العنب","🍇","أسرار بنفسجية تنتظر الأبطال"],["شاطئ البطيخ","🍉","موجات من المرح والانفجارات"],["كرنفال الكرز","🍒","ألوان وألعاب ومفاجآت"],["قصر الأناناس","🍍","بوابات ذهبية وألغاز استوائية"],["مملكة الكمثرى","🍐","حدائق ذهبية وثمار كمثرى متلألئة"],["جبال الخوخ","🍑","وديان وردية ومنحدرات سكرية"],["جزيرة المانجو","🥭","نسيم استوائي وكنوز مخفية"],["حديقة التفاح","🍎","أشجار حمراء ومسارات مرصعة"],["كهف الكيوي","🥝","متاهات خضراء وأحجار كريمة"],["مدينة الدونات","🍩","شوارع من السكر والكريمة"],["بحيرة المصاصات","🍭","جزر حلوة ومياه بلورية"],["مهرجان الكب كيك","🧁","أبراج كريمة ونجوم ذهبية"],["قلعة الشوكولاتة","🍫","أنهار كاكاو وأبواب سحرية"],["وادي العسل","🍯","خلايا لامعة ومكافآت نادرة"],["غابة النعناع","🌿","نسيم بارد وأحجار زمردية"],["سيرك الحلوى","🍬","ألعاب بهلوانية وانفجارات ملونة"],["مجرة السكر","🌌","كواكب من الحلوى والنجوم"],["قمة قوس قزح","🌈","ألوان سحرية وتحديات كبرى"],["مرفأ الكراميل","🍮","أمواج ذهبية وأسرار بحرية"],["مملكة الجواهر","💎","كنوز نادرة وممرات مضيئة"],["قصر الملكة السكرية","👑","المواجهة الكبرى في قلب المملكة"]];
 const GUEST_KEY="fruit-pop-adam-guest-v2"; let activeStorageKey=GUEST_KEY;
@@ -42,6 +43,7 @@ function writeOfflineAttempts(playerId,rows){localStorage.setItem(offlineAttempt
 function readPendingStageResults(playerId){try{const rows=JSON.parse(localStorage.getItem(pendingStageStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
 function writePendingStageResults(playerId,rows){localStorage.setItem(pendingStageStoreKey(playerId),JSON.stringify(rows.slice(0,20)))}
 async function ensureOfflineAttempts(){
+ if(OFFLINE_PROGRESS_PREVIEW)return false;
  const playerId=currentPlayer?.id||offlineAccountId;
  if(!playerId||!navigator.onLine||!currentPlayer)return false;
  await flushPendingStageResults();
@@ -58,6 +60,7 @@ async function ensureOfflineAttempts(){
  }catch(error){console.warn("Offline stage preparation failed",error);return existing.length>0}
 }
 async function flushPendingStageResults(){
+ if(OFFLINE_PROGRESS_PREVIEW)return false;
  const playerId=currentPlayer?.id||offlineAccountId;
  if(!playerId||!navigator.onLine||!currentPlayer)return false;
  let pending=readPendingStageResults(playerId);
@@ -78,7 +81,7 @@ async function flushPendingStageResults(){
  }
  return true;
 }
-async function startLevel(n=state.level){await analyticsSessionReady;ensureAudio();busy=true;level=n;stageAttempt=null;stageRewardRequired=!!(currentPlayer||offlineAccountId);stageEvents=[];stageRng=0;
+async function startLevel(n=state.level){await analyticsSessionReady;ensureAudio();busy=true;level=n;stageAttempt=null;stageRewardRequired=!OFFLINE_PROGRESS_PREVIEW&&!!(currentPlayer||offlineAccountId);stageEvents=[];stageRng=0;
  if(stageRewardRequired){
   const playerId=currentPlayer?.id||offlineAccountId;
   if(navigator.onLine&&currentPlayer)await ensureOfflineAttempts();
