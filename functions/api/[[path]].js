@@ -255,7 +255,7 @@ export async function onRequest({ request, env }) {
       const body = await request.json();
       const result = await callGameRewards(env, {
         action: "attempt-batch", gamePlayerId: player.id, count: body.count,
-      });
+      }, url.hostname);
       return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
