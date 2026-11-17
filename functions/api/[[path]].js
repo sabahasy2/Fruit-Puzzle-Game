@@ -40,7 +40,8 @@ async function saveProgress(db, playerId, p) {
 }
 async function callGameRewards(env, payload) {
   if (!env.SUPABASE_SECRET_KEY) throw new Error("Game rewards backend key is not configured.");
-  const response = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/functions/v1/game-rewards", {
+  const supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\/+$/, "");
+  const response = await fetch(`${supabaseUrl}/functions/v1/game-rewards`, {
     method: "POST",
     headers: { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" },
     body: JSON.stringify(payload),
@@ -89,10 +90,13 @@ export async function onRequest({ request, env }) {
       if (accessToken.length < 40 || accessToken.length > 8192 || !/^[0-9a-f]{48}$/i.test(linkCode))
         return redirectStoreLogin(url, "failed");
 
-      const authResponse = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/auth/v1/user", {
+      const previewStoreAuth = url.hostname !== "fruit-pop-puzzle.pages.dev";
+      const supabaseUrl = previewStoreAuth ? "https://szfcnihddyhyuqhyfeyj.supabase.co" : (env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co");
+      const supabasePublishableKey = previewStoreAuth ? "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3" : (env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3");
+      const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         method: "GET",
         headers: {
-          "apikey": "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3",
+          "apikey": supabasePublishableKey,
           "Authorization": "Bearer " + accessToken,
         },
         cache: "no-store",
@@ -116,14 +120,18 @@ export async function onRequest({ request, env }) {
         await saveProgress(env.DB, playerId, { level: 1, stars: 0, coins: 250, lives: 5, totalScore: 0 });
       }
 
-      const linked = await callGameRewards(env, {
-        action: "link-exchange",
-        gamePlayerId: playerId,
-        code: linkCode,
-      });
-      if (linked.status !== 200 || linked.data?.ok !== true) {
-        console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
-        return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+      // Preview deployments authenticate with the main store but skip reward linking.
+      // Their game progress is isolated in the preview D1 database.
+      if (!previewStoreAuth) {
+        const linked = await callGameRewards(env, {
+          action: "link-exchange",
+          gamePlayerId: playerId,
+          code: linkCode,
+        });
+        if (linked.status !== 200 || linked.data?.ok !== true) {
+          console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
+          return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+        }
       }
 
       const sessionToken = await createSession(env.DB, playerId);
@@ -181,6 +189,15 @@ export async function onRequest({ request, env }) {
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
       const body = await request.json();
       const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/batch" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "attempt-batch", gamePlayerId: player.id, count: body.count,
+      });
       return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/complete" && request.method === "POST") {

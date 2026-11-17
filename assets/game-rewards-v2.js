@@ -1,9 +1,11 @@
 (()=>{"use strict";
 const $=id=>document.getElementById(id);
-const STORE_URL=location.hostname==="fruit-pop-puzzle.pages.dev"?"https://adam-al-noor-books.pages.dev":"https://feat-game-stage-rewards.adam-al-noor-books.pages.dev";
+const OFFLINE_PROGRESS_PREVIEW=location.hostname!=="fruit-pop-puzzle.pages.dev";
+const STORE_URL="https://adam-al-noor-books.pages.dev";
 const formatIqd=value=>Math.max(0,Number(value)||0).toLocaleString("ar-IQ")+" د.ع";
 const decorativeUsd=value=>((Math.max(0,Number(value)||0)/500)*0.45).toFixed(2);
 async function refreshGameRewards(){
+  if(OFFLINE_PROGRESS_PREVIEW){const button=$("gameRewardsBtn");if(button)button.hidden=true;return null;}
   const badge=$("redPointsBalance"),stageBadge=$("redPointsBalanceGame"),usdBadge=$("redPointsUsdBalance");
   try{
     const response=await fetch("/api/rewards/profile",{credentials:"same-origin",cache:"no-store"});
@@ -51,7 +53,6 @@ async function openWallet(){
   );
   $("closeGameRewardsBtn").onclick=()=>$("modalLayer").classList.add("hidden");
 }
-$("gameRewardsBtn")?.addEventListener("click",openWallet);
 window.refreshGameRewards=refreshGameRewards;
-refreshGameRewards();
+if(OFFLINE_PROGRESS_PREVIEW){const button=$("gameRewardsBtn");if(button)button.hidden=true;}else{$("gameRewardsBtn")?.addEventListener("click",openWallet);refreshGameRewards();}
 })();
