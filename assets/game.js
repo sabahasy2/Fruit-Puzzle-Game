@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const OFFLINE_PROGRESS_PREVIEW=location.hostname!=="fruit-pop-puzzle.pages.dev";
+const TEST_REWARD_PREVIEW_HOST="feature-offline-reward-sync.fruit-pop-puzzle.pages.dev";const OFFLINE_PROGRESS_PREVIEW=location.hostname!=="fruit-pop-puzzle.pages.dev"&&location.hostname!==TEST_REWARD_PREVIEW_HOST;
 const STORE_URL="https://adam-al-noor-books.pages.dev";
 const $=id=>document.getElementById(id), FRUIT_SETS=[["🍎","🍊","🥝","🍇","🍌","🍐","🍆"],["🍎","🍊","🥝","🍇","🍉","🥒","🍒"],["🍎","🍊","🥝","🍉","🥒","🥭","🍐"],["🍎","🍊","🍉","🥒","🥭","🍍","🍆"],["🍎","🍉","🥒","🥭","🍍","🍆","🫑"]],BOARD_SIZE=7;
 const WORLDS=[["حدائق الفراولة","🍓","حيث تبدأ الحكاية بين أزهار الفراولة"],["وادي البرتقال","🍊","أشعة ذهبية وعصائر منعشة"],["قمم الليمون","🍋","تسلق القمم واجمع الحلوى"],["غابة العنب","🍇","أسرار بنفسجية تنتظر الأبطال"],["شاطئ البطيخ","🍉","موجات من المرح والانفجارات"],["كرنفال الكرز","🍒","ألوان وألعاب ومفاجآت"],["قصر الأناناس","🍍","بوابات ذهبية وألغاز استوائية"],["مملكة الكمثرى","🍐","حدائق ذهبية وثمار كمثرى متلألئة"],["جبال الخوخ","🍑","وديان وردية ومنحدرات سكرية"],["جزيرة المانجو","🥭","نسيم استوائي وكنوز مخفية"],["حديقة التفاح","🍎","أشجار حمراء ومسارات مرصعة"],["كهف الكيوي","🥝","متاهات خضراء وأحجار كريمة"],["مدينة الدونات","🍩","شوارع من السكر والكريمة"],["بحيرة المصاصات","🍭","جزر حلوة ومياه بلورية"],["مهرجان الكب كيك","🧁","أبراج كريمة ونجوم ذهبية"],["قلعة الشوكولاتة","🍫","أنهار كاكاو وأبواب سحرية"],["وادي العسل","🍯","خلايا لامعة ومكافآت نادرة"],["غابة النعناع","🌿","نسيم بارد وأحجار زمردية"],["سيرك الحلوى","🍬","ألعاب بهلوانية وانفجارات ملونة"],["مجرة السكر","🌌","كواكب من الحلوى والنجوم"],["قمة قوس قزح","🌈","ألوان سحرية وتحديات كبرى"],["مرفأ الكراميل","🍮","أمواج ذهبية وأسرار بحرية"],["مملكة الجواهر","💎","كنوز نادرة وممرات مضيئة"],["قصر الملكة السكرية","👑","المواجهة الكبرى في قلب المملكة"]];
@@ -153,11 +153,31 @@ function useBooster(i){let key=activeBooster;activeBooster=null;if(stageAttempt)
 function collapseBoard(){for(let c=0;c<BOARD_SIZE;c++){let vals=[];for(let r=BOARD_SIZE-1;r>=0;r--)if(board[r*BOARD_SIZE+c])vals.push(board[r*BOARD_SIZE+c]);while(vals.length<BOARD_SIZE)vals.push(randFruit());for(let r=BOARD_SIZE-1;r>=0;r--)board[r*BOARD_SIZE+c]=vals[BOARD_SIZE-1-r]}}
 function showDaily(){let today=dateKey(),claimed=state.lastDaily===today;let reward=[50,65,80,100,125,150,250][Math.min(6,state.dailyStreak||0)];modal(`<div class="modal-hero">🎁</div><div class="eyebrow">هدية كل يوم</div><h2>مكافأتك اليومية</h2><p>افتح صندوقك اليومي واجمع الذهب لمواصلة المغامرة.</p><div style="font-size:42px;color:#ffe19a">🪙 ${claimed?"تم الاستلام":"+"+reward}</div><p>${claimed?"عد غداً لتحصل على هدية جديدة":"اليوم "+((state.dailyStreak%7)+1)+" من سلسلة المكافآت"}</p><button class="modal-action" id="claimDaily" ${claimed?"disabled":""}>${claimed?"تم استلام المكافأة":"استلم هديتك"}</button>`);$("claimDaily").onclick=()=>{if(state.lastDaily===today)return;state.coins+=reward;state.dailyStreak=(state.dailyStreak||0)+1;state.lastDaily=today;save();sound("win");closeModal();toast("أضيفت "+reward+" قطعة ذهبية إلى رصيدك!")}}
 function showLifeModal(){modal(`<div class="modal-hero">❤️</div><h2>تحتاج إلى قلوب أكثر</h2><p>استرح قليلاً أو عد لاحقاً لتستعيد محاولاتك.</p><p>القلوب المتاحة: ${state.lives} / 5</p><button class="modal-action" id="lifeClose">حسناً</button>`);$("lifeClose").onclick=closeModal}
+async function loginTestAccount(event){
+ event.preventDefault();
+ const email=$("testAuthEmail").value.trim(),password=$("testAuthPassword").value;
+ const button=$("testAuthSubmit");button.disabled=true;button.textContent="جارٍ تسجيل الدخول...";
+ try{
+  const response=await fetch("/api/auth/test",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({email,password})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(data.error||"تعذّر تسجيل الدخول بحساب الاختبار");
+  await checkSession();
+  await ensureOfflineAttempts();
+  closeModal();
+  toast("تم تسجيل الدخول بحساب الاختبار وتجهيز مزامنة المراحل");
+ }catch(error){toast(error.message||"تعذّر تسجيل الدخول بحساب الاختبار")}
+ finally{button.disabled=false;button.textContent="دخول حساب الاختبار";$("testAuthPassword").value=""}
+}
 function accountModal(){
 if(currentPlayer){
 modal(`<div class="modal-hero">👤</div><h2>حسابك في متجر آدم النور</h2><p>تم تسجيل الدخول تلقائياً بحساب المتجر:</p><p class="account-email" id="currentAccountEmail"></p><p>كل مكافأة تحصل عليها من اللعب تُضاف إلى محفظة اللعبة الافتراضية المنفصلة في المتجر.</p><a class="ghost-action" href="${STORE_URL}/" style="display:block;text-align:center;text-decoration:none">العودة إلى المتجر</a><button class="modal-action" id="modalLogoutBtn">تسجيل الخروج من اللعبة</button>`);
 $("currentAccountEmail").textContent=currentPlayer.email;
 $("modalLogoutBtn").onclick=logoutAccount;
+return;
+}
+if(location.hostname===TEST_REWARD_PREVIEW_HOST){
+modal(`<div class="modal-hero">🧪</div><h2>دخول حساب الاختبار</h2><p>هذه معاينة اختبار منفصلة. استخدم حساب Supabase التجريبي فقط.</p><form id="testAuthForm" style="display:grid;gap:12px;text-align:right"><label>البريد الإلكتروني<input id="testAuthEmail" type="email" autocomplete="username" required style="width:100%;padding:12px;border-radius:10px;border:1px solid #bbb"></label><label>كلمة مرور حساب الاختبار<input id="testAuthPassword" type="password" autocomplete="current-password" required style="width:100%;padding:12px;border-radius:10px;border:1px solid #bbb"></label><button class="modal-action" id="testAuthSubmit" type="submit">دخول حساب الاختبار</button></form>`);
+$("testAuthForm").onsubmit=loginTestAccount;
 return;
 }
 modal(`<div class="modal-hero">👑</div><h2>الدخول إلى اللعبة</h2><p>للحصول على النقاط الحمراء، سجّل الدخول إلى حسابك في متجر آدم النور أولاً، ثم اضغط «العب الآن». ستدخل اللعبة تلقائياً دون إنشاء حساب جديد أو إدخال رمز.</p><a class="modal-action" href="${STORE_URL}/" style="display:block;text-align:center;text-decoration:none">افتح متجر آدم النور</a>`);
