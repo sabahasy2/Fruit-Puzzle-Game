@@ -35,7 +35,59 @@ function stageRandom(){stageRng^=stageRng<<13;stageRng^=stageRng>>>17;stageRng^=
 function randFruit(){const fruits=fruitsForLevel(level);return fruits[Math.floor((stageRng?stageRandom():Math.random())*fruits.length)]}
 function findMatches(b=board){let set=new Set();for(let r=0;r<BOARD_SIZE;r++)for(let c=0;c<BOARD_SIZE;c++){let i=r*BOARD_SIZE+c,v=b[i];if(!v)continue;if(c<BOARD_SIZE-2&&v===b[i+1]&&v===b[i+2]){let k=c+2;while(k+1<BOARD_SIZE&&b[r*BOARD_SIZE+k+1]===v)k++;for(let x=c;x<=k;x++)set.add(r*BOARD_SIZE+x)}if(r<BOARD_SIZE-2&&v===b[i+BOARD_SIZE]&&v===b[i+2*BOARD_SIZE]){let k=r+2;while(k+1<BOARD_SIZE&&b[(k+1)*BOARD_SIZE+c]===v)k++;for(let x=r;x<=k;x++)set.add(x*BOARD_SIZE+c)}}return [...set]}
 function makeBoard(){let b=Array(BOARD_SIZE*BOARD_SIZE).fill(null);for(let i=0;i<b.length;i++){let v;do{v=randFruit();b[i]=v}while((i%BOARD_SIZE>=2&&b[i]===b[i-1]&&b[i]===b[i-2])||(i>=2*BOARD_SIZE&&b[i]===b[i-BOARD_SIZE]&&b[i]===b[i-2*BOARD_SIZE]))}return b}
-async function startLevel(n=state.level){await analyticsSessionReady;ensureAudio();ensureAudio();busy=true;level=n;stageAttempt=null;stageRewardRequired=!!currentPlayer;stageEvents=[];stageRng=0;if(currentPlayer){try{let ar=await fetch("/api/rewards/attempt/start",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({level:n})});let ad=await ar.json();if(ar.status===409&&Number.isInteger(Number(ad.verifiedLevel))){const requiredLevel=Number(ad.verifiedLevel)+1;if(requiredLevel>=1&&requiredLevel<=1200&&requiredLevel!==n){n=requiredLevel;level=n;toast("لضمان احتساب مكافآتك، سنكمل معك من المرحلة "+n+" أولاً.");ar=await fetch("/api/rewards/attempt/start",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({level:n})});ad=await ar.json()}}if(ar.ok&&ad.attemptId&&Number(ad.seed)>0){stageAttempt=ad;stageRng=Number(ad.seed)>>>0}else if(ar.status===403){stageRewardRequired=false}else{toast(ad.error||"تعذّر تهيئة إثبات المرحلة. لم نبدأ اللعب كي لا تضيع مكافأتك.");busy=false;return}}catch{toast("تعذّر الاتصال بخادم المكافآت. أعد المحاولة قبل بدء المرحلة كي لا تضيع مكافأتك.");busy=false;return}}targetFruit=worldData(n).fruit;const fruitNames={"🍎":"التفاح","🍅":"الطماطم","🌶️":"الفلفل الحار","🍉":"البطيخ","🍑":"الخوخ","🍊":"البرتقال","🥕":"الجزر","🥭":"المانجو","🍍":"الأناناس","🍌":"الموز","🌽":"الذرة","🍋":"الليمون","🍋‍🟩":"الليمون الأخضر","🍈":"الشمام","🍐":"الكمثرى","🫛":"البازلاء","🫑":"الفلفل الحلو","🍏":"التفاح الأخضر","🥝":"الكيوي","🥑":"الأفوكادو","🫒":"الزيتون","🥦":"البروكلي","🥒":"الخيار","🥬":"الخس","🍇":"العنب","🍆":"الباذنجان","🍠":"البطاطا الحلوة","🫜":"الخضار الجذرية","🍓":"الفراولة","🍒":"الكرز"};if($("missionLabel"))$("missionLabel").textContent="اجمع "+(fruitNames[targetFruit]||"الثمار");target=8+Math.min(10,Math.floor(n/12));moves=28+Math.min(8,Math.floor(n/15));if(stageAttempt){targetFruit=stageAttempt.targetFruit||targetFruit;target=Number(stageAttempt.target)||target;moves=Number(stageAttempt.moves)||moves;}score=0;collected=0;selected=-1;activeBooster=null;board=makeBoard();busy=false;$("levelWorld").textContent=worldData(n).name;$("levelLabel").textContent="المرحلة "+n;$("targetFruit").textContent=targetFruit;$("targetCount").textContent="0 / "+target;$("moves").textContent=moves;$("score").textContent=score;showScreen("game");renderBoard()}
+function offlineAttemptStoreKey(playerId){return "fruit-pop-offline-attempts-"+playerId}
+function pendingStageStoreKey(playerId){return "fruit-pop-offline-results-"+playerId}
+function readOfflineAttempts(playerId){try{const rows=JSON.parse(localStorage.getItem(offlineAttemptStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
+function writeOfflineAttempts(playerId,rows){localStorage.setItem(offlineAttemptStoreKey(playerId),JSON.stringify(rows.slice(0,8)))}
+function readPendingStageResults(playerId){try{const rows=JSON.parse(localStorage.getItem(pendingStageStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
+function writePendingStageResults(playerId,rows){localStorage.setItem(pendingStageStoreKey(playerId),JSON.stringify(rows.slice(0,20)))}
+async function ensureOfflineAttempts(){
+ const playerId=currentPlayer?.id||offlineAccountId;
+ if(!playerId||!navigator.onLine||!currentPlayer)return false;
+ await flushPendingStageResults();
+ const existing=readOfflineAttempts(playerId);
+ try{
+  const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:5})});
+  const data=await response.json();
+  if(!response.ok)throw Error(data.error||"تعذّر تجهيز المراحل دون اتصال");
+  const merged=new Map(existing.map(x=>[x.attemptId,x]));
+  for(const row of (data.attempts||[]))if(row?.attemptId&&Number(row.seed)>0)merged.set(row.attemptId,row);
+  writeOfflineAttempts(playerId,[...merged.values()].sort((a,b)=>a.level-b.level));
+  return true;
+ }catch(error){console.warn("Offline stage preparation failed",error);return existing.length>0}
+}
+async function flushPendingStageResults(){
+ const playerId=currentPlayer?.id||offlineAccountId;
+ if(!playerId||!navigator.onLine||!currentPlayer)return false;
+ let pending=readPendingStageResults(playerId);
+ if(!pending.length)return true;
+ pending.sort((a,b)=>a.level-b.level);
+ for(const item of pending){
+  try{
+   const response=await fetch("/api/rewards/attempt/complete",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({attemptId:item.attemptId,events:item.events})});
+   const data=await response.json();
+   if(response.ok){pending=pending.filter(x=>x.attemptId!==item.attemptId);writePendingStageResults(playerId,pending);await window.refreshGameRewards?.();continue}
+   if(response.status===409||response.status===400){
+    const profileResponse=await fetch("/api/rewards/profile",{credentials:"same-origin",cache:"no-store"});
+    const profile=await profileResponse.json();
+    if(profileResponse.ok&&Number(profile.verifiedLevel)>=Number(item.level)){pending=pending.filter(x=>x.attemptId!==item.attemptId);writePendingStageResults(playerId,pending);await window.refreshGameRewards?.();continue}
+   }
+   console.warn("Offline stage sync is waiting",data.error||response.status);return false;
+  }catch(error){console.warn("Offline stage sync failed",error);return false}
+ }
+ return true;
+}
+async function startLevel(n=state.level){await analyticsSessionReady;ensureAudio();busy=true;level=n;stageAttempt=null;stageRewardRequired=!!(currentPlayer||offlineAccountId);stageEvents=[];stageRng=0;
+ if(stageRewardRequired){
+  const playerId=currentPlayer?.id||offlineAccountId;
+  if(navigator.onLine&&currentPlayer)await ensureOfflineAttempts();
+  const attempts=readOfflineAttempts(playerId);
+  const match=attempts.find(x=>Number(x.level)===n&&Number(x.seed)>0&&x.expiresAt&&new Date(x.expiresAt).getTime()>Date.now());
+  if(match){stageAttempt=match;stageRng=Number(match.seed)>>>0}
+  else if(!navigator.onLine){toast("هذه المرحلة غير مجهّزة بعد للعب دون اتصال. اتصل بالإنترنت مرة واحدة لتجهيز المراحل التالية.");busy=false;return}
+  else{toast("لم نتمكن من تجهيز إثبات المرحلة. أعد المحاولة بعد التأكد من الاتصال.");busy=false;return}
+ }
+ targetFruit=worldData(n).fruit;const fruitNames={"🍎":"التفاح","🍅":"الطماطم","🌶️":"الفلفل الحار","🍉":"البطيخ","🍑":"الخوخ","🍊":"البرتقال","🥕":"الجزر","🥭":"المانجو","🍍":"الأناناس","🍌":"الموز","🌽":"الذرة","🍋":"الليمون","🍋‍🟩":"الليمون الأخضر","🍈":"الشمام","🍐":"الكمثرى","🫛":"البازلاء","🫑":"الفلفل الحلو","🍏":"التفاح الأخضر","🥝":"الكيوي","🥑":"الأفوكادو","🫒":"الزيتون","🥦":"البروكلي","🥒":"الخيار","🥬":"الخس","🍇":"العنب","🍆":"الباذنجان","🍠":"البطاطا الحلوة","🫜":"الخضار الجذرية","🍓":"الفراولة","🍒":"الكرز"};if($("missionLabel"))$("missionLabel").textContent="اجمع "+(fruitNames[targetFruit]||"الثمار");target=8+Math.min(10,Math.floor(n/12));moves=28+Math.min(8,Math.floor(n/15));if(stageAttempt){targetFruit=stageAttempt.targetFruit||targetFruit;target=Number(stageAttempt.target)||target;moves=Number(stageAttempt.moves)||moves;}score=0;collected=0;selected=-1;activeBooster=null;board=makeBoard();busy=false;$("levelWorld").textContent=worldData(n).name;$("levelLabel").textContent="المرحلة "+n;$("targetFruit").textContent=targetFruit;$("targetCount").textContent="0 / "+target;$("moves").textContent=moves;$("score").textContent=score;showScreen("game");renderBoard()}
 let returnToGameFromMap=false;
 let suppressCellClick=false;
 function finishDrag(e){if(dragStart<0)return;const from=dragStart,hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("#gameBoard [data-cell]"),to=hit?Number(hit.dataset.cell):from;dragStart=-1;document.querySelectorAll(".fruit-cell.pressed").forEach(x=>x.classList.remove("pressed"));suppressCellClick=true;setTimeout(()=>{suppressCellClick=false},350);if(busy)return;if(to!==from){if(adjacent(from,to))selectOrSwap(from,to);else{selected=to;renderBoard()}}else tapCell(from)}
