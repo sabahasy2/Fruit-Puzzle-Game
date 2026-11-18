@@ -110,7 +110,7 @@ let pendingStageFlushPromise=null;async function flushPendingStageResults(){if(p
      schedulePendingStageRetry(10000);
     }
    }
-   if(response.status===401||response.status===408||response.status===429||response.status>=500)
+   if(response.status===401||response.status===408||response.status===409||response.status===429||response.status>=500)
     schedulePendingStageRetry(response.status===429?8000:12000);
    console.warn("Offline stage sync is waiting",data.error||response.status);
    return false;
