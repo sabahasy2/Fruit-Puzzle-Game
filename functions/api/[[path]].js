@@ -26,7 +26,7 @@ async function currentPlayer(request, db) {
   const token = (request.headers.get("Cookie") || "").split(";").map(x => x.trim()).find(x => x.startsWith("fp_session="))?.slice(11);
   if (!token) return null;
   const now = Math.floor(Date.now() / 1000);
-  return db.prepare("SELECT p.id,p.email,p.display_name,pr.level,pr.stars,pr.coins,pr.lives,pr.total_score FROM sessions s JOIN players p ON p.id=s.player_id LEFT JOIN progress pr ON pr.player_id=p.id WHERE s.token_hash=? AND s.expires_at>?")
+  return db.prepare("SELECT p.id,p.email,p.display_name,pr.level,pr.stars,pr.coins,pr.lives,pr.total_score,pr.reset_version FROM sessions s JOIN players p ON p.id=s.player_id LEFT JOIN progress pr ON pr.player_id=p.id WHERE s.token_hash=? AND s.expires_at>?")
     .bind(await tokenHash(token), now).first();
 }
 async function saveProgress(db, playerId, p) {
@@ -294,7 +294,7 @@ export async function onRequest({ request, env }) {
     if (path === "/api/progress" && request.method === "GET") {
       const player = await currentPlayer(request,env.DB);
       if (!player) return json({error:"Sign in to sync progress."},401);
-      return json({playerId:player.id,progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,totalScore:player.total_score||0,lives:player.lives??5}});
+      return json({playerId:player.id,resetVersion:player.reset_version||0,progress:{level:player.level||1,stars:player.stars||0,coins:player.coins||0,totalScore:player.total_score||0,lives:player.lives??5}});
     }
     if (path === "/api/progress" && request.method === "PUT") {
       const player = await currentPlayer(request,env.DB);
