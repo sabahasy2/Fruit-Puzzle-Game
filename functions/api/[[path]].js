@@ -30,6 +30,10 @@ async function currentPlayer(request, db) {
     .bind(await tokenHash(token), now).first();
 }
 async function saveProgress(db, playerId, p) {
+  const current = await db.prepare("SELECT reset_version FROM progress WHERE player_id=?").bind(playerId).first();
+  const serverResetVersion = Number(current?.reset_version) || 0;
+  const clientResetVersion = Number(p.resetVersion) || 0;
+  if (clientResetVersion !== serverResetVersion) return false;
   const level = Math.max(1, Math.min(10000, Math.floor(Number(p.level) || 1)));
   const stars = Math.max(0, Math.min(30000, Math.floor(Number(p.stars) || 0)));
   const coins = Math.max(0, Math.min(10000000, Math.floor(Number(p.coins) || 0)));
@@ -37,6 +41,7 @@ async function saveProgress(db, playerId, p) {
   const totalScore = Math.max(0, Math.min(1000000000, Math.floor(Number(p.totalScore ?? p.total_score) || 0)));
   await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,total_score,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,total_score=MAX(total_score,excluded.total_score),updated_at=excluded.updated_at")
     .bind(playerId, level, stars, coins, lives, totalScore, Math.floor(Date.now()/1000)).run();
+  return true;
 }
 async function callGameRewards(env, payload, hostname, authorization = "") {
   const isTestPreview = hostname === "feature-offline-reward-sync.fruit-pop-puzzle.pages.dev";
@@ -299,7 +304,8 @@ export async function onRequest({ request, env }) {
     if (path === "/api/progress" && request.method === "PUT") {
       const player = await currentPlayer(request,env.DB);
       if (!player) return json({error:"Sign in to sync progress."},401);
-      await saveProgress(env.DB,player.id,await request.json());
+      const saved = await saveProgress(env.DB,player.id,await request.json());
+      if (!saved) return json({error:"Game progress was reset. Reload before syncing."},409);
       return json({ok:true});
     }
     /* Google sign-in has been intentionally removed; email/password is the only account method. */
