@@ -38,12 +38,25 @@ async function saveProgress(db, playerId, p) {
   await db.prepare("INSERT INTO progress(player_id,level,stars,coins,lives,total_score,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(player_id) DO UPDATE SET level=MAX(level,excluded.level),stars=MAX(stars,excluded.stars),coins=MAX(coins,excluded.coins),lives=excluded.lives,total_score=MAX(total_score,excluded.total_score),updated_at=excluded.updated_at")
     .bind(playerId, level, stars, coins, lives, totalScore, Math.floor(Date.now()/1000)).run();
 }
-async function callGameRewards(env, payload) {
+async function callGameRewards(env, payload, hostname, authorization = "") {
+  const isTestPreview = hostname === "feature-offline-reward-sync.fruit-pop-puzzle.pages.dev";
+  const isProduction = hostname === "fruit-pop-puzzle.pages.dev";
+  if (!isTestPreview && !isProduction) throw new Error("Game rewards are disabled on this deployment.");
   if (!env.SUPABASE_SECRET_KEY) throw new Error("Game rewards backend key is not configured.");
-  const response = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/functions/v1/game-rewards", {
-    method: "POST",
-    headers: { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" },
-    body: JSON.stringify(payload),
+  let supabaseUrl;
+  if (isTestPreview) {
+    if (env.SUPABASE_URL !== "https://vrxppgghkdfqnaltnnks.supabase.co")
+      throw new Error("Test preview must use the dedicated test Supabase project.");
+    supabaseUrl = "https://vrxppgghkdfqnaltnnks.supabase.co";
+  } else {
+    supabaseUrl = String(env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co").replace(/\/+$/, "");
+    if (new URL(supabaseUrl).hostname !== "szfcnihddyhyuqhyfeyj.supabase.co")
+      throw new Error("Production game rewards must use the production Supabase project.");
+  }
+  const headers = { "apikey": env.SUPABASE_SECRET_KEY, "content-type": "application/json" };
+  if (authorization) headers.Authorization = authorization;
+  const response = await fetch(`${supabaseUrl}/functions/v1/game-rewards`, {
+    method: "POST", headers, body: JSON.stringify(payload),
   });
   const data = await response.json().catch(() => ({}));
   return { data, status: response.status };
@@ -53,10 +66,15 @@ export async function onRequest({ request, env }) {
   if (!env.DB) return json({ error: "Game database is not connected yet." }, 503);
   const url = new URL(request.url), path = url.pathname.replace(/\/$/, "");
   const requestOrigin = request.headers.get("Origin") || "";
+  const isProductionGame = url.hostname === "fruit-pop-puzzle.pages.dev";
+  const isRewardTestPreview = url.hostname === "feature-offline-reward-sync.fruit-pop-puzzle.pages.dev";
+  const rewardsEnabled = isProductionGame || isRewardTestPreview;
   const allowedStoreOrigin = requestOrigin === "https://adam-al-noor-books.pages.dev" || /^https:\/\/[a-z0-9-]+\.adam-al-noor-books\.pages\.dev$/.test(requestOrigin);
   const storeCors = allowedStoreOrigin ? { "Access-Control-Allow-Origin": requestOrigin, "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Vary": "Origin" } : {};
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...storeCors } });
   try {
+    if ((path.startsWith("/api/rewards/") || path === "/api/auth/test") && !rewardsEnabled)
+      return json({ error: "Rewards are disabled on this deployment." }, 404);
     if (path === "/api/analytics/view" && request.method === "POST") {
       await env.DB.prepare("UPDATE game_analytics SET page_views=page_views+1 WHERE id=1").run();
       return json({ ok: true });
@@ -82,6 +100,47 @@ export async function onRequest({ request, env }) {
       const stats = await env.DB.prepare("SELECT page_views AS pageViews, (SELECT COUNT(*) FROM game_analytics_guests) AS guestPlayers, (SELECT COUNT(*) FROM players) AS registeredPlayers FROM game_analytics WHERE id=1").first();
       return json({ pageViews: stats?.pageViews || 0, guestPlayers: stats?.guestPlayers || 0, registeredPlayers: stats?.registeredPlayers || 0 }, 200, storeCors);
     }
+    if (path === "/api/auth/test" && request.method === "POST") {
+      if (!isRewardTestPreview) return json({ error: "Test sign-in is available only on the dedicated reward preview." }, 404);
+      if (env.SUPABASE_URL !== "https://vrxppgghkdfqnaltnnks.supabase.co" || !env.SUPABASE_PUBLISHABLE_KEY || !env.SUPABASE_SECRET_KEY)
+        return json({ error: "The dedicated test Supabase configuration is incomplete." }, 503);
+      const body = await request.json();
+      const email = String(body.email || "").trim().toLowerCase();
+      const password = String(body.password || "");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 128)
+        return json({ error: "Enter the test account email and password." }, 400);
+      const authResponse = await fetch("https://vrxppgghkdfqnaltnnks.supabase.co/auth/v1/token?grant_type=password", {
+        method: "POST",
+        headers: { "apikey": env.SUPABASE_PUBLISHABLE_KEY, "content-type": "application/json" },
+        body: JSON.stringify({ email, password }), cache: "no-store",
+      });
+      const authData = await authResponse.json().catch(() => ({}));
+      if (!authResponse.ok || !authData.access_token || !authData.user?.id)
+        return json({ error: "Test account sign-in failed. Check the credentials and try again." }, 401);
+      const userId = String(authData.user.id);
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) return json({ error: "The test account identity is invalid." }, 401);
+      const existing = await env.DB.prepare("SELECT id,email FROM players WHERE id=? OR email=? LIMIT 1").bind(userId, email).first();
+      if (existing && existing.id !== userId) return json({ error: "This test email is already attached to a different game profile." }, 409);
+      if (!existing) {
+        const passwordHash = await hashPassword(random(32));
+        const displayName = String(authData.user.user_metadata?.full_name || email.split("@")[0]).slice(0, 40) || "Test Player";
+        await env.DB.prepare("INSERT INTO players(id,email,password_hash,display_name,created_at) VALUES(?,?,?,?,?)")
+          .bind(userId, email, `${passwordHash.salt}:${passwordHash.hash}`, displayName, Math.floor(Date.now() / 1000)).run();
+        await saveProgress(env.DB, userId, { level: 1, stars: 0, coins: 250, lives: 5, totalScore: 0 });
+      }
+      const codeResult = await callGameRewards(env, { action: "create-link-code" }, url.hostname, "Bearer " + authData.access_token);
+      if (codeResult.status !== 200 || !codeResult.data?.code) {
+        console.error("Test reward link-code creation failed", { status: codeResult.status });
+        return json({ error: "Test account authenticated, but reward linking could not be prepared." }, 502);
+      }
+      const linked = await callGameRewards(env, { action: "link-exchange", gamePlayerId: userId, code: codeResult.data.code }, url.hostname);
+      if (linked.status !== 200 || linked.data?.ok !== true) {
+        console.error("Test reward account linking failed", { status: linked.status });
+        return json({ error: "Test account authenticated, but game linking failed. Please retry." }, 502);
+      }
+      const sessionToken = await createSession(env.DB, userId);
+      return json({ ok: true }, 200, { "Set-Cookie": cookie("fp_session", sessionToken, 60 * 60 * 24 * 30) });
+    }
     if (path === "/api/auth/store" && request.method === "POST") {
       const form = await request.formData();
       const accessToken = String(form.get("access_token") || "").trim();
@@ -89,10 +148,13 @@ export async function onRequest({ request, env }) {
       if (accessToken.length < 40 || accessToken.length > 8192 || !/^[0-9a-f]{48}$/i.test(linkCode))
         return redirectStoreLogin(url, "failed");
 
-      const authResponse = await fetch("https://szfcnihddyhyuqhyfeyj.supabase.co/auth/v1/user", {
+      const previewStoreAuth = url.hostname !== "fruit-pop-puzzle.pages.dev";
+      const supabaseUrl = previewStoreAuth ? "https://szfcnihddyhyuqhyfeyj.supabase.co" : (env.SUPABASE_URL || "https://szfcnihddyhyuqhyfeyj.supabase.co");
+      const supabasePublishableKey = previewStoreAuth ? "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3" : (env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3");
+      const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         method: "GET",
         headers: {
-          "apikey": "sb_publishable_DRVhnLRevwG5P01do64_Rw_rc_C9WA3",
+          "apikey": supabasePublishableKey,
           "Authorization": "Bearer " + accessToken,
         },
         cache: "no-store",
@@ -116,14 +178,18 @@ export async function onRequest({ request, env }) {
         await saveProgress(env.DB, playerId, { level: 1, stars: 0, coins: 250, lives: 5, totalScore: 0 });
       }
 
-      const linked = await callGameRewards(env, {
-        action: "link-exchange",
-        gamePlayerId: playerId,
-        code: linkCode,
-      });
-      if (linked.status !== 200 || linked.data?.ok !== true) {
-        console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
-        return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+      // Preview deployments authenticate with the main store but skip reward linking.
+      // Their game progress is isolated in the preview D1 database.
+      if (!previewStoreAuth) {
+        const linked = await callGameRewards(env, {
+          action: "link-exchange",
+          gamePlayerId: playerId,
+          code: linkCode,
+        }, url.hostname);
+        if (linked.status !== 200 || linked.data?.ok !== true) {
+          console.error("Store-to-game account linking failed", { status: linked.status, error: linked.data?.error || "unknown" });
+          return redirectStoreLogin(url, linked.status === 400 ? "expired" : "failed");
+        }
       }
 
       const sessionToken = await createSession(env.DB, playerId);
@@ -163,7 +229,7 @@ export async function onRequest({ request, env }) {
     if (path === "/api/rewards/profile" && request.method === "GET") {
       const player = await currentPlayer(request, env.DB);
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
-      const profile = await callGameRewards(env, { action: "profile", gamePlayerId: player.id });
+      const profile = await callGameRewards(env, { action: "profile", gamePlayerId: player.id }, url.hostname);
       return json(profile.data, profile.status);
     }
     if (path === "/api/rewards/link" && request.method === "POST") {
@@ -173,14 +239,23 @@ export async function onRequest({ request, env }) {
       const result = await callGameRewards(env, {
         action: "link-exchange", gamePlayerId: player.id,
         code: String(body.code || ""),
-      });
+      }, url.hostname);
       return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/start" && request.method === "POST") {
       const player = await currentPlayer(request, env.DB);
       if (!player) return json({ error: "Sign in to your game account first." }, 401);
       const body = await request.json();
-      const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level });
+      const result = await callGameRewards(env, { action: "attempt-start", gamePlayerId: player.id, level: body.level }, url.hostname);
+      return json(result.data, result.status);
+    }
+    if (path === "/api/rewards/attempt/batch" && request.method === "POST") {
+      const player = await currentPlayer(request, env.DB);
+      if (!player) return json({ error: "Sign in to your game account first." }, 401);
+      const body = await request.json();
+      const result = await callGameRewards(env, {
+        action: "attempt-batch", gamePlayerId: player.id, count: body.count,
+      }, url.hostname);
       return json(result.data, result.status);
     }
     if (path === "/api/rewards/attempt/complete" && request.method === "POST") {
@@ -190,7 +265,7 @@ export async function onRequest({ request, env }) {
       const result = await callGameRewards(env, {
         action: "attempt-complete", gamePlayerId: player.id,
         attemptId: body.attemptId, events: body.events,
-      });
+      }, url.hostname);
       return json(result.data, result.status);
     }
     if (path === "/api/global-score" && request.method === "GET") {
