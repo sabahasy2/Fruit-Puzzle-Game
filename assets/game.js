@@ -79,7 +79,7 @@ async function ensureOfflineAttempts(){
   return true;
  }catch(error){console.warn("Offline stage preparation failed",error);return existing.length>0}
 }
-async function flushPendingStageResults(){
+let pendingStageFlushPromise=null;async function flushPendingStageResults(){if(pendingStageFlushPromise)return pendingStageFlushPromise;const run=flushPendingStageResultsUnlocked();pendingStageFlushPromise=run;try{return await run}finally{if(pendingStageFlushPromise===run)pendingStageFlushPromise=null}}async function flushPendingStageResultsUnlocked(){
  if(OFFLINE_PROGRESS_PREVIEW)return false;
  const playerId=currentPlayer?.id||offlineAccountId;
  if(!playerId||!navigator.onLine||!currentPlayer)return false;
