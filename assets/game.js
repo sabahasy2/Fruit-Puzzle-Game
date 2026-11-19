@@ -39,7 +39,7 @@ function makeBoard(){let b=Array(BOARD_SIZE*BOARD_SIZE).fill(null);for(let i=0;i
 function offlineAttemptStoreKey(playerId){return "fruit-pop-offline-attempts-"+playerId}
 function pendingStageStoreKey(playerId){return "fruit-pop-offline-results-"+playerId}
 function readOfflineAttempts(playerId){try{const rows=JSON.parse(localStorage.getItem(offlineAttemptStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
-function writeOfflineAttempts(playerId,rows){localStorage.setItem(offlineAttemptStoreKey(playerId),JSON.stringify(rows.slice(0,8)))}
+function writeOfflineAttempts(playerId,rows){localStorage.setItem(offlineAttemptStoreKey(playerId),JSON.stringify(rows.slice(0,20)))}
 function readPendingStageResults(playerId){try{const rows=JSON.parse(localStorage.getItem(pendingStageStoreKey(playerId))||"[]");return Array.isArray(rows)?rows:[]}catch{return []}}
 function writePendingStageResults(playerId,rows){localStorage.setItem(pendingStageStoreKey(playerId),JSON.stringify(rows.slice(0,20)))}
 function schedulePendingStageRetry(delay=10000){
@@ -69,7 +69,7 @@ async function ensureOfflineAttempts(){
  }
  const existing=readOfflineAttempts(playerId);
  try{
-  const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:6})});
+  const response=await fetch("/api/rewards/attempt/batch",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({count:20})});
   const data=await response.json();
   if(response.status===403){stageRewardRequired=false;return false}
   if(!response.ok)throw Error(data.error||"تعذّر تجهيز المراحل دون اتصال");
