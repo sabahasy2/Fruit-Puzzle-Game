@@ -89,3 +89,32 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 .store-offers-btn{display:grid;justify-items:center;gap:3px;text-decoration:none;color:#ffe7a5!important;background:linear-gradient(110deg,#6d3b8d,#40205f)!important;border:1px solid #f8d98a99!important;box-shadow:inset 0 1px 0 #ffffff30,0 5px 16px #13051e55;font-size:14px!important;padding:12px 14px!important;transition:transform .18s ease,filter .18s ease}
 .store-offers-btn small{font-size:10px;font-weight:600;color:#e8d7f5}
 .store-offers-btn:active{transform:translateY(1px);filter:brightness(1.12)}
+
+
+/* Final mobile game HUD polish: clearer counters and fully visible boosters */
+.game-screen{padding-bottom:14px}
+.top-stats .total-top-pill{min-width:72px;max-width:78px;flex:0 0 auto;justify-content:center}
+.top-stats .total-top-pill b{max-width:58px;font-size:10px;white-space:nowrap;overflow:visible;text-overflow:clip;font-variant-numeric:tabular-nums}
+.mission-card{align-items:stretch;gap:6px;padding:10px 8px}
+.mission-main{gap:7px}
+.mission-main>div{min-width:0}
+.moves-box,.score-box,.total-score-box{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0;padding-right:7px}
+.mission-card small{font-size:8px;line-height:1.25}
+.mission-card b{font-size:13px;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
+.map-shortcut{flex:0 0 42px;min-width:42px}
+.booster-row{gap:14px;margin:13px 0 12px;align-items:stretch}
+.booster{width:min(92px,calc((100% - 28px)/3));min-height:82px;padding:9px 7px 8px;gap:3px}
+.booster span{font-size:27px;line-height:1.2}
+.booster small{font-size:11px;line-height:1.3}
+.booster b{width:21px;height:21px;font-size:11px}
+.game-hint{padding:0 8px 10px;font-size:11px;line-height:1.7}
+@media(max-width:390px){
+ .top-stats .total-top-pill{min-width:64px;max-width:68px;padding:4px 5px}
+ .top-stats .total-top-pill b{max-width:52px;font-size:9px}
+ .mission-card{gap:4px;padding:8px 5px}
+ .mission-card small{font-size:7px}
+ .mission-card b{font-size:11px}
+ .map-shortcut{flex-basis:36px;min-width:36px}
+ .booster-row{gap:10px;margin-top:11px}
+ .booster{width:min(88px,calc((100% - 20px)/3));min-height:78px}
+}
