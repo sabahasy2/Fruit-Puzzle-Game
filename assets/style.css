@@ -151,3 +151,32 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
   #gameRewardsBtn span,#gameRewardsBtn #redPointsBalance{font-size:9px!important}
   #gameRewardsBtn #redPointsUsdBalance{font-size:7px!important}
 }
+
+
+/* Separate and align the heart and coin counters in the mobile header */
+.top-stats{gap:4px;flex-wrap:nowrap}
+.top-stats>.stat-pill{box-sizing:border-box;min-width:0;flex:0 0 auto;padding:4px 5px;gap:3px;white-space:nowrap;justify-content:center}
+.top-stats>.stat-pill:first-child{width:72px;min-width:72px}
+.top-stats>.stat-pill:nth-child(2){width:53px;min-width:53px}
+.top-stats>.total-top-pill{width:65px;min-width:65px;max-width:65px;flex-basis:65px}
+.top-stats>.stat-pill span{font-size:12px;line-height:1;flex:0 0 auto}
+.top-stats>.stat-pill b{font-size:11px;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.top-stats>.stat-pill small{font-size:8px;line-height:1;white-space:nowrap;flex:0 0 auto}
+.top-stats>.stat-pill:first-child small{letter-spacing:-.25px}
+@media(max-width:390px){
+ .top-stats{gap:3px}
+ .top-stats>.stat-pill:first-child{width:68px;min-width:68px}
+ .top-stats>.stat-pill:nth-child(2){width:49px;min-width:49px}
+ .top-stats>.total-top-pill{width:60px;min-width:60px;max-width:60px;flex-basis:60px}
+ .top-stats>.stat-pill{padding:4px 3px;gap:2px}
+ .top-stats>.stat-pill span{font-size:11px}
+ .top-stats>.stat-pill b{font-size:10px}
+ .top-stats>.stat-pill small{font-size:7px}
+}
+@media(max-width:340px){
+ .top-stats{gap:2px}
+ .top-stats>.stat-pill:first-child{width:62px;min-width:62px}
+ .top-stats>.stat-pill:nth-child(2){width:45px;min-width:45px}
+ .top-stats>.total-top-pill{width:54px;min-width:54px;max-width:54px;flex-basis:54px}
+ .top-stats>.stat-pill small{font-size:6.5px}
+}
