@@ -212,3 +212,19 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
  .bottom-nav .nav-item span{font-size:19px}
  .bottom-nav .nav-item small{font-size:8px}
 }
+
+
+/* Give the account icon a familiar circular profile-button treatment */
+#accountBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+#accountBtn #accountIcon{
+  width:29px;height:29px;min-width:29px;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,rgba(255,225,145,.28),rgba(119,63,158,.72));
+  border:1.5px solid rgba(255,224,150,.88);
+  box-shadow:0 2px 7px rgba(0,0,0,.24),inset 0 1px 3px rgba(255,255,255,.28);
+  font-size:17px;line-height:1
+}
+@media(max-width:390px){
+ #accountBtn #accountIcon{width:27px;height:27px;min-width:27px;font-size:16px}
+}
