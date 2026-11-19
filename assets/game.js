@@ -77,7 +77,7 @@ async function ensureOfflineAttempts(){
   for(const row of (data.attempts||[]))if(row?.attemptId&&Number(row.seed)>0)merged.set(Number(row.level),row);
   writeOfflineAttempts(playerId,[...merged.values()].sort((a,b)=>a.level-b.level));
   return true;
- }catch(error){console.warn("Offline stage preparation failed",error);return existing.length>0}
+ }catch(error){console.warn("Offline stage preparation failed",error);const stillValid=existing.filter(x=>new Date(x.expiresAt).getTime()>Date.now());writeOfflineAttempts(playerId,stillValid);return stillValid.length>0}
 }
 let pendingStageFlushPromise=null;async function flushPendingStageResults(){if(pendingStageFlushPromise)return pendingStageFlushPromise;const run=flushPendingStageResultsUnlocked();pendingStageFlushPromise=run;try{return await run}finally{if(pendingStageFlushPromise===run)pendingStageFlushPromise=null}}async function flushPendingStageResultsUnlocked(){
  if(OFFLINE_PROGRESS_PREVIEW)return false;
@@ -126,11 +126,22 @@ async function startLevel(n=state.level){await analyticsSessionReady;ensureAudio
  if(stageRewardRequired){
   const playerId=currentPlayer?.id||offlineAccountId;
   if(navigator.onLine&&currentPlayer)await ensureOfflineAttempts();
-  const attempts=readOfflineAttempts(playerId);
-  const match=attempts.find(x=>Number(x.level)===n&&Number(x.seed)>0&&x.expiresAt&&new Date(x.expiresAt).getTime()>Date.now());
+  let attempts=readOfflineAttempts(playerId);
+  let match=attempts.find(x=>Number(x.level)===n&&Number(x.seed)>0&&x.expiresAt&&new Date(x.expiresAt).getTime()>Date.now());
+  // A returning player may have a stale local session and expired offline tickets.
+  // Revalidate the session and request a fresh batch before blocking the adventure.
+  if(!match&&navigator.onLine){
+   await checkSession();
+   if(currentPlayer?.id===playerId){
+    await ensureOfflineAttempts();
+    attempts=readOfflineAttempts(playerId);
+    match=attempts.find(x=>Number(x.level)===n&&Number(x.seed)>0&&x.expiresAt&&new Date(x.expiresAt).getTime()>Date.now());
+   }
+  }
   if(match){stageAttempt=match;stageRng=Number(match.seed)>>>0}
   else if(!navigator.onLine){toast("هذه المرحلة غير مجهّزة بعد للعب دون اتصال. اتصل بالإنترنت مرة واحدة لتجهيز المراحل التالية.");busy=false;return}
-  else{toast("لم نتمكن من تجهيز إثبات المرحلة. أعد المحاولة بعد التأكد من الاتصال.");busy=false;return}
+  else if(!currentPlayer){toast("تعذّر استعادة جلسة حسابك. ارجع إلى المتجر واضغط «العب الآن» لربط اللعبة مجدداً.");busy=false;return}
+  else{toast("تعذّر تجهيز المرحلة الآن. تحقق من الاتصال ثم اضغط «ابدأ المغامرة» مجدداً.");busy=false;return}
  }
  targetFruit=worldData(n).fruit;const fruitNames={"🍎":"التفاح","🍅":"الطماطم","🌶️":"الفلفل الحار","🍉":"البطيخ","🍑":"الخوخ","🍊":"البرتقال","🥕":"الجزر","🥭":"المانجو","🍍":"الأناناس","🍌":"الموز","🌽":"الذرة","🍋":"الليمون","🍋‍🟩":"الليمون الأخضر","🍈":"الشمام","🍐":"الكمثرى","🫛":"البازلاء","🫑":"الفلفل الحلو","🍏":"التفاح الأخضر","🥝":"الكيوي","🥑":"الأفوكادو","🫒":"الزيتون","🥦":"البروكلي","🥒":"الخيار","🥬":"الخس","🍇":"العنب","🍆":"الباذنجان","🍠":"البطاطا الحلوة","🫜":"الخضار الجذرية","🍓":"الفراولة","🍒":"الكرز"};if($("missionLabel"))$("missionLabel").textContent="اجمع "+(fruitNames[targetFruit]||"الثمار");target=8+Math.min(10,Math.floor(n/12));moves=28+Math.min(8,Math.floor(n/15));if(stageAttempt){targetFruit=stageAttempt.targetFruit||targetFruit;target=Number(stageAttempt.target)||target;moves=Number(stageAttempt.moves)||moves;}score=0;collected=0;selected=-1;activeBooster=null;board=makeBoard();busy=false;$("levelWorld").textContent=worldData(n).name;$("levelLabel").textContent="المرحلة "+n;$("targetFruit").textContent=targetFruit;$("targetCount").textContent="0 / "+target;$("moves").textContent=moves;$("score").textContent=score;showScreen("game");renderBoard()}
 let returnToGameFromMap=false;
