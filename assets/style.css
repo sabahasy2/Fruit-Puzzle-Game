@@ -180,3 +180,23 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
  .top-stats>.total-top-pill{width:54px;min-width:54px;max-width:54px;flex-basis:54px}
  .top-stats>.stat-pill small{font-size:6.5px}
 }
+
+
+/* Keep the account/profile button visible on narrow phone headers */
+.account-indicator{flex:0 0 auto;min-width:37px;max-width:none}
+.account-indicator .avatar-btn{flex:0 0 37px}
+@media(max-width:390px){
+  .topbar{gap:4px}
+  .brand{flex:0 1 auto;min-width:0;gap:5px}
+  .brand-mark{width:30px;height:30px;flex:0 0 30px;font-size:20px}
+  .brand b{font-size:10px;letter-spacing:1px}
+  .brand small{font-size:6px;letter-spacing:1px}
+  .account-indicator{width:32px;min-width:32px;max-width:32px;justify-content:center}
+  .account-indicator>span{display:none}
+  .account-indicator .avatar-btn{width:32px;height:32px;flex:0 0 32px;font-size:16px}
+}
+@media(max-width:340px){
+  .brand b{font-size:9px}
+  .brand small{font-size:5px;letter-spacing:.7px}
+  .account-indicator,.account-indicator .avatar-btn{width:29px;min-width:29px;flex-basis:29px;height:29px}
+}
