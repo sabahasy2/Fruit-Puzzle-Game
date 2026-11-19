@@ -134,3 +134,20 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
   #gameRewardsBtn #redPointsBalance{font-size:11px}
   #gameRewardsBtn #redPointsUsdBalance{font-size:8px!important}
 }
+
+
+/* Refined header balance size: keep the wallet compact beside the stat pills */
+#gameRewardsBtn{
+  width:70px;min-width:70px;max-width:70px;flex:0 0 70px;
+  height:50px;box-sizing:border-box;padding:3px 2px!important;
+  gap:1px!important;border-radius:11px!important;
+  font-size:10px!important;line-height:1.05!important;
+}
+#gameRewardsBtn span{font-size:10px!important;white-space:nowrap}
+#gameRewardsBtn #redPointsBalance{font-size:10px!important;white-space:nowrap}
+#gameRewardsBtn #redPointsUsdBalance{font-size:8px!important;line-height:1!important}
+@media(max-width:390px){
+  #gameRewardsBtn{width:64px;min-width:64px;max-width:64px;flex-basis:64px;height:46px;padding:2px 1px!important}
+  #gameRewardsBtn span,#gameRewardsBtn #redPointsBalance{font-size:9px!important}
+  #gameRewardsBtn #redPointsUsdBalance{font-size:7px!important}
+}
