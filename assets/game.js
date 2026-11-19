@@ -34,14 +34,14 @@ function sound(kind){
  }else if(kind==="explosion"||kind==="mega"){
   tone(kind==="mega"?105:125,.3,"sawtooth",.14);
   tone(kind==="mega"?62:78,.38,"sine",.17,.025);
-  noiseBurst(kind==="mega"?.34:.27,kind==="mega"?.18:.15,kind==="mega"?360:420);
+  noiseBurst(kind==="mega" ? .34 : .27,kind==="mega" ? .18 : .15,kind==="mega"?360:420);
   [880,1175,1568].forEach((f,i)=>tone(f,.1,"sine",.035,.045+i*.035));
  }else if(kind==="collision"){
   tone(185,.085,"square",.075);tone(115,.13,"triangle",.09,.03);noiseBurst(.075,.06,700);
  }else if(kind==="match"||kind==="bigMatch"||kind==="cascade"){
   const notes=kind==="cascade"?[784,988,1175,1397]:kind==="bigMatch"?[659,784,988,1175,1397]:[587,740,880];
-  notes.forEach((f,i)=>tone(f,kind==="cascade"?.16:.14,"triangle",kind==="bigMatch"?.075:.065,i*.055));
-  sparkleNoise(kind==="bigMatch"?.2:.12,.035);
+  notes.forEach((f,i)=>tone(f,kind==="cascade" ? .16 : .14,"triangle",kind==="bigMatch" ? .075 : .065,i*.055));
+  sparkleNoise(kind==="bigMatch" ? .2 : .12,.035);
  }else if(kind==="swap"){
   tone(520,.065,"sine",.055);tone(760,.075,"triangle",.045,.025);
  }else if(kind==="hammer"){
@@ -59,7 +59,7 @@ function sound(kind){
   tone(131,.42,"sine",.08,.42);
  }else if(kind==="win"){
   const notes=[523,659,784,1047,1319,1568,1760,2093];
-  notes.forEach((f,i)=>tone(f,.24,"triangle",i>4?.075:.085,i*.075));
+  notes.forEach((f,i)=>tone(f,.24,"triangle",i>4 ? .075 : .085,i*.075));
   [523,659,784,1047].forEach((f,i)=>tone(f,.48,"sine",.045,.62+i*.012));
   sparkleNoise(.42,.075);
  }
@@ -194,7 +194,7 @@ function adjacent(a,b){return Math.abs(Math.floor(a/BOARD_SIZE)-Math.floor(b/BOA
 function tapCell(i){if(busy)return;if(activeBooster){useBooster(i);return}if(selected===-1){selected=i;renderBoard();return}if(selected===i){selected=-1;renderBoard();return}selectOrSwap(selected,i)}
 function selectOrSwap(a,b){if(busy)return;if(!adjacent(a,b)){selected=b;renderBoard();return}selected=-1;[board[a],board[b]]=[board[b],board[a]];sound("swap");let matches=findMatches();if(!matches.length){[board[a],board[b]]=[board[b],board[a]];sound("collision");renderBoard();return}if(stageAttempt)stageEvents.push({type:"swap",a,b});moves--;busy=true;renderBoard();setTimeout(()=>resolveMatches(matches),100)}
 function spawnMatchBurst(indices,chain=0){const wrap=document.querySelector(".board-wrap"),grid=$("gameBoard");if(!wrap||!grid)return;const wr=wrap.getBoundingClientRect(),cells=[...new Set(indices)].slice(0,7);cells.forEach((idx,n)=>{const cell=grid.querySelector(`[data-cell="${idx}"]`);if(!cell)return;const r=cell.getBoundingClientRect(),burst=document.createElement("span");burst.className="match-burst"+(chain?" chain":"");burst.style.left=(r.left-wr.left+r.width/2)+"px";burst.style.top=(r.top-wr.top+r.height/2)+"px";const core=document.createElement("span");core.className="burst-core";burst.appendChild(core);for(let p=0;p<9;p++){const spark=document.createElement("i");spark.style.setProperty("--angle",(p*40+(n%3)*9)+"deg");spark.style.setProperty("--distance",(24+(p%3)*9)+"px");spark.style.setProperty("--delay",(p%3)*12+"ms");burst.appendChild(spark)}wrap.appendChild(burst);setTimeout(()=>burst.remove(),620)})}
-function resolveMatches(matches,depth=0){if(!matches.length){busy=false;renderBoard();checkEnd();return}spawnMatchBurst(matches,depth);sound(depth>0?"cascade":matches.length>=5?"mega":matches.length>=4?"bigMatch":"match");const count=matches.length,gained=count*60*(depth+1);matches.forEach(i=>{const cell=$("gameBoard").querySelector(`[data-cell="${i}"]`);if(cell)cell.classList.add("matched");if(board[i]===targetFruit)collected++;board[i]=null});score+=gained;recordGlobalScore(gained);updateGameStats();setTimeout(()=>{renderBoard();for(let c=0;c<BOARD_SIZE;c++){let vals=[];for(let r=BOARD_SIZE-1;r>=0;r--){let v=board[r*BOARD_SIZE+c];if(v)vals.push(v)}while(vals.length<BOARD_SIZE)vals.push(randFruit());for(let r=BOARD_SIZE-1;r>=0;r--)board[r*BOARD_SIZE+c]=vals[BOARD_SIZE-1-r]}renderBoard();setTimeout(()=>{let next=findMatches();if(next.length&&depth<7)resolveMatches(next,depth+1);else{busy=false;save();checkEnd()}},65)},95)}
+function resolveMatches(matches,depth=0){if(!matches.length){busy=false;renderBoard();checkEnd();return}spawnMatchBurst(matches,depth);sound(depth>0?"cascade":matches.length>=5?"mega":matches.length>=4?"bigMatch":"match");const count=matches.length,gained=count*60*(depth+1);matches.forEach(i=>{const cell=$("gameBoard").querySelector(`[data-cell="${i}"]`);if(cell)cell.classList.add("matched");if(board[i]===targetFruit)collected++;board[i]=null});score+=gained;recordGlobalScore(gained);updateGameStats();setTimeout(()=>{renderBoard();for(let c=0;c<BOARD_SIZE;c++){let vals=[];for(let r=BOARD_SIZE-1;r>=0;r--){let v=board[r*BOARD_SIZE+c];if(v)vals.push(v)}while(vals.length<BOARD_SIZE)vals.push(randFruit());for(let r=BOARD_SIZE-1;r>=0;r--)board[r*BOARD_SIZE+c]=vals[BOARD_SIZE-1-r]}renderBoard();sound("drop");setTimeout(()=>{let next=findMatches();if(next.length&&depth<7)resolveMatches(next,depth+1);else{busy=false;save();checkEnd()}},65)},95)}
 function updateGameStats(){$("targetCount").textContent=Math.min(collected,target)+" / "+target;$("moves").textContent=moves;$("score").textContent=score.toLocaleString("en-US");if($("totalScore"))$("totalScore").textContent=(state.totalScore||0).toLocaleString("en-US");if($("totalScoreTop"))$("totalScoreTop").textContent=(state.totalScore||0).toLocaleString("en-US");document.querySelectorAll("[data-booster]").forEach(b=>{const count=Number(state.boosters?.[b.dataset.booster]||0);const badge=b.querySelector("b");if(badge)badge.textContent=count;b.disabled=count<=0;b.setAttribute("aria-label",`${b.dataset.booster}: ${count}`)})}
 function saveScoreOnly(){if($("totalScore"))$("totalScore").textContent=(state.totalScore||0).toLocaleString("en-US");if($("totalScoreTop"))$("totalScoreTop").textContent=(state.totalScore||0).toLocaleString("en-US")}
 function checkEnd(){if(collected>=target){winLevel();return}if(moves<=0){loseLevel()}}
