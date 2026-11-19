@@ -58,10 +58,12 @@ function sound(kind){
   [587,494,392,330,262].forEach((f,i)=>tone(f,.24,"triangle",.07,i*.11));
   tone(131,.42,"sine",.08,.42);
  }else if(kind==="win"){
-  const notes=[523,659,784,1047,1319,1568,1760,2093];
-  notes.forEach((f,i)=>tone(f,.24,"triangle",i>4 ? .075 : .085,i*.075));
-  [523,659,784,1047].forEach((f,i)=>tone(f,.48,"sine",.045,.62+i*.012));
-  sparkleNoise(.42,.075);
+  // A clearly distinct, celebratory victory fanfare.
+  const notes=[784,988,1175,1568,1397,1568,1760,2093];
+  notes.forEach((f,i)=>tone(f,.27,"triangle",i>4 ? .085 : .095,i*.085));
+  [392,494,587,784,988].forEach((f,i)=>tone(f,.62,"sine",.052,.72+i*.018));
+  [1175,1397,1760,2093].forEach((f,i)=>tone(f,.34,"sine",.035,1.02+i*.055));
+  sparkleNoise(.62,.09);
  }
  if(["explosion","mega","hammer","win"].includes(kind)){
   try{if(state.vibrate!==false&&navigator.vibrate)navigator.vibrate(kind==="win"?[25,35,45,30,60]:kind==="mega"?[35,25,45]:24)}catch{}
